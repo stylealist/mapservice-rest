@@ -1,5 +1,6 @@
 package com.example.newfirstservice;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -29,9 +30,10 @@ public class FirstServiceController {
         log.info(header);
         return "Hello World in First Service";
     }
-
-    @GetMapping("check")
-    public String check(){
-        return "Hi, there. This is a message from First Service";
+    @GetMapping("/check")
+    public String check(HttpServletRequest request){
+        log.info("Server Port={}",request.getServerPort());
+        return String.format("Hi, there. This is a message from First Service on PORT %s"
+                ,env.getProperty("local.server.port"));
     }
 }
