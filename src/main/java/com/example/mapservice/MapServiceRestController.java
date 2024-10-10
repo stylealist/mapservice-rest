@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/map")
+//@RequestMapping("/map")
+@RequestMapping("/")
 @Slf4j
 public class MapServiceRestController {
     Environment env;
