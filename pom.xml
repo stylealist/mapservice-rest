@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>new-first-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>new-first-service</name>
-    <description>new-first-service</description>
+    <artifactId>sj-lab-mapservice-rest</artifactId>
+    <version>sj-lab-mapservice-rest</version>
+    <name>sj-lab-mapservice-rest</name>
+    <description>sj-lab-mapservice-rest</description>
     <url/>
     <licenses>
         <license/>
@@ -64,6 +64,7 @@
     </dependencyManagement>
 
     <build>
+        <finalName>sj-lab-mapservice-rest</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
