@@ -1,13 +1,13 @@
-package com.example.newfirstservice;
+package com.example.mapservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class NewFirstServiceApplication {
+public class MapServiceRestApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(NewFirstServiceApplication.class, args);
+        SpringApplication.run(MapServiceRestApplication.class, args);
     }
 
 }

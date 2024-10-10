@@ -1,4 +1,4 @@
-package com.example.newfirstservice;
+package com.example.mapservice;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/first-service")
+@RequestMapping("/map")
 @Slf4j
-public class FirstServiceController {
+public class MapServiceRestController {
     Environment env;
 
     @Autowired
-    public FirstServiceController(Environment env) {
+    public MapServiceRestController(Environment env) {
         this.env = env;
     }
 

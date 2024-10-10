@@ -1,10 +1,10 @@
-package com.example.newfirstservice;
+package com.example.mapservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class NewFirstServiceApplicationTests {
+class MapServiceApplicationTests {
 
     @Test
     void contextLoads() {
