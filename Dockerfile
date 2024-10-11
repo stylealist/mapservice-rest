@@ -8,7 +8,7 @@ WORKDIR /app
 COPY target/sj-lab-mapservice-rest.jar /app/sj-lab-mapservice-rest.jar
 
 # 포트 노출 (Eureka 서버의 기본 포트)
-EXPOSE 8761
+#EXPOSE 8761
 
 #기본 프로파일을 local로 설정 (환경 변수로 설정)
 ENV SPRING_PROFILES_ACTIVE=local
