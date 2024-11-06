@@ -9,3 +9,8 @@ spring:
     name: mapservice-rest
   profiles:
     active: local
+  datasource:
+    url: jdbc:postgresql://118.67.132.31:5432/postgres
+    username: admin
+    password: xogml159
+    #platform: postgres
