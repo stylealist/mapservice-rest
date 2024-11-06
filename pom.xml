@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.example</groupId>
     <artifactId>sj-lab-mapservice-rest</artifactId>
-    <version>sj-lab-mapservice-rest</version>
+    <version>1.0.0</version>
     <name>sj-lab-mapservice-rest</name>
     <description>sj-lab-mapservice-rest</description>
     <url/>
