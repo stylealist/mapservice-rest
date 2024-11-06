@@ -1,4 +1,4 @@
-package com.example.mapservice;
+package com.example.mapservice.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-//@RequestMapping("/map")
 @RequestMapping("/")
 @Slf4j
 public class MapServiceRestController {
