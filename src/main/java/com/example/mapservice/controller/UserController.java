@@ -2,6 +2,7 @@ package com.example.mapservice.controller;
 
 import com.example.mapservice.bean.User;
 import com.example.mapservice.dao.UserDaoService;
+import com.example.mapservice.exception.UserNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
