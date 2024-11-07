@@ -2,6 +2,8 @@ server:
   port: 0
   servlet:
     context-path: /map
+  message:
+    basename: messages
 #  port: ${random.int(10000,51000)}
 
 spring:
@@ -14,7 +16,6 @@ spring:
     username: admin
     password: xogml159
     #platform: postgres
-
 
 logging:
   level:
