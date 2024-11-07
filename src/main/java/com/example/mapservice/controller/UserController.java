@@ -24,7 +24,7 @@ public class UserController {
         return userDaoService.findAll();
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/users/{id}")
     public User retrieveUser(@PathVariable int id) {
         User user = userDaoService.findOne(id);
 
