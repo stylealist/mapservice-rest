@@ -1,7 +1,7 @@
-spring:
-  data:
-    rest:
-      base-path: /api/map
+#spring:
+#  data:
+#    rest:
+#      base-path: /api/map
     #platform: postgres
 
 eureka:
