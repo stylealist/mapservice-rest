@@ -21,3 +21,9 @@ spring:
 logging:
   level:
     org.springframework: debug
+# 추후 보안에 맞게 설정해야 함
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "self,health"
