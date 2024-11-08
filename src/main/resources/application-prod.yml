@@ -6,3 +6,9 @@ eureka:
       defaultZone: http://www.sj-lab.co.kr/discovery/eureka
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    config-url: /${spring.profiles.active}/api/map/v3/api-docs/swagger-config # NOTE: API GW 에서 접근 가능하게 하기 위해 /{apiGwStageName}/{prefixPath} 를 붙여줌
+    url: /${spring.profiles.active}/api/map/v3/api-docs

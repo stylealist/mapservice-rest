@@ -30,10 +30,4 @@ public class MapServiceRestApplication {
         localeResolver.setDefaultLocale(Locale.US);
         return localeResolver;
     }
-
-    @Bean
-    ForwardedHeaderFilter forwardedHeaderFilter() {
-        return new ForwardedHeaderFilter();
-    }
-
 }
