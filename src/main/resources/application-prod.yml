@@ -1,3 +1,9 @@
+spring:
+  data:
+    rest:
+      base-path: /api/map
+    #platform: postgres
+
 eureka:
   client:
     fetch-registry: true
