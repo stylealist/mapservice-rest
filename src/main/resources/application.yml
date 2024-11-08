@@ -13,9 +13,14 @@ spring:
   profiles:
     active: local
   datasource:
-    url: jdbc:postgresql://118.67.132.31:5432/postgres
+    url: jdbc:postgresql://118.67.132.31:5432/map-service
     username: admin
     password: xogml159
+  # 동적이지않아 코드로 변경
+  #security:
+  #  user:
+  #    name: stylealist
+  #    password: 1q2w3e4r
     #platform: postgres
 
 logging:
