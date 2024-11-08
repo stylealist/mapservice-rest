@@ -4,6 +4,7 @@ server:
     context-path: /map
   message:
     basename: messages
+  forward-headers-strategy: framework
 #  port: ${random.int(10000,51000)}
 
 spring:
