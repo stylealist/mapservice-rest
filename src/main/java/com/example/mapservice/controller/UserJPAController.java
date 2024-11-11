@@ -1,5 +1,6 @@
 package com.example.mapservice.controller;
 
+import com.example.mapservice.bean.Post;
 import com.example.mapservice.bean.User;
 import com.example.mapservice.exception.UserNotFoundException;
 import com.example.mapservice.repository.UserRepository;
@@ -53,6 +54,15 @@ public class UserJPAController {
         entityModel.add(linkTo.withRel("all-users")); // all-users -> http://localhost:8088/users
 
         return ResponseEntity.ok(entityModel);
+    }
+    @GetMapping("/users/{id}/posts")
+    public List<Post> retrieveAllPostsByUser(@PathVariable int id) {
+        Optional<User> user = userRepository.findById(id);
+        if(!user.isPresent()){
+            throw new UserNotFoundException("id-" + id);
+        }
+
+        return user.get().getPosts();
     }
     @PostMapping("/users")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
