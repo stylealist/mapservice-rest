@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.ForwardedHeaderFilter;
@@ -20,6 +21,9 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 public class NewSwaggerConfig {
+    @Value("${spring.profiles.active:}")
+    private String profile;
+
     @Bean
     public GroupedOpenApi customTestOpenApi(){
         String[] paths = {"/users/**","/admin/**"};
@@ -31,8 +35,14 @@ public class NewSwaggerConfig {
     }
     @Bean
     public OpenAPI customOpenAPI() {
+        String BaseUrl = "";
+        if(profile.equals("local")) {
+            BaseUrl = "/map";
+        }else if(profile.equals("prod")) {
+            BaseUrl = "/api/map";
+        }
         return new OpenAPI()
-                .servers(List.of(new Server().url("/api/map")));
+                .servers(List.of(new Server().url(BaseUrl)));
     }
     @Bean
     ForwardedHeaderFilter forwardedHeaderFilter() {
