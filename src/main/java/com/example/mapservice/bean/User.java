@@ -18,7 +18,7 @@ import java.util.List;
 @JsonIgnoreProperties(value = {"password","ssn"})
 @Schema(description = "사용자 상세 정보를 위한 도메인 객체")
 @Entity
-@Table(name = "users", schema="member")
+@Table(name = "users")//, schema="member")
 public class User {
 
     @Schema(title = "사용자 ID", description = "사용자 ID는 자동 생성됩니다.")

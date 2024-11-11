@@ -16,12 +16,13 @@ spring:
     url: jdbc:postgresql://118.67.132.31:5432/map-service
     username: admin
     password: xogml159
-  # 동적이지않아 코드로 변경
-  #security:
-  #  user:
-  #    name: stylealist
-  #    password: 1q2w3e4r
-    #platform: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
 
 logging:
   level:
@@ -32,3 +33,10 @@ management:
     web:
       exposure:
         include: "self,health"
+
+# 동적이지않아 코드로 변경
+#security:
+#  user:
+#    name: stylealist
+#    password: 1q2w3e4r
+#platform: postgres
