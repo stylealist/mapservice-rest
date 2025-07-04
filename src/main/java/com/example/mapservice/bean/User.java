@@ -1,3 +1,4 @@
+/*
 package com.example.mapservice.bean;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -47,3 +48,4 @@ public class User {
         this.ssn = ssn;
     }
 }
+*/

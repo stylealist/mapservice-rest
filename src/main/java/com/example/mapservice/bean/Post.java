@@ -1,3 +1,4 @@
+/*
 package com.example.mapservice.bean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -24,3 +25,4 @@ public class Post {
     @JsonIgnore
     private User user;
 }
+*/

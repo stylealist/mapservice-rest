@@ -1,3 +1,4 @@
+/*
 package com.example.mapservice.controller;
 
 import com.example.mapservice.bean.AdminUser;
@@ -101,3 +102,4 @@ public class AdminUserController {
     }
 
 }
+*/
