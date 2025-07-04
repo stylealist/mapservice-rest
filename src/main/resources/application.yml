@@ -13,17 +13,17 @@ spring:
     name: mapservice-rest
   profiles:
     active: local
-  datasource:
-    url: jdbc:postgresql://118.67.132.31:5432/map-service
-    username: admin
-    password: xogml159
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
-    show-sql: true
+  #datasource:
+  #  url: jdbc:postgresql://118.67.132.31:5432/map-service
+  #  username: admin
+  #  password: xogml159
+  #jpa:
+  #  hibernate:
+  #    ddl-auto: update
+  #  properties:
+  #    hibernate:
+  #      format_sql: true
+  #  show-sql: true
 
 logging:
   level:
