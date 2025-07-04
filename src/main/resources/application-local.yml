@@ -1,8 +1,5 @@
 eureka:
   client:
-    tls:
-      enabled: true
-      trust-all-certs: true
     fetch-registry: true
     register-with-eureka: true
     service-url:
