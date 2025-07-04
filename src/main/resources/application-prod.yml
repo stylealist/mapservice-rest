@@ -14,7 +14,7 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: https://eureka.sj-lab.co.kr
+      defaultZone: https://eureka.sj-lab.co.kr/eureka
       #defaultZone: http://www.sj-lab.co.kr/discovery/eureka
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
