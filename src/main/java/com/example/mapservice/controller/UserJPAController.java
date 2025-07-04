@@ -1,3 +1,4 @@
+/*
 package com.example.mapservice.controller;
 
 import com.example.mapservice.bean.Post;
@@ -106,3 +107,4 @@ public class UserJPAController {
         userRepository.deleteById(id);
     }
 }
+*/
