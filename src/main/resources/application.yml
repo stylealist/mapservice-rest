@@ -16,8 +16,8 @@ spring:
     exclude:
       - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
       - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-  #profiles:
-  #  active: local
+  profiles:
+    active: local
   #datasource:
   #  url: jdbc:postgresql://118.67.132.31:5432/map-service
   #  username: admin

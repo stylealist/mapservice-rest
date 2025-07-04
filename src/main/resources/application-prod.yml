@@ -1,0 +1,34 @@
+#spring:
+#  data:
+#    rest:
+#      base-path: /api/map
+    #platform: postgres
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
+eureka:
+  client:
+    tls:
+      enabled: false
+      #trust-all-certs: true
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: https://eureka.sj-lab.co.kr/eureka
+      #defaultZone: http://www.sj-lab.co.kr/discovery/eureka
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.cloud.client.hostname}
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+    #instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    #prefer-ip-address: true
+
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    config-url: /api/map/v3/api-docs/swagger-config # NOTE: API GW 에서 접근 가능하게 하기 위해 /{apiGwStageName}/{prefixPath} 를 붙여줌
+    url: /api/map/v3/api-docs
