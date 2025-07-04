@@ -11,7 +11,8 @@ COPY target/sj-lab-mapservice-rest.jar /app/sj-lab-mapservice-rest.jar
 #EXPOSE 8761
 
 #기본 프로파일을 local로 설정 (환경 변수로 설정)
-ENV SPRING_PROFILES_ACTIVE=local
+# helm 주입으로 변경
+# ENV SPRING_PROFILES_ACTIVE=local
 
 # 애플리케이션 실행
 ENTRYPOINT ["java", "-jar", "/app/sj-lab-mapservice-rest.jar"]
