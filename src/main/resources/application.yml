@@ -1,4 +1,4 @@
-#
+# application.yml
 server:
   port: 0
   servlet:
