@@ -12,10 +12,14 @@ server:
 spring:
   application:
     name: mapservice-rest
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
-      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  datasource:
+    url: jdbc:postgresql://211.188.62.54:30017/sjlab
+    username: stylealist
+    password: "!@xogml159"
+    driver-class-name: org.postgresql.Driver  # URL로 자동판별되지만 명시해도 OK
+
+mybatis:
+  mapper-locations: classpath*:mapper/**/*.xml
   #profiles:
   #  active: local
   #datasource:
@@ -32,7 +36,8 @@ spring:
 
 logging:
   level:
-    org.springframework: debug
+    org.springframework: info
+    root: info
 # 추후 보안에 맞게 설정해야 함
 management:
   endpoints:
