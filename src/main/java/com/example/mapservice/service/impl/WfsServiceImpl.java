@@ -18,4 +18,5 @@ public class WfsServiceImpl implements WfsService {
     public String convenienceStore() {
         return mapper.convenienceStore();
     }
+    public String busStopInfo() {return mapper.busStopInfo();}
 }

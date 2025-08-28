@@ -26,4 +26,17 @@ public class WfsController {
                 .header(HttpHeaders.CACHE_CONTROL, "public, max-age=300")
                 .body(geojson);
     }
+    @GetMapping("/busStop-info")
+    public ResponseEntity<String> busStopInfo() throws Exception {
+        String geojson = "";
+        try{
+            geojson = wfsService.busStopInfo();
+            // 바디는 JSON 문자열 그대로
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CACHE_CONTROL, "public, max-age=300")
+                .body(geojson);
+    }
 }

@@ -7,4 +7,7 @@
     <select id="convenienceStore" resultType="String">
         select geojson from map.v_convenience_store_geojson
     </select>
+    <select id="busStopInfo" resultType="String">
+        select geojson from map.v_bus_stop_info_geojson
+    </select>
 </mapper>
