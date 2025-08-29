@@ -10,4 +10,7 @@
     <select id="busStopInfo" resultType="String">
         select geojson from map.v_bus_stop_info_geojson
     </select>
+    <select id="cctvInfo" resultType="String">
+        select geojson from map.v_cctv_info_geojson
+    </select>
 </mapper>

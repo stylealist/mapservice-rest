@@ -6,5 +6,6 @@ import org.apache.ibatis.annotations.Mapper;
 public interface WfsMapper {
     String convenienceStore();
     String busStopInfo();
+    String cctvInfo();
 
 }

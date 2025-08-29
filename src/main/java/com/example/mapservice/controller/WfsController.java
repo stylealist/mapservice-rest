@@ -39,4 +39,17 @@ public class WfsController {
                 .header(HttpHeaders.CACHE_CONTROL, "public, max-age=300")
                 .body(geojson);
     }
+    @GetMapping("/cctv-info")
+    public ResponseEntity<String> cctvInfo() throws Exception {
+        String geojson = "";
+        try{
+            geojson = wfsService.cctvInfo();
+            // 바디는 JSON 문자열 그대로
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CACHE_CONTROL, "public, max-age=300")
+                .body(geojson);
+    }
 }
