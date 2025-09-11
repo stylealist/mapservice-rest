@@ -7,5 +7,7 @@ public interface WfsMapper {
     String convenienceStore();
     String busStopInfo();
     String cctvInfo();
+    String pharmacyInfo();
+    String hospitalInfo();
 
 }

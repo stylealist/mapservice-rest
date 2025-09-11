@@ -7,4 +7,6 @@ public interface WfsService {
     String convenienceStore() throws Exception;
     String busStopInfo() throws Exception;
     String cctvInfo() throws Exception;
+    String pharmacyInfo() throws Exception;
+    String hospitalInfo() throws Exception;
 }

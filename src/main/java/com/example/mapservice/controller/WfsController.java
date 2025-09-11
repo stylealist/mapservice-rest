@@ -52,4 +52,30 @@ public class WfsController {
                 .header(HttpHeaders.CACHE_CONTROL, "public, max-age=300")
                 .body(geojson);
     }
+    @GetMapping("/pharmacy-info")
+    public ResponseEntity<String> pharmacyInfo() throws Exception {
+        String geojson = "";
+        try{
+            geojson = wfsService.pharmacyInfo();
+            // 바디는 JSON 문자열 그대로
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CACHE_CONTROL, "public, max-age=300")
+                .body(geojson);
+    }
+    @GetMapping("/hospital-info")
+    public ResponseEntity<String> hospitalInfo() throws Exception {
+        String geojson = "";
+        try{
+            geojson = wfsService.hospitalInfo();
+            // 바디는 JSON 문자열 그대로
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CACHE_CONTROL, "public, max-age=300")
+                .body(geojson);
+    }
 }

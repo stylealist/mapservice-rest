@@ -13,4 +13,10 @@
     <select id="cctvInfo" resultType="String">
         select geojson from map.v_cctv_info_geojson
     </select>
+    <select id="pharmacyInfo" resultType="String">
+        select geojson from map.v_pharmacy_info_geojson
+    </select>
+    <select id="hospitalInfo" resultType="String">
+        select geojson from map.v_hospital_info_geojson
+    </select>
 </mapper>

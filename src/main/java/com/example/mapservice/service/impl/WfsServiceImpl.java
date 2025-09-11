@@ -20,4 +20,8 @@ public class WfsServiceImpl implements WfsService {
     }
     public String busStopInfo() {return mapper.busStopInfo();}
     public String cctvInfo() {return mapper.cctvInfo();}
+
+    @Override
+    public String pharmacyInfo() throws Exception {return mapper.pharmacyInfo();}
+    public String hospitalInfo() throws Exception {return mapper.hospitalInfo();}
 }
