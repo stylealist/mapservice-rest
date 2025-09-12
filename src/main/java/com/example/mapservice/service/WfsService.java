@@ -9,4 +9,5 @@ public interface WfsService {
     String cctvInfo() throws Exception;
     String pharmacyInfo() throws Exception;
     String hospitalInfo() throws Exception;
+    String governmentOfficeInfo() throws Exception;
 }

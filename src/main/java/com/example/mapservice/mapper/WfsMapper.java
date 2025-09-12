@@ -9,5 +9,6 @@ public interface WfsMapper {
     String cctvInfo();
     String pharmacyInfo();
     String hospitalInfo();
+    String governmentOfficeInfo();
 
 }

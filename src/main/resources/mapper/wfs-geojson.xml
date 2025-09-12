@@ -19,4 +19,7 @@
     <select id="hospitalInfo" resultType="String">
         select geojson from map.v_hospital_info_geojson
     </select>
+    <select id="governmentOfficeInfo" resultType="String">
+        select geojson from map.v_government_office_geojson
+    </select>
 </mapper>

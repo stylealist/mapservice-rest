@@ -24,4 +24,7 @@ public class WfsServiceImpl implements WfsService {
     @Override
     public String pharmacyInfo() throws Exception {return mapper.pharmacyInfo();}
     public String hospitalInfo() throws Exception {return mapper.hospitalInfo();}
+
+    @Override
+    public String governmentOfficeInfo() throws Exception {return mapper.governmentOfficeInfo();}
 }
