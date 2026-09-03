@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mvnw.cmd clean*)",
+      "Bash(mvnw.cmd package*)",
+      "Bash(mvnw.cmd test*)",
+      "Bash(mvnw.cmd spring-boot:run*)",
+      "Bash(./mvnw clean*)",
+      "Bash(./mvnw package*)",
+      "Bash(./mvnw test*)",
+      "Bash(./mvnw spring-boot:run*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath' | tr -d '\\r' | { read -r f; case \"$f\" in *application*.yml|*application*.yaml) if grep -niE 'password[[:space:]]*:' \"$f\" 2>/dev/null | grep -v '${' | grep -q .; then jq -n --arg f \"$f\" '{systemMessage: (\"⚠️ \" + $f + \" 에 평문 비밀번호로 보이는 값이 있습니다. 환경변수나 Vault로 외부화하는 것을 고려하세요.\")}'; fi ;; esac; } 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}
