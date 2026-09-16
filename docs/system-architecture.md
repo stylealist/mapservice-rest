@@ -26,13 +26,15 @@
 
 | 계층 | 저장소 · 로컬 경로 | 기술 스택 | Eureka 이름 | 코드 규칙 |
 |---|---|---|---|---|
-| 프론트엔드 | `sj-lab-mapservice` · `C:\vscode_develop\sj-lab-mapservice` | 순수 정적 JS(ES 모듈), OpenLayers·hls.js 벤더링, 빌드 도구 없음 | - | 그 저장소 `CLAUDE.md` + `docs/map-architecture.md`, `ui-conventions.md`, `external-services.md` |
+| 첫 화면 | `sj-lab-hub` · `C:\vscode_develop\sj-lab-hub` | React 18 + Webpack, 라우터 없이 `window.location.href`로 이동 | - | 그 저장소 `CLAUDE.md` |
+| 지도 프론트엔드 | `sj-lab-mapservice` · `C:\vscode_develop\sj-lab-mapservice` | 순수 정적 JS(ES 모듈), OpenLayers·hls.js 벤더링, 빌드 도구 없음 | - | 그 저장소 `CLAUDE.md` + `docs/map-architecture.md`, `ui-conventions.md`, `external-services.md` |
 | 게이트웨이 | `sj-lab-apigateway` · `C:\developer\workspace\sj-lab-apigateway` | Spring Boot 3.3.2, Spring Cloud 2023.0.3, Gateway(WebFlux) | `apigateway-service` | 그 저장소 `CLAUDE.md` |
 | 디스커버리 | `sj-lab-discoveryServer` · `C:\developer\workspace\sj-lab-discoveryServer` | Spring Boot 3.3.2, Eureka Server | `discoveryservice` (자기 등록 안 함) | 그 저장소 `CLAUDE.md` |
 | 백엔드 | `mapservice-rest` · `C:\developer\workspace\mapservice-rest` | Spring Boot 3.3.2, MyBatis, PostgreSQL 드라이버 | `MAPSERVICE-REST` (`spring.application.name: mapservice-rest`) | 이 저장소 `CLAUDE.md` |
 | 배치 | `sj-lab-scheduler` · `C:\developer\workspace\sj-lab-scheduler` | Spring Boot 3.3.2, MyBatis, `@Scheduled` | `SJ-LAB-SCHEDULER` | 그 저장소 `CLAUDE.md`(도메인별 cron 표 포함) |
 | AI | `fast-api-ai` · `C:\developer\workspace\fast-api-ai` | Python 3.12, FastAPI, py-eureka-client | `FAST-API-AI` (`APP_NAME: fast-api-ai`) | 그 저장소 `CLAUDE.md` |
 | DB | 개발 DB `sjlab` (MCP `sjlabDevDb`, 읽기 전용) | PostgreSQL 17.0 + PostGIS 3.4.3 | - | `docs/analysis/*.md` |
+| 배포 | `sj-lab-k8s-manifests` · `C:\developer\workspace\sj-lab-k8s-manifests` | 서비스별 Helm 차트, ArgoCD GitOps 소스 | - | 그 저장소 `CLAUDE.md` |
 
 **뷰와 생성 주체 (scheduler 매퍼 XML 기준)**: `map.v_convenience_store_geojson`, `v_bus_stop_info_geojson`, `v_cctv_info_geojson`, `v_pharmacy_info_geojson`, `v_hospital_info_geojson`, `v_government_office_geojson`, `v_fclt_info`, `v_fclt_info_geojson`. `qfield.facility_total_view`와 `public.g_sido/g_sgg/g_emd`는 scheduler가 만들지 않습니다(출처 미확인).
 
@@ -57,6 +59,7 @@
 | `GET /map/admin-area/sgg?sidoCd=` | `QfieldFacilityController` | `public.g_sgg` | `map-facility.js` |
 | `GET /map/admin-area/emd?sggCd=` | `QfieldFacilityController` | `public.g_emd` | `map-facility.js` |
 
+- 시설물 목록(`/map/qfield/facilities`)의 `properties`는 `total_id`, `fclt_nm`, `inst_nm`, `daddr`, `facility_condition`, `repair_required_yn`, `emd_cd`입니다. `inst_nm`·`daddr`는 같은 이름(예: "강당")이 반복될 때 목록에서 구분하기 위한 보조 정보이므로 빼지 마세요.
 - 응답 형식: WFS 레이어는 `geojson` 텍스트(FeatureCollection), 오류 시 **HTTP 200 + 빈 바디**. QField/행정구역은 JSON 문자열 + 400/404 명시, `Cache-Control` 60초(시설물)·3600초(행정구역).
 - 좌표계: 시설물 `geom`은 EPSG:3857, 행정구역 경계는 EPSG:4326. 프론트 지도 뷰는 EPSG:3857입니다.
 - 행정구역 코드는 접두어 계층(sido 2자리 → sgg 5자리 → emd 8자리)이며 백엔드와 프론트가 같은 자릿수 검증을 가정합니다.
@@ -87,6 +90,19 @@
 **fast-api-ai 라우트 추가**
 - `routes/<도메인>/`에 `APIRouter`를 만들고 `main.py`에서 `include_router()`로 등록해야 노출됩니다(그 저장소 `add-route` 스킬). 게이트웨이 경로는 `/fast-api-ai/...`.
 
+## 배포 경로 (운영)
+
+```
+git push → Jenkins(빌드 → 이미지 push: sj-lab-registry.kr.ncr.ntruss.com)
+        → sj-lab-k8s-manifests 의 <서비스>/values.yaml 의 image.tag 를 자동 커밋
+        → ArgoCD 가 동기화(selfHeal·prune) → 쿠버네티스 롤아웃
+```
+
+- **`image.tag`는 Jenkins가 관리하는 값**입니다. 요청 없이 임의로 낮추거나 되돌리지 마세요.
+- 매니페스트 단계는 clone → sed → push 구조라 **여러 저장소를 동시에 push하면 한 잡이 `cannot lock ref`로 실패**할 수 있습니다(2026-09-16 실제 발생). 실패하면 이미지는 레지스트리에 올라가 있고 태그 커밋만 빠진 상태이므로, 해당 잡을 재실행하면 됩니다.
+- 롤아웃 중에는 게이트웨이가 잠시 **503**을 반환합니다(옛 파드 종료 ~ 새 파드의 Eureka 등록 사이). 배포 직후 503은 몇 초 뒤 다시 확인해 보세요.
+- 차트를 고쳤다면 해당 차트 디렉터리에서 `helm lint`와 `helm template`을 돌려 렌더링을 확인합니다. 로컬 저장소가 Jenkins 자동 커밋보다 뒤처져 있을 수 있으니 **수정 전 `git pull`** 하세요.
+
 ## 총괄 세션에서 다른 저장소를 다룰 때
 
 - `.claude/settings.local.json`의 `permissions.additionalDirectories`에 다섯 저장소(게이트웨이·디스커버리·scheduler·fast-api-ai·프론트)가 등록되어 있어, 이 세션에서 바로 읽고 수정할 수 있습니다(로컬 전용 설정). 폴더 신뢰 등록 위치는 `docs/dev-environment.md` 참고.
@@ -95,6 +111,8 @@
 - 다른 저장소의 훅·에이전트는 이 세션에서 동작하지 않으므로 직접 지켜야 합니다.
   - `sj-lab-discoveryServer`: `target/`가 git에 추적되지만 편집 금지(그 저장소 훅이 막던 규칙). 설정은 `src/main/resources/`만 수정.
   - `sj-lab-scheduler`: 커밋 전 staged diff에 `password`/`secret`/`api_key`/`service_key` 등이 **새로 추가**됐는지 확인(그 저장소 `check-secrets.sh` 훅 규칙). 기존에 커밋된 키는 사용자와 상의 없이 로테이션·이전하지 않음. 로컬에서 띄우면 cron 배치가 실제 DB에 적재하므로 검증용 기동은 사용자 확인 후에.
+  - `sj-lab-k8s-manifests`: 차트 수정 전 `git pull`(Jenkins 자동 커밋이 계속 쌓임), 수정 후 `helm lint <차트>`·`helm template <차트>` 확인. `image.tag`는 Jenkins 관리 값이므로 임의 변경 금지. 네임스페이스·리소스 제한 등은 같은 차트의 기존 패턴을 따를 것.
+  - `sj-lab-hub`: 기능 카드는 `src/App.js` 최상단 `features` 배열 하나가 단일 소스. 스타일은 파일 하단의 인라인 `xxxStyle` 객체 컨벤션을 유지하고, 검증은 `npm start`(3000) 또는 `npm run build`로 할 것.
   - `fast-api-ai`: `.py` 수정 후 `python -m py_compile <파일>`로 문법 확인(그 저장소 훅 규칙). `core/config.py`의 `INSTANCE_IP` 고정(127.0.0.1)은 의도된 것이므로 되돌리지 않음.
   - 각 저장소의 리뷰 체크리스트는 `<저장소>/.claude/agents/reviewer.md`에 있습니다. 이 세션의 `reviewer` 에이전트는 `mapservice-rest` 전용이므로, 다른 저장소 변경은 그 체크리스트 파일을 읽고 확인합니다.
 - `sj-lab-mapservice`와 `mapservice-rest`는 public 저장소입니다. DB 호스트·비밀번호·토큰을 문서나 코드에 적지 않습니다.

@@ -15,7 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - 답변은 한글로 할 것.
 - 코드 추가·수정 중 CLAUDE.md 또는 docs에 반영해야 할 내용이면 코드 변경 직후 바로 추가할 것.
 - 함수·변수 이름은 카멜 형식으로 지을 것.
-- 게이트웨이·디스커버리·scheduler·fast-api-ai·프론트엔드 저장소 파일을 수정하기 전에 그 저장소의 `CLAUDE.md`를 먼저 Read할 것(이 세션에 자동 로드되지 않음). git 작업은 `git -C <경로>`로 저장소별로 할 것.
+- 게이트웨이·디스커버리·scheduler·fast-api-ai·프론트엔드·hub·k8s-manifests 저장소 파일을 수정하기 전에 그 저장소의 `CLAUDE.md`를 먼저 Read할 것(이 세션에 자동 로드되지 않음). git 작업은 `git -C <경로>`로 저장소별로 할 것.
 - API 경로·응답 형식을 바꾸면 백엔드와 프론트(`map-wfs.js`/`map-facility.js`)를 같은 작업에서 함께 수정하고 `docs/system-architecture.md`의 API 계약 표를 갱신할 것.
 - `.claude/hooks/guard.sh`가 `git reset --hard`, `git push --force`, 그리고 `claude` 문자열이 들어간 Bash 명령을 차단합니다. 차단되면 우회하지 말고 다른 도구(Read/Grep/PowerShell)로 해결할 것.
 
