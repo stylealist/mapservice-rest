@@ -155,6 +155,21 @@
     </select>
 
     <!--
+      미디어 중계용 조회 — 시설물이 실제로 가진 첨부 경로와 원본 프로젝트만 돌려준다.
+      요청된 path 가 이 목록에 있는지 확인해 임의 파일 접근을 막는 데 쓴다.
+    -->
+    <select id="getFacilityMediaSource" resultType="String">
+        SELECT json_build_object(
+            'totalId', total_id,
+            'sourceTable', source_table,
+            'paths', json_build_array(photo_1, photo_2, photo_3, photo_4, photo_5, audio_memo, video)
+        )::text
+        FROM qfield.facility_total_view
+        WHERE total_id = #{totalId}
+        LIMIT 1
+    </select>
+
+    <!--
       시설물 아이콘 설정 조회 (qfield.facility_icon).
       프론트엔드가 이 설정으로 종류별 아이콘을 그리므로, 아이콘을 추가·변경할 때
       코드 배포 없이 이 테이블 행만 고치면 된다. 테이블 생성 스크립트: db/qfield_facility_icon.sql

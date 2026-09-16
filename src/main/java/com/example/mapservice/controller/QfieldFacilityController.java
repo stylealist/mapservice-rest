@@ -1,6 +1,7 @@
 package com.example.mapservice.controller;
 
 import com.example.mapservice.service.QfieldFacilityService;
+import com.example.mapservice.service.QfieldMediaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class QfieldFacilityController {
 
     private final QfieldFacilityService qfieldFacilityService;
+    private final QfieldMediaService qfieldMediaService;
 
     @GetMapping("/qfield/facilities")
     public ResponseEntity<String> getFacilities(
@@ -67,6 +69,44 @@ public class QfieldFacilityController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.CACHE_CONTROL, "public, max-age=60")
                 .body(geojson);
+    }
+
+    /**
+     * 시설물 첨부 파일(사진·음성·영상) 중계.
+     *
+     * DB에는 QField 프로젝트 안의 상대 경로만 있고 원본은 QFieldCloud에 있으며 인증이 필요하다.
+     * 브라우저는 인증 헤더를 붙일 수 없으므로 백엔드가 대신 받아 전달한다.
+     * 요청된 경로가 그 시설물의 첨부인지 먼저 확인해 임의 파일 접근을 막는다.
+     */
+    @GetMapping("/qfield/facilities/{totalId}/media")
+    public ResponseEntity<byte[]> getFacilityMedia(
+            @PathVariable("totalId") String totalId,
+            @RequestParam("path") String path) {
+
+        if (totalId == null || totalId.isBlank() || path == null || path.isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        try {
+            QfieldMediaService.MediaContent media = qfieldMediaService.getFacilityMedia(totalId.trim(), path.trim());
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, media.contentType())
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + media.fileName() + "\"")
+                    .header(HttpHeaders.CACHE_CONTROL, "private, max-age=300")
+                    .body(media.body());
+        } catch (QfieldMediaService.MediaException e) {
+            log.warn("시설물 첨부 중계 실패({}): {}", e.getError(), e.getMessage());
+            return ResponseEntity.status(toStatus(e.getError())).build();
+        }
+    }
+
+    private HttpStatus toStatus(QfieldMediaService.MediaError error) {
+        return switch (error) {
+            case NOT_CONFIGURED -> HttpStatus.SERVICE_UNAVAILABLE;
+            case FACILITY_NOT_FOUND, FILE_NOT_FOUND, PROJECT_NOT_FOUND -> HttpStatus.NOT_FOUND;
+            case PATH_NOT_ALLOWED -> HttpStatus.FORBIDDEN;
+            default -> HttpStatus.BAD_GATEWAY;
+        };
     }
 
     /**

@@ -20,6 +20,14 @@ spring:
 
 mybatis:
   mapper-locations: classpath*:mapper/**/*.xml
+
+# QFieldCloud — 시설물 첨부 파일(사진·음성·영상) 중계용
+# 계정 정보는 환경변수로만 주입한다(여기에 평문으로 적지 말 것).
+# 미설정이면 미디어 엔드포인트가 503을 반환하고 나머지 기능은 그대로 동작한다.
+qfield:
+  base-url: ${QFIELD_BASE_URL:https://qfield.sj-lab.co.kr}
+  username: ${QFIELD_USERNAME:}
+  password: ${QFIELD_PASSWORD:}
   #profiles:
   #  active: local
   #datasource:

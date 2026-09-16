@@ -11,4 +11,5 @@ public interface QfieldFacilityMapper {
     String getSggList(@Param("sidoCd") String sidoCd);
     String getEmdList(@Param("sggCd") String sggCd);
     String getFacilityIcons();
+    String getFacilityMediaSource(@Param("totalId") String totalId);
 }
