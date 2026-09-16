@@ -112,6 +112,48 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v1.19</span>
+        <span class="ver-title">음성 관련 항목 라벨 정리</span>
+        <span class="date">2026-09-16</span>
+      </div>
+      <ul>
+        <li><code>facility_memo_txt</code>: "현장 특이사항 텍스트화" → <b>음성 변환 내용</b></li>
+        <li><code>audio_memo_txt</code>: "음성내용" → <b>음성 메모 텍스트</b> (새 라벨과 구분되도록 함께 변경)</li>
+      </ul>
+      <p><a href="../history_v1.19.md">history_v1.19.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v1.18</span>
+        <span class="ver-title">값이 없는 항목도 "-" 로 표시</span>
+        <span class="date">2026-09-16</span>
+      </div>
+      <ul>
+        <li>빈 값도 항목명을 남기고 <code>-</code>(연한 회색)로 표시 — 어떤 정보가 비어 있는지 보임</li>
+        <li>사진·음성·영상도 동일 규칙. 표시 행 8개 → 20개</li>
+        <li>"그 밖의 항목"(설정에 없는 키)은 값이 있을 때만 표시 — 빈 줄이 쌓이지 않게</li>
+      </ul>
+      <p><a href="../history_v1.18.md">history_v1.18.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v1.17</span>
+        <span class="ver-title">상세 팝업에 점검 결과·사진·음성·영상 추가</span>
+        <span class="date">2026-09-16</span>
+      </div>
+      <ul>
+        <li>시설물 상태·보수 필요 여부를 <b>앱 소스의 ValueMap 그대로</b> 한글 표시(정상/경미한 파손/파손·고장/철거됨, 정비요청/양호)</li>
+        <li>사진 5장을 <b>한 줄 갤러리</b>로 — 좌우 버튼·번호(1 / 3)·원본 링크</li>
+        <li>현장 특이사항(음성)·현장 영상은 플레이어로 바로 재생, 텍스트화 항목도 표시</li>
+        <li>DB에 미디어 데이터가 아직 없어 시험값으로 검증. 콘솔 오류 0건</li>
+      </ul>
+      <p><a href="../history_v1.17.md">history_v1.17.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v1.16</span>
         <span class="ver-title">QField 앱·동기화 저장소 추가와 시설물 데이터 출처 확정</span>
         <span class="date">2026-09-16</span>

@@ -376,7 +376,10 @@
       <button type="button" class="vchip" role="tab" data-ver="1.13" aria-controls="pane-v1.13" title="상세 팝업 일시 표기 정리"><span class="pv">v1.13</span><span class="pt">일시 표기 정리</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.14" aria-controls="pane-v1.14" title="팝업을 열 때 화면이 위로 밀리던 오류 수정"><span class="pv">v1.14</span><span class="pt">화면 밀림 오류 수정</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.15" aria-controls="pane-v1.15" title="상세 팝업에서 행정구역 이름 숨김"><span class="pv">v1.15</span><span class="pt">행정구역 이름 숨김</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="1.16" aria-controls="pane-v1.16" title="QField 앱·동기화 저장소 추가와 데이터 출처 확정"><span class="pv">v1.16<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">QField 계열 저장소 추가</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.16" aria-controls="pane-v1.16" title="QField 앱·동기화 저장소 추가와 데이터 출처 확정"><span class="pv">v1.16</span><span class="pt">QField 계열 저장소 추가</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.17" aria-controls="pane-v1.17" title="상세 팝업에 점검 결과·사진·음성·영상 추가"><span class="pv">v1.17</span><span class="pt">점검 결과·미디어 표시</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.18" aria-controls="pane-v1.18" title="값이 없는 항목도 - 로 표시"><span class="pv">v1.18</span><span class="pt">빈 값 표시</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.19" aria-controls="pane-v1.19" title="음성 관련 항목 라벨 정리"><span class="pv">v1.19<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">음성 항목 라벨 정리</span></button>
     </div>
   </div>
 </nav>
@@ -1788,6 +1791,211 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
       <li>두 저장소의 <code>CLAUDE.md</code>에 "통합 허브" 안내 섹션 추가</li>
       <li>문서 반영: 구조도에 앱·동기화 계층, 계층 표 2행, 데이터 출처 문단, 저장소별 주의사항</li>
     </ul>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.17 ===================== -->
+<div class="vpane" data-ver="1.17" id="pane-v1.17" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.17</span>
+      <span>2026-09-16</span>
+      <span>sj-lab-mapservice</span>
+    </div>
+    <h1>상세 팝업에<br>점검 결과·사진·음성·영상 추가</h1>
+    <p class="dek">
+      현장에서 입력한 점검 결과와 촬영물이 팝업에 보이지 않았습니다.
+      상태·보수 여부·특이사항·점검 일시를 한글로 표시하고, 사진은 한 줄에서 넘겨 보며 음성·영상은 바로 재생합니다.
+    </p>
+    <dl class="facts">
+      <div><dt>추가 항목</dt><dd>8종</dd></div>
+      <div><dt>사진</dt><dd>한 줄 갤러리</dd></div>
+      <div><dt>코드 한글화</dt><dd class="ok">앱 소스 기준</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">facility_condition - 시설물 상태
+repair_required_yn - 보수 필요 여부
+facility_memo - 시설물 특이사항
+inspected_at - 점검 일시
+(photo_1 ~ photo_5) - 시설물사진 -&gt; 하나의 row에 넘기면서 볼 수 있도록
+audio_memo - 현장 특이사항
+facility_memo_txt - 현장 특이사항 텍스트화
+video - 현장 영상 해당 정보들도 상세 팝업에 추가해줘</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">표시 방식</p>
+    <h2>항목별로 어떻게 보이나</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>키</th><th>라벨</th><th>표시</th></tr></thead>
+        <tbody>
+          <tr><td><code>facility_condition</code></td><td>시설물 상태</td><td>코드 → 한글 (정상 / 경미한 파손 / 파손·고장 / 철거됨)</td></tr>
+          <tr><td><code>repair_required_yn</code></td><td>보수 필요 여부</td><td>코드 → 한글 (정비요청 / 양호)</td></tr>
+          <tr><td><code>facility_memo</code></td><td>시설물 특이사항</td><td>텍스트</td></tr>
+          <tr><td><code>inspected_at</code></td><td>점검 일시</td><td><code>YYYY-MM-DD HH:MM</code></td></tr>
+          <tr><td><code>photo_1</code>~<code>photo_5</code></td><td>시설물 사진</td><td><b>한 줄 갤러리</b> — 좌우 버튼으로 넘기고 <code>1 / 3</code> 번호 표시, "원본" 링크로 새 창</td></tr>
+          <tr><td><code>audio_memo</code></td><td>현장 특이사항</td><td>오디오 플레이어</td></tr>
+          <tr><td><code>facility_memo_txt</code></td><td>현장 특이사항 텍스트화</td><td>텍스트</td></tr>
+          <tr><td><code>video</code></td><td>현장 영상</td><td>비디오 플레이어</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">근거</p>
+    <h2>코드값 한글화는 앱 소스를 그대로</h2>
+    <p class="lede">
+      상태 코드를 임의로 정하지 않고 현장조사 앱의 ValueMap을 옮겼습니다.
+      v1.16에서 <code>infra-manage-app</code>을 작업 범위에 넣은 덕분에 확인할 수 있었습니다.
+    </p>
+    <div class="cmd">facility_condition : NORMAL=정상, MINOR_DAMAGE=경미한 파손, BROKEN=파손 / 고장, DESTROYED=철거됨
+repair_required_yn : Y=정비요청, N=양호</div>
+    <ul class="notes" style="margin-top:1.5rem">
+      <li>표에 없는 값이 오면 <b>원본을 그대로</b> 보여줍니다. 앱에서 선택지가 바뀌면 <code>FACILITY_VALUE_MAPS</code>도 함께 고쳐야 합니다</li>
+      <li>사진은 <code>photo_1</code> 자리에 갤러리 하나로 묶고 나머지 키는 숨김. <code>photo_1</code>이 비고 <code>photo_3</code>만 있어도 표시되도록 별도 판정</li>
+      <li>상태값이 본문 행으로 나오므로 <b>헤더 배지는 종류와 "보수 필요"(경고)만</b> 남겨 중복을 없앴습니다</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>실제 데이터 + 시험값</h2>
+    <div class="grid2">
+      <div class="cell">
+        <h3>실제 데이터 <span class="badge pass">확인</span></h3>
+        <p><code>FACIL_T1_329</code> — 시설물 상태 <b>경미한 파손</b>, 보수 필요 여부 <b>정비요청</b>, 점검 일시 <code>2026-08-24 16:59</code>로 표시됩니다.</p>
+      </div>
+      <div class="cell caution">
+        <h3>미디어 <span class="badge skip">시험값으로 확인</span></h3>
+        <p><b>DB에 사진·음성·영상 데이터가 아직 한 건도 없습니다</b>(사진 0, 음성 0, 영상 0). 그래서 응답을 가로채 시험값으로 검증했습니다 — 갤러리 <code>1 / 3</code> → 다음 버튼 → <code>2 / 3</code> 이동 및 이미지 교체, 오디오·비디오 플레이어 렌더링 확인. 콘솔 오류 0건.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.18 ===================== -->
+<div class="vpane" data-ver="1.18" id="pane-v1.18" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.18</span>
+      <span>2026-09-16</span>
+      <span>sj-lab-mapservice</span>
+    </div>
+    <h1>값이 없는 항목도<br>&ldquo;-&rdquo; 로 표시</h1>
+    <p class="dek">
+      값이 없으면 행 자체를 만들지 않아, 어떤 정보가 비어 있는지 알 수 없었습니다.
+      이제 항목은 그대로 두고 값만 <code>-</code> 로 보여줍니다.
+    </p>
+    <dl class="facts">
+      <div><dt>표시 행</dt><dd>8개 → <b>20개</b></dd></div>
+      <div><dt>적용 범위</dt><dd>정의된 항목만</dd></div>
+      <div><dt>바뀐 파일</dt><dd>2개</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">정보가 없는경우에 아예 안나오는게아니라 - 이렇게 공백으로라도 나오도록 해줄 수 있어?</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">동작</p>
+    <h2>무엇이 달라졌나</h2>
+    <ul class="notes">
+      <li><b>빈 값도 자리를 지킵니다</b> — 항목명은 그대로 두고 값만 <code>-</code>(연한 회색)로 표시</li>
+      <li>사진·음성·영상도 같은 규칙 — 데이터가 없으면 <code>-</code></li>
+      <li><b>적용 범위는 정의된 항목만</b> — 팝업 하단의 "그 밖의 항목"(설정에 없는 키를 이름 그대로 보여주는 영역)은 값이 있을 때만 나옵니다. 응답에 잡다한 키가 늘어나도 빈 줄이 쌓이지 않게 하려는 것입니다</li>
+    </ul>
+
+    <h2 style="margin-top:2.25rem">검증</h2>
+    <div class="grid2">
+      <div class="cell">
+        <h3>값이 있는 항목 <span class="badge pass">8개</span></h3>
+        <p>기관명 · 도로명주소 · 지번주소 · 담당부서 · 담당자 · 전화번호 · 등록일시 · 수정일시</p>
+      </div>
+      <div class="cell">
+        <h3>값이 없는 항목 <span class="badge pass">12개 모두 &ldquo;-&rdquo;</span></h3>
+        <p>시설물 상태 · 보수 필요 여부 · 시설물 특이사항 · 점검 일시 · 사업명 · 소유자 · 이메일 · 시설물 사진 · 현장 특이사항 · 현장 특이사항 텍스트화 · 현장 영상 · 음성내용. 콘솔 오류 0건.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.19 ===================== -->
+<div class="vpane" data-ver="1.19" id="pane-v1.19" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.19</span>
+      <span>2026-09-16</span>
+      <span>sj-lab-mapservice</span>
+    </div>
+    <h1>음성 관련 항목<br>라벨 정리</h1>
+    <p class="dek">
+      "현장 특이사항 텍스트화"라는 설명식 이름을, 무엇이 담기는지 바로 읽히는 이름으로 바꿨습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>바뀐 라벨</dt><dd>2개</dd></div>
+      <div><dt>바뀐 파일</dt><dd>1개</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">현장 특이사항 텍스트화를 적당한 한글명으로 변경해줘</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">변경</p>
+    <h2>라벨 두 개</h2>
+    <div class="cmp">
+      <div class="crow chead"><span>키</span><span>이전</span><span>이후</span></div>
+      <div class="crow"><span><code>facility_memo_txt</code></span><span class="cb">현장 특이사항 텍스트화</span><span class="ca">음성 변환 내용</span></div>
+      <div class="crow"><span><code>audio_memo_txt</code></span><span class="cb">음성내용</span><span class="ca">음성 메모 텍스트</span></div>
+    </div>
+    <p class="promptnote">
+      요청은 <code>facility_memo_txt</code> 하나였지만 <code>audio_memo_txt</code>도 함께 바꿨습니다.
+      새 라벨이 "음성 변환 내용"이 되면서 기존 "음성내용"과 구분되지 않기 때문입니다.
+    </p>
+    <div class="cmd">현장 특이사항      ▶ (음성 재생)
+음성 변환 내용     받아쓴 텍스트
+현장 영상          ▶ (영상 재생)
+음성 메모 텍스트   -</div>
   </div>
 </section>
 </div>
