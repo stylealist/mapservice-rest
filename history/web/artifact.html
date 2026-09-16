@@ -372,7 +372,8 @@
       <button type="button" class="vchip" role="tab" data-ver="1.9" aria-controls="pane-v1.9" title="서비스 이름을 SJ 시설물 관리로 변경"><span class="pv">v1.9</span><span class="pt">서비스명 변경</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.10" aria-controls="pane-v1.10" title="헤더·시설물 패널 UI 개선과 목록 검색 추가"><span class="pv">v1.10</span><span class="pt">UI 개선 · 목록 검색</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.11" aria-controls="pane-v1.11" title="시·도 기본값을 서울특별시로 설정"><span class="pv">v1.11</span><span class="pt">기본 시·도 서울</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="1.12" aria-controls="pane-v1.12" title="상세 팝업에서 내부 관리용 항목 숨김"><span class="pv">v1.12<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">팝업 내부 항목 숨김</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.12" aria-controls="pane-v1.12" title="상세 팝업에서 내부 관리용 항목 숨김"><span class="pv">v1.12</span><span class="pt">팝업 내부 항목 숨김</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.13" aria-controls="pane-v1.13" title="상세 팝업 일시 표기 정리"><span class="pv">v1.13<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">일시 표기 정리</span></button>
     </div>
   </div>
 </nav>
@@ -1515,6 +1516,61 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
         <p>요청한 7개와 <code>sgg_cd</code>까지 팝업에서 사라진 것을 확인했습니다. 콘솔 오류 0건.</p>
       </div>
     </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.13 ===================== -->
+<div class="vpane" data-ver="1.13" id="pane-v1.13" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.13</span>
+      <span>2026-09-16</span>
+      <span>sj-lab-mapservice</span>
+    </div>
+    <h1>상세 팝업 일시 표기를<br>YYYY-MM-DD HH:MM 으로 정리</h1>
+    <p class="dek">
+      등록·수정일시가 <code>2026-08-28T05:12:42.635018</code> 처럼 DB 원본 그대로 보여 읽기 어려웠습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>적용 필드</dt><dd>등록 · 수정 · 점검일시</dd></div>
+      <div><dt>바뀐 파일</dt><dd>1개</dd></div>
+      <div><dt>타임존</dt><dd class="ok">문자열 그대로 사용</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">등록 일 시 수정 일시가 yyyy-mm-dd ss:mm 으로 나오면 좋겠어</pre>
+    <p class="promptnote"><code>ss:mm</code>은 시:분을 뜻하는 것으로 보고 <b>HH:MM(시:분)</b>으로 적용했습니다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">결과</p>
+    <h2>표기 변화</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>항목</th><th>이전</th><th>이후</th></tr></thead>
+        <tbody>
+          <tr><td>등록일시</td><td class="cb"><code>2026-08-28T05:12:42.635018</code></td><td class="num">2026-08-28 05:12</td></tr>
+          <tr><td>수정일시</td><td class="cb"><code>2026-09-16T04:06:22.637368</code></td><td class="num">2026-09-16 04:06</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="notes" style="margin-top:1.5rem">
+      <li><b>타임존 어긋남 방지</b> — 백엔드 값은 타임존이 없는 로컬 시각 문자열이라 <code>new Date()</code>로 파싱하면 브라우저 타임존만큼 밀립니다. 정규식으로 날짜·시분만 잘라 씁니다</li>
+      <li><b>형식이 다르면 원본 그대로</b> 표시해 값이 사라지지 않게 했습니다</li>
+      <li><b>점검일시도 함께 적용</b> — 같은 성격의 일시 필드라 표기가 갈리면 어색하기 때문</li>
+      <li>앞으로 일시 필드가 늘면 <code>DETAIL_FIELD_CONFIG</code>에 <code>isDateTime: true</code>만 붙이면 됩니다</li>
+    </ul>
   </div>
 </section>
 </div>
