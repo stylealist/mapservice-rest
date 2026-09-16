@@ -370,7 +370,8 @@
       <button type="button" class="vchip" role="tab" data-ver="1.7" aria-controls="pane-v1.7" title="아이콘 설정 테이블 생성 스크립트 실행"><span class="pv">v1.7</span><span class="pt">설정 테이블 생성 실행</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.8" aria-controls="pane-v1.8" title="작업 저장소 2곳 추가와 배포 경로 문서화"><span class="pv">v1.8</span><span class="pt">저장소 2곳 추가 · 배포 경로</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.9" aria-controls="pane-v1.9" title="서비스 이름을 SJ 시설물 관리로 변경"><span class="pv">v1.9</span><span class="pt">서비스명 변경</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="1.10" aria-controls="pane-v1.10" title="헤더·시설물 패널 UI 개선과 목록 검색 추가"><span class="pv">v1.10<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">UI 개선 · 목록 검색</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.10" aria-controls="pane-v1.10" title="헤더·시설물 패널 UI 개선과 목록 검색 추가"><span class="pv">v1.10</span><span class="pt">UI 개선 · 목록 검색</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.11" aria-controls="pane-v1.11" title="시·도 기본값을 서울특별시로 설정"><span class="pv">v1.11<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">기본 시·도 서울</span></button>
     </div>
   </div>
 </nav>
@@ -1371,6 +1372,76 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
         <p>검증 중 백엔드 재기동으로 <b>Eureka 유령 인스턴스</b>가 생겨 호출 절반이 500이었고, 문서에 적어 둔 절차대로 해제해 정상화했습니다.</p>
       </div>
     </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.11 ===================== -->
+<div class="vpane" data-ver="1.11" id="pane-v1.11" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.11</span>
+      <span>2026-09-16</span>
+      <span>sj-lab-mapservice</span>
+    </div>
+    <h1>시·도 기본값을<br>서울특별시로 설정</h1>
+    <p class="dek">
+      첫 화면이 전국 2,474건으로 시작해 무엇부터 봐야 할지 알기 어려웠습니다.
+      서울(247건)로 시작하도록 바꾸면서, 전체를 받았다가 다시 받는 중복 요청도 없앴습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>기본 시·도</dt><dd>서울특별시 (11)</dd></div>
+      <div><dt>첫 화면 건수</dt><dd>247건</dd></div>
+      <div><dt>초기 요청</dt><dd class="ok">3건 (중복 없음)</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">시,도 주소의 기본값을 서울특별시로 해줄 수 있어?</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">구현</p>
+    <h2>사용자가 고른 것과 같은 경로를 태운다</h2>
+    <ul class="notes">
+      <li><b><code>applyDefaultSido()</code></b> — select 값을 <code>11</code>로 바꾼 뒤 <code>change</code> 이벤트를 직접 발생시켜, 사용자가 직접 고른 것과 같은 경로(구역 extent로 지도 이동 → 시군구 목록 → 시설물 재조회)를 그대로 탑니다. 로직이 한 벌로 유지됩니다</li>
+      <li><b>중복 요청 제거</b> — 초기화에서 부르던 <code>loadFacilities({})</code>를 없앴습니다. 두면 전국 2,474건을 받은 직후 서울만 다시 받아 요청이 두 번 나갑니다</li>
+      <li><b>안전장치</b> — 시도 목록 조회가 실패하거나 목록에 <code>11</code>이 없으면 기존처럼 전체 조회로 넘어갑니다</li>
+      <li>기본 시·도를 바꾸려면 <code>DEFAULT_SIDO_CD</code> 상수 한 줄만 고치면 됩니다</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>첫 화면 상태</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>확인</th><th>결과</th></tr></thead>
+        <tbody>
+          <tr><td>시·도 select</td><td>서울특별시(값 <code>11</code>) 선택됨</td></tr>
+          <tr><td>시·군·구 select</td><td>활성화, 26개 옵션(전체 + 25개 구)</td></tr>
+          <tr><td>시설물 건수</td><td class="num">247건 (전체 2,474건 중 서울)</td></tr>
+          <tr><td>지도 위치</td><td class="num">서울 영역, zoom 11.6</td></tr>
+          <tr><td>초기 네트워크 요청</td><td><code>sido</code> → <code>sgg?sidoCd=11</code> → <code>facilities?sidoCd=11</code> 3건만</td></tr>
+          <tr><td>콘솔 오류</td><td class="num">0건</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="notes" style="margin-top:1.5rem">
+      <li>시·도에서 "전체"를 고르면 기존처럼 전국이 조회됩니다</li>
+      <li><b>지도 프론트엔드는 현재 실서버에서 서비스되지 않는 상태</b>(v1.10에서 확인)라, 배포 복구 후 반영 여부를 다시 확인해야 합니다</li>
+    </ul>
   </div>
 </section>
 </div>

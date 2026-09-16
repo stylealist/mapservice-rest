@@ -112,6 +112,20 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v1.11</span>
+        <span class="ver-title">시·도 기본값을 서울특별시로 설정</span>
+        <span class="date">2026-09-16</span>
+      </div>
+      <ul>
+        <li>첫 화면이 서울(247건)로 시작 — <code>applyDefaultSido()</code>가 select 값을 바꾼 뒤 <code>change</code>를 발생시켜 기존 경로를 그대로 사용</li>
+        <li>초기화의 전체 조회를 제거해 <b>중복 요청 제거</b>(초기 요청 3건)</li>
+        <li>시도 목록 실패·기본 코드 부재 시 전체 조회로 폴백. 콘솔 오류 0건</li>
+      </ul>
+      <p><a href="../history_v1.11.md">history_v1.11.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v1.10</span>
         <span class="ver-title">헤더·시설물 패널 UI 개선과 목록 검색 추가</span>
         <span class="date">2026-09-16</span>
