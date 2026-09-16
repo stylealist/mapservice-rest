@@ -112,6 +112,50 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v1.10</span>
+        <span class="ver-title">헤더·시설물 패널 UI 개선과 목록 검색 추가</span>
+        <span class="date">2026-09-16</span>
+      </div>
+      <ul>
+        <li>헤더: 심볼 배지 + 서비스명 + 영문 캡션, 딥 네이비 톤으로 지도 핀 파랑과 통일</li>
+        <li>패널 제목 옆 <b>조회 건수 pill</b>, 시설물명·기관명 <b>즉시 검색</b>(서버 재조회 없음)</li>
+        <li>목록 항목을 <code>아이콘 | 이름 + 소속 | 배지</code> 3단으로 재구성 — 소속(기관명 · 지사)으로 같은 이름 구분</li>
+        <li>백엔드 목록 API에 <code>inst_nm</code>·<code>daddr</code> 추가. 검증: 검색 "충전" 113건, 콘솔 오류 0건</li>
+      </ul>
+      <p><a href="../history_v1.10.md">history_v1.10.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v1.9</span>
+        <span class="ver-title">서비스 이름을 "SJ 시설물 관리"로 변경</span>
+        <span class="date">2026-09-16</span>
+      </div>
+      <ul>
+        <li>지도 서비스: 브라우저 탭 제목·화면 로고·README·리뷰어 설명의 <code>SJ Map Platform</code> → <b>SJ 시설물 관리</b></li>
+        <li>첫 화면 허브: 첫 카드 "2D 지도" → <b>"시설물 관리"</b>, 설명 "Facility Management", 아이콘 🏢</li>
+        <li>경로(<code>/map</code>)·API 주소·Eureka 서비스명·저장소 이름은 배포 영향 때문에 유지</li>
+      </ul>
+      <p><a href="../history_v1.9.md">history_v1.9.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v1.8</span>
+        <span class="ver-title">작업 저장소 2곳 추가와 배포 경로 문서화</span>
+        <span class="date">2026-09-16</span>
+      </div>
+      <ul>
+        <li><code>sj-lab-k8s-manifests</code>(Helm 차트·ArgoCD GitOps 소스), <code>sj-lab-hub</code>(사이트 첫 화면) 추가 — 작업 범위 7곳, Orca 8곳</li>
+        <li>배포 경로 문서화: push → Jenkins 빌드·이미지 push → 매니페스트 태그 커밋 → ArgoCD 동기화</li>
+        <li>함정 2건 기록: 동시 push 시 매니페스트 커밋 충돌(<code>cannot lock ref</code>), 롤아웃 중 503</li>
+        <li>실서버 확인: v1.7까지 반영 완료(아이콘 7건, 시설물 2,474건, CORS 정상)</li>
+      </ul>
+      <p><a href="../history_v1.8.md">history_v1.8.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v1.7</span>
         <span class="ver-title">아이콘 설정 테이블 생성 스크립트 실행</span>
         <span class="date">2026-09-16</span>
