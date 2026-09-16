@@ -112,6 +112,20 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v1.12</span>
+        <span class="ver-title">상세 팝업에서 내부 관리용 항목 숨김</span>
+        <span class="date">2026-09-16</span>
+      </div>
+      <ul>
+        <li>행정구역 코드(<code>sido_cd</code>·<code>sgg_cd</code>·<code>emd_cd</code>)와 QField 원본 식별자(<code>origin_id</code>·<code>total_seq</code>·<code>source_fid</code>·<code>source_table</code>), <code>use_yn</code>을 팝업에서 제외</li>
+        <li><code>INTERNAL_DETAIL_KEYS</code> 상수로 관리 — 되돌리거나 새 키를 추가하기 쉬움</li>
+        <li>검증: 남은 항목 11개, 숨긴 8개 모두 미표시, 콘솔 오류 0건</li>
+      </ul>
+      <p><a href="../history_v1.12.md">history_v1.12.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v1.11</span>
         <span class="ver-title">시·도 기본값을 서울특별시로 설정</span>
         <span class="date">2026-09-16</span>
