@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapservice.mapper.QfieldFacilityMapper">
+
+    <select id="getFacilities" resultType="String">
+        SELECT json_build_object(
+            'type', 'FeatureCollection',
+            'features', COALESCE(json_agg(
+                json_build_object(
+                    'type', 'Feature',
+                    'id', sub.total_id,
+                    'geometry', sub.geom_json::json,
+                    'properties', json_build_object(
+                        'total_id', sub.total_id,
+                        'fclt_nm', sub.fclt_nm,
+                        'facility_condition', sub.facility_condition,
+                        'repair_required_yn', sub.repair_required_yn,
+                        'emd_cd', sub.emd_cd
+                    )
+                )
+            ), '[]'::json)
+        )::text
+        FROM (
+            SELECT
+                f.total_id,
+                f.fclt_nm,
+                f.facility_condition,
+                f.repair_required_yn,
+                e.emd_cd,
+                ST_AsGeoJSON(f.geom) AS geom_json
+            FROM qfield.facility_total_view f
+            LEFT JOIN LATERAL (
+                SELECT emd_cd
+                FROM public.g_emd e
+                WHERE ST_Intersects(e.geom, ST_Transform(f.geom, 4326))
+                LIMIT 1
+            ) e ON true
+            WHERE f.use_yn = 'y'
+            <if test="code != null and code != ''">
+              AND e.emd_cd LIKE #{code} || '%'
+            </if>
+            ORDER BY f.fclt_nm, f.total_id
+        ) sub
+    </select>
+
+    <select id="getFacilityDetail" resultType="String">
+        SELECT json_build_object(
+            'type', 'Feature',
+            'id', f.total_id,
+            'geometry', ST_AsGeoJSON(f.geom)::json,
+            'properties', (to_jsonb(f) - 'geom') || jsonb_build_object(
+                'emd_cd', adm.emd_cd,
+                'emd_nm', adm.emd_nm,
+                'sgg_cd', adm.sgg_cd,
+                'sgg_nm', adm.sgg_nm,
+                'sido_cd', adm.sido_cd,
+                'sido_nm', adm.sido_nm
+            )
+        )::text
+        FROM qfield.facility_total_view f
+        LEFT JOIN LATERAL (
+            SELECT
+                e.emd_cd,
+                e.emd_nm,
+                s.sgg_cd,
+                s.sgg_nm,
+                si.sido_cd,
+                si.sido_nm
+            FROM public.g_emd e
+            LEFT JOIN public.g_sgg s ON s.sgg_cd = SUBSTRING(e.emd_cd, 1, 5)
+            LEFT JOIN public.g_sido si ON si.sido_cd = SUBSTRING(e.emd_cd, 1, 2)
+            WHERE ST_Intersects(e.geom, ST_Transform(f.geom, 4326))
+            LIMIT 1
+        ) adm ON true
+        WHERE f.total_id = #{totalId}
+          AND f.use_yn = 'y'
+    </select>
+
+    <select id="getSidoList" resultType="String">
+        SELECT COALESCE(json_agg(
+            json_build_object(
+                'code', sido_cd,
+                'name', sido_nm,
+                'extent', json_build_array(
+                    ST_XMin(env),
+                    ST_YMin(env),
+                    ST_XMax(env),
+                    ST_YMax(env)
+                )
+            )
+        ), '[]'::json)::text
+        FROM (
+            SELECT
+                sido_cd,
+                sido_nm,
+                ST_Transform(ST_Envelope(geom), 3857) AS env
+            FROM public.g_sido
+            ORDER BY sido_cd
+        ) sub
+    </select>
+
+    <select id="getSggList" resultType="String">
+        SELECT COALESCE(json_agg(
+            json_build_object(
+                'code', sgg_cd,
+                'name', sgg_nm,
+                'extent', json_build_array(
+                    ST_XMin(env),
+                    ST_YMin(env),
+                    ST_XMax(env),
+                    ST_YMax(env)
+                )
+            )
+        ), '[]'::json)::text
+        FROM (
+            SELECT
+                sgg_cd,
+                sgg_nm,
+                ST_Transform(ST_Envelope(geom), 3857) AS env
+            FROM public.g_sgg
+            WHERE sgg_cd LIKE #{sidoCd} || '%'
+            ORDER BY sgg_cd
+        ) sub
+    </select>
+
+    <select id="getEmdList" resultType="String">
+        SELECT COALESCE(json_agg(
+            json_build_object(
+                'code', emd_cd,
+                'name', emd_nm,
+                'extent', json_build_array(
+                    ST_XMin(env),
+                    ST_YMin(env),
+                    ST_XMax(env),
+                    ST_YMax(env)
+                )
+            )
+        ), '[]'::json)::text
+        FROM (
+            SELECT
+                emd_cd,
+                emd_nm,
+                ST_Transform(ST_Envelope(geom), 3857) AS env
+            FROM public.g_emd
+            WHERE emd_cd LIKE #{sggCd} || '%'
+            ORDER BY emd_cd
+        ) sub
+    </select>
+
+    <!--
+      시설물 아이콘 설정 조회 (qfield.facility_icon).
+      프론트엔드가 이 설정으로 종류별 아이콘을 그리므로, 아이콘을 추가·변경할 때
+      코드 배포 없이 이 테이블 행만 고치면 된다. 테이블 생성 스크립트: db/qfield_facility_icon.sql
+    -->
+    <select id="getFacilityIcons" resultType="String">
+        SELECT COALESCE(json_agg(
+            json_build_object(
+                'iconType', icon_type,
+                'label', icon_label,
+                'keywords', COALESCE(keywords, ARRAY[]::text[]),
+                'glyph', glyph_svg,
+                'pinColor', pin_color,
+                'warnColor', warn_color,
+                'isDefault', is_default
+            ) ORDER BY sort_order, icon_type
+        ), '[]'::json)::text
+        FROM qfield.facility_icon
+        WHERE use_yn = 'y'
+    </select>
+
+</mapper>
