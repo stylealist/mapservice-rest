@@ -16,6 +16,8 @@
                     'properties', json_build_object(
                         'total_id', sub.total_id,
                         'fclt_nm', sub.fclt_nm,
+                        'inst_nm', sub.inst_nm,
+                        'daddr', sub.daddr,
                         'facility_condition', sub.facility_condition,
                         'repair_required_yn', sub.repair_required_yn,
                         'emd_cd', sub.emd_cd
@@ -27,6 +29,8 @@
             SELECT
                 f.total_id,
                 f.fclt_nm,
+                f.inst_nm,
+                f.daddr,
                 f.facility_condition,
                 f.repair_required_yn,
                 e.emd_cd,
