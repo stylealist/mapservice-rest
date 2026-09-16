@@ -2,6 +2,35 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## sj-lab 통합 허브
+
+이 저장소는 sj-lab 저장소들을 넘나드는 작업(프론트엔드 `sj-lab-mapservice` + 이 백엔드 + 게이트웨이)을 총괄하는 기준 저장소입니다. 디스커버리(`sj-lab-discoveryServer`), 수집 배치(`sj-lab-scheduler`), `fast-api-ai`도 이 세션에서 함께 다룹니다. 총괄 Claude 세션은 여기서 띄우고, MCP 설정(`.mcp.json`), 로컬 비밀값(`.claude/settings.local.json`), Bash 가드 훅(`.claude/hooks/guard.sh`), DB 분석 문서(`docs/analysis/`)를 이 저장소에서 관리합니다. 프론트엔드 코드 규칙은 `C:\vscode_develop\sj-lab-mapservice\CLAUDE.md`를 따릅니다.
+
+- @docs/system-architecture.md — DB → 백엔드 → Eureka → 게이트웨이 → 프론트 전체 구조, API 계약 표, 저장소를 넘나드는 변경 체크리스트, 총괄 세션에서 다른 저장소를 다룰 때의 규칙
+- @docs/dev-environment.md — 로컬 저장소 경로, 포트·라우팅(8100=게이트웨이, 4000=프론트, 8761=Eureka), CORS, 워커 운영 시 주의
+- @docs/mcp.md — GitHub/DB MCP 설정과 비밀값 관리 규칙
+- `docs/analysis/sjlab-dev-db-check.md`, `docs/analysis/db-analysis.md` — 개발 DB 연결·권한·스키마 점검 및 인덱스·뷰·데이터 품질 분석
+
+공통 규칙:
+- 답변은 한글로 할 것.
+- 코드 추가·수정 중 CLAUDE.md 또는 docs에 반영해야 할 내용이면 코드 변경 직후 바로 추가할 것.
+- 함수·변수 이름은 카멜 형식으로 지을 것.
+- 게이트웨이·디스커버리·scheduler·fast-api-ai·프론트엔드 저장소 파일을 수정하기 전에 그 저장소의 `CLAUDE.md`를 먼저 Read할 것(이 세션에 자동 로드되지 않음). git 작업은 `git -C <경로>`로 저장소별로 할 것.
+- API 경로·응답 형식을 바꾸면 백엔드와 프론트(`map-wfs.js`/`map-facility.js`)를 같은 작업에서 함께 수정하고 `docs/system-architecture.md`의 API 계약 표를 갱신할 것.
+- `.claude/hooks/guard.sh`가 `git reset --hard`, `git push --force`, 그리고 `claude` 문자열이 들어간 Bash 명령을 차단합니다. 차단되면 우회하지 말고 다른 도구(Read/Grep/PowerShell)로 해결할 것.
+
+작업 규칙(2026-09-16 추가):
+- **작업 범위**: `docs/dev-environment.md`의 "로컬 저장소 경로" 표에 명시된 저장소 안에서만 작업할 것. 표에 없는 경로를 읽거나 고쳐야 하면 먼저 사용자에게 확인하고, 승인되면 그 표와 `additionalDirectories`에 추가할 것.
+- **DB**: 기본은 조회(SELECT)만 할 것. 사용자가 특정 스크립트를 콕 집어 "실행해줘"라고 지시한 경우에만 예외로 실행하되, ① 실행할 SQL을 먼저 저장소에 스크립트 파일로 남기고 ② 대상 DB·계정을 밝힌 뒤 ③ 실행 결과와 함께 history에 기록할 것. 그 외에는 `CREATE`/`ALTER`/`DROP`(DDL), `GRANT`/`REVOKE`(DCL), `INSERT`/`UPDATE`/`DELETE`(DML)를 임의로 실행하지 말 것 — 필요한 SQL은 실행하지 말고 사용자에게 제안만 할 것. scheduler를 로컬에서 띄우면 cron 배치가 DB에 적재하므로 이것도 사용자 확인 후에.
+- **파일 삭제**: 파일을 지우지 말고 `trash/<YYYY-MM-DD>/` 아래에 원래 경로 구조를 유지한 채 옮길 것(예: `trash/2026-09-16/docs/old.md`). 옮긴 파일은 그 버전의 history 문서에 기록할 것.
+- **git push**: 자동으로 push하지 말 것. 사용자가 명시적으로 요청할 때만 push하며, 커밋은 저장소별로 `git -C <경로>`로 할 것.
+- **변경 기록(history)**: 파일을 실제로 변경한 작업마다 `history/history_v<major>.<minor>.md`를 새로 만들 것(조회·질문만 한 턴은 기록하지 않음). 내용은 사용자가 입력한 프롬프트 원문, 변경된 결과물(파일별 요약), 접속 URL 링크를 포함할 것. 직전 버전에서 minor를 1 올리고, 구조가 바뀌는 큰 작업이면 major를 올릴 것.
+- **공유 웹사이트**: history 문서를 추가·수정하면 같은 작업에서 두 곳을 함께 갱신할 것.
+  1. `history/web/artifact.html` — 팀에 링크로 공유하는 발행 페이지의 원본. 버전 패널을 추가한 뒤 **같은 URL로 다시 발행**해야 링크가 유지됨(발행 주소: `https://claude.ai/artifact/HhEYu2UmxSko5h8uef7hB9`). 발행은 외부 서비스에 내용을 올리는 행위이므로 민감 정보를 싣지 말 것.
+  2. `history/web/index.html` — 오프라인용 요약 페이지. 외부 CDN·빌드 도구 없이 단일 HTML로 유지할 것.
+  - 새 history 문서의 접속 URL 표 맨 위에 발행 페이지 주소를 넣을 것.
+- **AI에이전트 오케스트레이션**: 오케스트레이션을 진행 할 때 최종 검증은 반드시 Claude로 진행해줘
+
 ## 명령어
 
 Windows: `mvnw.cmd` 사용; Bash 등 Unix 계열 셸에서는 `./mvnw` 사용.
@@ -21,9 +50,17 @@ Docker: `Dockerfile`은 미리 빌드된 `target/sj-lab-mapservice-rest.jar`가 
 
 Eureka에 등록되는(`@EnableDiscoveryClient`) Spring Boot 3.3.2 / Java 17 마이크로서비스(`mapservice-rest`)로, 읽기 전용 지도/GIS 데이터를 GeoJSON으로 제공합니다. API 게이트웨이 뒤에 위치하며 context-path는 `/map`, prod 기준 base path는 `/api/map`입니다(`NewSwaggerConfig` 참고).
 
-**요청 흐름**: `WfsController`(REST 엔드포인트) → `WfsService` / `WfsServiceImpl` → `WfsMapper`(자바 쪽 SQL이 없는 MyBatis `@Mapper` 인터페이스) → `src/main/resources/mapper/wfs-geojson.xml` → PostgreSQL/PostGIS.
+**요청 흐름**:
+- 기존 WFS 레이어: `WfsController`(REST 엔드포인트) → `WfsService` / `WfsServiceImpl` → `WfsMapper`(자바 쪽 SQL이 없는 MyBatis `@Mapper` 인터페이스) → `src/main/resources/mapper/wfs-geojson.xml` → PostgreSQL/PostGIS.
+- QField 시설물 및 행정구역 레이어: `QfieldFacilityController` → `QfieldFacilityService` / `QfieldFacilityServiceImpl` → `QfieldFacilityMapper` → `src/main/resources/mapper/qfield-facility.xml` → PostgreSQL/PostGIS.
 
-핵심 포인트: 각 매퍼 메서드의 SQL은 DB 뷰(예: `map.v_bus_stop_info_geojson`)에서 이미 완성된 `geojson` 텍스트 컬럼을 그대로 select할 뿐이며, GeoJSON 조립은 자바가 아니라 DB에서 이루어집니다. 서비스/컨트롤러 계층은 이 문자열을 가공 없이 그대로 통과시킵니다. 새 지도 레이어를 추가하려면: `geojson` 컬럼을 만드는 DB 뷰를 추가한 뒤, `WfsMapper`, `wfs-geojson.xml`, `WfsService`/`WfsServiceImpl`, `WfsController` 엔드포인트에 동일한 패턴으로 항목을 추가하면 됩니다 — 기존 레이어(편의점, 버스정류장, CCTV, 약국, 병원, 관공서)가 모두 이 네 곳에 똑같은 패턴으로 구현되어 있습니다.
+핵심 포인트:
+- 기존 레이어(편의점, 버스정류장, CCTV, 약국, 병원, 관공서): DB 뷰(예: `map.v_bus_stop_info_geojson`)에서 이미 완성된 `geojson` 텍스트 컬럼을 그대로 select할 뿐이며, GeoJSON 조립은 DB에서 이루어집니다. 새 레이어 추가 시 DB 뷰를 생성할 수 있다면 `geojson` 컬럼을 가진 뷰를 추가한 뒤 동일 패턴으로 4개 계층(`WfsMapper`, `wfs-geojson.xml`, `WfsService`/`WfsServiceImpl`, `WfsController`)에 메서드를 추가합니다.
+- 읽기 전용 DB 등 뷰 생성이 불가능한 경우: `qfield-facility.xml` 패턴을 따릅니다. XML 내 SQL에서 `json_build_object`, `json_agg`, `to_jsonb`, `ST_AsGeoJSON` 등을 활용해 DB 레벨에서 GeoJSON/JSON 문자열로 직접 조립해 반환합니다. 파라미터는 반드시 MyBatis `#{}` 바인딩을 사용합니다.
+- 시설물 공간 쿼리 및 행정구역 필터: `qfield.facility_total_view`의 EPSG:3857 점 좌표와 `public.g_emd`의 EPSG:4326 경계를 조인할 때, `LEFT JOIN LATERAL`과 `ST_Intersects(e.geom, ST_Transform(f.geom, 4326))` (LIMIT 1)로 `g_emd`의 GIST 인덱스를 활용합니다. 행정구역 코드는 접두어 계층 구조(sido 2자리, sgg 5자리, emd 8자리)이므로 `emd_cd LIKE code || '%'` 단일 조건으로 고속 필터링합니다 (g_sido 폴리곤 직접 조인이나 ST_MakeValid는 지양).
+- 행정구역 BBOX 조회: 폴리곤 전체 좌표를 변환하지 않고 `ST_Transform(ST_Envelope(geom), 3857)`로 BBOX만 변환하여 `[minX, minY, maxX, maxY]`를 계산합니다.
+- 설정 테이블: 지도 시설물 아이콘은 `qfield.facility_icon`에서 관리하며 `GET /map/qfield/facility-icons`(`getFacilityIcons`)로 내려줍니다. 생성 스크립트는 `db/qfield_facility_icon.sql`이고 **DDL 실행은 담당자가 직접** 합니다. 테이블이 없거나 조회가 실패하면 서비스가 예외를 삼키고 `null`을 반환해 컨트롤러가 빈 배열(`[]`)을 내려주며, 프론트는 내장 기본 아이콘으로 동작합니다 — 이 경로는 의도된 것이므로 예외를 다시 던지도록 바꾸지 마세요.
+- 예외 및 검증: `QfieldFacilityController`는 파라미터 유효성 검증 실패 시 HTTP 400, 시설물 미존재 시 HTTP 404를 명확히 반환하며, 500 오류를 삼키지 않고 정확한 응답 코드를 제공합니다.
 
 매퍼 XML은 `application.yml`의 `mybatis.mapper-locations: classpath*:mapper/**/*.xml` 설정으로 자동 스캔되며, `MapServiceRestApplication`에 `@MapperScan("com.example.mapservice.mapper")`가 선언되어 있습니다.
 
