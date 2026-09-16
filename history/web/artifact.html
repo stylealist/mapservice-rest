@@ -379,7 +379,10 @@
       <button type="button" class="vchip" role="tab" data-ver="1.16" aria-controls="pane-v1.16" title="QField 앱·동기화 저장소 추가와 데이터 출처 확정"><span class="pv">v1.16</span><span class="pt">QField 계열 저장소 추가</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.17" aria-controls="pane-v1.17" title="상세 팝업에 점검 결과·사진·음성·영상 추가"><span class="pv">v1.17</span><span class="pt">점검 결과·미디어 표시</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.18" aria-controls="pane-v1.18" title="값이 없는 항목도 - 로 표시"><span class="pv">v1.18</span><span class="pt">빈 값 표시</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="1.19" aria-controls="pane-v1.19" title="음성 관련 항목 라벨 정리"><span class="pv">v1.19<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">음성 항목 라벨 정리</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.19" aria-controls="pane-v1.19" title="음성 관련 항목 라벨 정리"><span class="pv">v1.19</span><span class="pt">음성 항목 라벨 정리</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.20" aria-controls="pane-v1.20" title="사진·음성·영상 실제 재생(QFieldCloud 중계)"><span class="pv">v1.20</span><span class="pt">첨부 파일 재생</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.21" aria-controls="pane-v1.21" title="오디오 플레이어가 보이지 않던 오류 수정"><span class="pv">v1.21</span><span class="pt">오디오 표시 수정</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.22" aria-controls="pane-v1.22" title="음성 변환(STT)이 DB에 들어오지 않던 원인 정리"><span class="pv">v1.22<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">STT 원인 추적</span></button>
     </div>
   </div>
 </nav>
@@ -1996,6 +1999,277 @@ repair_required_yn : Y=정비요청, N=양호</div>
 음성 변환 내용     받아쓴 텍스트
 현장 영상          ▶ (영상 재생)
 음성 메모 텍스트   -</div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.20 ===================== -->
+<div class="vpane" data-ver="1.20" id="pane-v1.20" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.20</span>
+      <span>2026-09-16</span>
+      <span>mapservice-rest · sj-lab-mapservice</span>
+    </div>
+    <h1>시설물 사진·음성·영상<br>실제 재생</h1>
+    <p class="dek">
+      팝업에 자리는 있었지만 실제로는 재생되지 않았습니다.
+      원인을 세 가지로 좁힌 뒤, 백엔드가 QFieldCloud에서 받아 전달하는 중계 방식으로 해결했습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>신규 API</dt><dd>미디어 중계 1개</dd></div>
+      <div><dt>사진</dt><dd class="ok">1080×1920 로드</dd></div>
+      <div><dt>음성 · 영상</dt><dd class="ok">9.7초 · 2.6초 재생</dd></div>
+      <div><dt>경로 검증</dt><dd>불일치 시 403</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">사진, 오디오, 비디오가 실제로 재생이되었으면 좋겠어 qfieldcloud의 url은 https://qfield.sj-lab.co.kr/ 이야 해당 정보를 md 파일들에도 추가해줘</pre>
+    <p class="promptnote">재생 경로는 인프라·보안이 걸린 선택이라 확인을 거쳐 <b>백엔드 프록시</b> 방식으로 정했습니다(파일을 공개하지 않음).</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">진단</p>
+    <h2>왜 경로만으로는 재생이 안 됐나</h2>
+    <ul class="notes">
+      <li><b>값이 URL이 아님</b> — DB에는 QField 프로젝트 내 상대 경로가 저장됩니다 (<code>DCIM/JPEG_...jpg</code>, <code>audio/...m4a</code>, <code>video/...mp4</code>)</li>
+      <li><b>원본은 인증 뒤에</b> — QFieldCloud API가 401을 반환합니다. 브라우저의 <code>&lt;img&gt;</code>·<code>&lt;audio&gt;</code>·<code>&lt;video&gt;</code>는 인증 헤더를 붙일 수 없습니다</li>
+      <li><b>서버에도 파일이 없음</b> — 동기화 워커가 처리 후 폴더를 삭제하고(<code>shutil.rmtree</code>) 차트 볼륨도 <code>emptyDir</code>입니다</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">해결</p>
+    <h2>백엔드가 대신 받아 전달</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">프론트</span><span class="fv"><code>buildFacilityMediaUrl()</code>이 상대 경로를 <code>/map/qfield/facilities/{totalId}/media?path=...</code> 로 조립</span></div>
+      <div class="frow"><span class="fk">검증</span><span class="fv">요청 경로가 <b>그 시설물의 첨부인지 DB로 확인</b> — 아니면 403 (임의 파일 접근 차단)</span></div>
+      <div class="frow"><span class="fk">인증</span><span class="fv"><code>POST /api/v1/auth/login/</code> → 토큰 6시간 캐시, 401·403이면 한 번만 재발급 후 재시도</span></div>
+      <div class="frow"><span class="fk">프로젝트</span><span class="fv"><code>GET /api/v1/projects/</code> — <code>source_table</code>의 접두어로 프로젝트 식별(캐시)</span></div>
+      <div class="frow"><span class="fk">파일</span><span class="fv"><code>GET /api/v1/files/{projectId}/{경로}/</code> → 바이트 전달</span></div>
+      <div class="frow"><span class="fk">타입 교정</span><span class="fv">QFieldCloud는 <code>application.force-download</code>를 돌려줘 재생이 안 됩니다. <b>확장자로 실제 타입</b>(image/jpeg, audio/mp4, video/mp4)을 지정</span></div>
+    </div>
+    <ul class="notes" style="margin-top:1.5rem">
+      <li>계정은 <code>QFIELD_USERNAME</code>/<code>QFIELD_PASSWORD</code> <b>환경변수로만</b> 주입 — 저장소 파일에 값을 남기지 않았습니다</li>
+      <li>계정이 없으면 <b>이 엔드포인트만 503</b>이고 나머지 기능은 그대로 동작합니다</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>실제 데이터로 재생까지 확인</h2>
+    <div class="grid2">
+      <div class="cell">
+        <h3>응답 <span class="badge pass">확인</span></h3>
+        <div class="tbl" style="margin-top:.8rem">
+          <table>
+            <thead><tr><th>호출</th><th>결과</th></tr></thead>
+            <tbody>
+              <tr><td>사진</td><td class="num">200 · image/jpeg · 85,843 B</td></tr>
+              <tr><td>음성</td><td class="num">200 · audio/mp4 · 158,027 B</td></tr>
+              <tr><td>영상</td><td class="num">200 · video/mp4 · 1,147,822 B</td></tr>
+              <tr><td>허용되지 않은 경로</td><td class="num">403</td></tr>
+              <tr><td>게이트웨이 경유</td><td class="num">3회 연속 200</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="cell">
+        <h3>브라우저 재생 <span class="badge pass">확인</span></h3>
+        <p>이미지 1080×1920 로드 완료, 음성 <code>readyState 4</code> 9.7초, 영상 <code>readyState 4</code> 2.6초(1080폭), 갤러리 <code>1 / 5</code>. 영상은 206 부분 요청도 정상입니다. 콘솔 오류 0건.</p>
+      </div>
+    </div>
+    <ul class="notes" style="margin-top:1.5rem">
+      <li><b>운영 배포 전 Secret 필요</b> — <code>sj-lab-k8s-manifests</code>의 mapservice-rest 차트에 계정 환경변수를 Secret으로 주입해야 합니다(아직 미적용)</li>
+    </ul>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.21 ===================== -->
+<div class="vpane" data-ver="1.21" id="pane-v1.21" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.21</span>
+      <span>2026-09-16</span>
+      <span>sj-lab-mapservice</span>
+    </div>
+    <h1>오디오 플레이어가<br>보이지 않던 오류 수정</h1>
+    <p class="dek">
+      "현장 특이사항"의 오디오를 들을 수 없다는 제보. 측정해 보니 재생은 되고 있었고, <b>플레이어 폭이 0</b>이라 화면에 나타나지 않던 것이었습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>오디오 폭</dt><dd>0px → <b>386px</b></dd></div>
+      <div><dt>실제 재생</dt><dd class="ok">수정 전에도 정상</dd></div>
+      <div><dt>바뀐 파일</dt><dd>CSS 1개</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">audio_memo - 현장 특이사항 가 오디오인데 오디오는 듣는게 없어</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">원인</p>
+    <h2>정렬 설정 하나가 폭을 0으로 만들었다</h2>
+    <p class="lede">
+      <code>.facility-detail-row</code> 의 <code>align-items: flex-start</code> 가 전체 폭 행에도 그대로 적용되어,
+      세로 배치에서 자식의 폭이 내용 크기로 줄어들었습니다.
+    </p>
+    <ul class="notes">
+      <li>사진·영상은 <b>고유 크기가 있어</b> 티가 나지 않았습니다</li>
+      <li>오디오는 <code>width: 100%</code> 로만 지정돼 있어 폭이 0이 되고, 컨트롤이 렌더링되지 않았습니다</li>
+      <li>재생 자체는 정상이었습니다 — <code>readyState 4</code>, 9.7초 음원이 실제로 재생 중이었습니다</li>
+    </ul>
+
+    <h2 style="margin-top:2.25rem">수정과 검증</h2>
+    <div class="cmp">
+      <div class="crow chead"><span>확인 항목</span><span>수정 전</span><span>수정 후</span></div>
+      <div class="crow"><span>오디오 요소 폭</span><span class="cb">0px (보이지 않음)</span><span class="ca">386px</span></div>
+      <div class="crow"><span>display</span><span class="cb">inline</span><span class="ca">block</span></div>
+      <div class="crow"><span>영상 플레이어</span><span class="cb">표시됨</span><span class="ca">386 × 220, 정상</span></div>
+      <div class="crow"><span>콘솔 오류</span><span class="cb">0건</span><span class="ca">0건</span></div>
+    </div>
+    <p class="promptnote">
+      전체 폭 행에 <code>align-items: stretch</code> 와 값 영역 <code>width: 100%</code> 를 주고,
+      오디오·비디오에 <code>display: block</code> 과 오디오 최소 폭(240px)을 지정했습니다.
+    </p>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.22 ===================== -->
+<div class="vpane" data-ver="1.22" id="pane-v1.22" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.22</span>
+      <span>2026-09-16</span>
+      <span>sj-qfieldsync · sj-lab-mapservice</span>
+    </div>
+    <h1>음성 변환(STT)이 DB에<br>들어오지 않던 원인 정리</h1>
+    <p class="dek">
+      변환 코드 자체는 멀쩡했습니다. 팝업이 다른 필드를 보고 있었고, 실패 원인은 로그에 남지 않고 있었습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>로컬 변환</dt><dd class="ok">성공 (신뢰도 0.87)</dd></div>
+      <div><dt>팝업 필드</dt><dd>잘못 지정됨</dd></div>
+      <div><dt>실패 로그</dt><dd class="pending">삼켜지고 있었음</dd></div>
+      <div><dt>바뀐 파일</dt><dd>3개</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">음성 메모 텍스트는 상세팝업에서 제거해주고 sj-qfieldsync에서 음성파일을 받아서 텍스트로변환하는 부분이 있는데 해당 부분이 잘 이루어지지않아 db에 음성 텍스트가 안들어와있어</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">조사</p>
+    <h2>세 가지를 확인했습니다</h2>
+
+    <div class="finding">
+      <div class="fhead">
+        <span class="sev">발견 1</span>
+        <h3>팝업이 엉뚱한 필드를 보고 있었다</h3>
+        <span class="where">map-facility.js</span>
+      </div>
+      <div class="fbody">
+        <p>앱 소스를 보니 <code>facility_memo</code>는 <b>텍스트 입력 필드</b>이고 음성은 <code>audio_memo</code>였습니다. 그런데 동기화 워커는 컬럼명에 <code>memo</code>만 들어가도 <code>_txt</code>를 만들어 STT를 시도해, <b><code>facility_memo_txt</code>는 구조적으로 항상 빈 값</b>이었습니다. 팝업은 하필 그 필드를 "음성 변환 내용"으로 보여주고 있었습니다.</p>
+        <p class="fnext"><b>수정</b> — 팝업은 <code>audio_memo_txt</code>를 표시하고, 항상 비는 <code>facility_memo_txt</code>는 숨김. 워커도 <b>실제 오디오 컬럼에만</b> <code>_txt</code>를 만들도록 변경.</p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="fhead">
+        <span class="sev warn">발견 2</span>
+        <h3>변환 자체는 정상 동작</h3>
+        <span class="where">disaster2convert.py</span>
+      </div>
+      <div class="fbody">
+        <p>실제 음성 파일(158KB)을 내려받아 직접 실행하니 한국어 인식에 성공했습니다(신뢰도 0.87).</p>
+        <div class="cmd">"태풍이 와서 시설물이 파손되었습니다 시설물의 위치는 건물 2층에 있습니다"</div>
+        <p class="fnext">코드·라이브러리·구글 STT 호출은 문제 없음 → <b>운영 컨테이너에서만 실패</b>하고 있습니다.</p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="fhead">
+        <span class="sev">발견 3</span>
+        <h3>실패 원인이 로그에 남지 않았다</h3>
+        <span class="where">qfield_data_sync.py</span>
+      </div>
+      <div class="fbody">
+        <p>DB 값은 <code>NULL</code>이 아니라 <b>빈 문자열</b>이었습니다. 코드는 돌았는데 결과가 비어 있었다는 뜻인데, 아래처럼 모든 오류를 삼키고 있어 구분할 수 없었습니다.</p>
+        <pre class="fcode">try:
+    stt_val = dc.read_audio(path)
+except Exception:
+    pass          # ← 모든 오류를 조용히 삼킴</pre>
+        <p class="fnext"><b>수정</b> — 모듈 없음 / 파일 없음 / 디코딩 실패 / API 오류 / 결과 없음을 <b>각각 다른 로그</b>로 남기도록 변경.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">함께 고친 잠재 버그</p>
+    <h2>변환 함수의 파일 처리</h2>
+    <ul class="notes">
+      <li>입력이 이미 <code>.wav</code>이면 <b>원본 파일을 삭제</b>하고 있었습니다(변환본이 아니라 원본)</li>
+      <li>변환 실패 시 존재하지 않는 파일을 지우려 해 <b>2차 예외</b>가 났습니다</li>
+      <li>임시 wav를 프로젝트 폴더에 만들어 다음 스캔에 섞일 수 있었습니다 → 임시 디렉터리로 분리하고 반드시 정리</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증 · 다음 단계</p>
+    <h2>배포 후 로그 한 줄이면 확정됩니다</h2>
+    <div class="grid2">
+      <div class="cell">
+        <h3>로컬 검증 <span class="badge pass">확인</span></h3>
+        <p>실제 m4a 변환 성공(원본 보존·임시 파일 0), 깨진 파일은 예외가 호출부로 전달, <code>_txt</code> 판정은 <code>audio_memo</code>만 참. 팝업 19개 항목 정상, 콘솔 오류 0건.</p>
+      </div>
+      <div class="cell caution">
+        <h3>운영 확인 <span class="badge skip">로그 필요</span></h3>
+        <p>로컬에 쿠버네티스 접근 권한이 없어 파드 로그를 보지 못했습니다. 배포 후 아래 중 어떤 줄이 찍히는지 보면 원인이 바로 좁혀집니다.</p>
+        <div class="cmd">⚠️ STT 모듈 로드 실패(...)      → 라이브러리 없음
+⚠️ STT 건너뜀(파일 없음)        → 다운로드 폴더에 음성 없음
+❌ STT 실패(CouldntDecodeError) → ffmpeg 문제
+❌ STT 실패(RequestError)       → 외부 네트워크 차단
+⚠️ STT 결과 없음                → 무음·인식 실패</div>
+      </div>
+    </div>
   </div>
 </section>
 </div>

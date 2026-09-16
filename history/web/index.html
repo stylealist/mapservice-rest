@@ -112,6 +112,50 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v1.22</span>
+        <span class="ver-title">음성 변환(STT)이 DB에 들어오지 않던 원인 정리</span>
+        <span class="date">2026-09-16</span>
+      </div>
+      <ul>
+        <li>팝업이 항상 비는 <code>facility_memo_txt</code>를 보고 있었음 → 실제 변환 결과인 <code>audio_memo_txt</code>로 교체</li>
+        <li>실제 음성 파일로 변환 성공 확인(신뢰도 0.87) — 코드가 아니라 <b>운영 환경 문제</b></li>
+        <li>실패를 삼키던 <code>except: pass</code>를 원인별 로그로 교체, <code>_txt</code> 생성을 실제 오디오 컬럼으로 한정</li>
+        <li>변환 함수의 원본 파일 삭제·2차 예외·임시 파일 잔여 문제도 함께 수정</li>
+      </ul>
+      <p><a href="../history_v1.22.md">history_v1.22.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v1.21</span>
+        <span class="ver-title">오디오 플레이어가 보이지 않던 오류 수정</span>
+        <span class="date">2026-09-16</span>
+      </div>
+      <ul>
+        <li>재생은 정상이었고 <b>플레이어 폭이 0</b>이라 화면에 안 보였던 문제 — 전체 폭 행의 <code>align-items</code> 설정이 원인</li>
+        <li>전체 폭 행에 <code>stretch</code> 적용, 오디오·비디오에 <code>display: block</code>, 오디오 최소 폭 지정</li>
+        <li>검증: 오디오 0px → 386px, 영상 386×220, 콘솔 오류 0건</li>
+      </ul>
+      <p><a href="../history_v1.21.md">history_v1.21.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v1.20</span>
+        <span class="ver-title">시설물 사진·음성·영상 실제 재생(QFieldCloud 중계)</span>
+        <span class="date">2026-09-16</span>
+      </div>
+      <ul>
+        <li>DB 값은 상대 경로, 원본은 인증 필요한 QFieldCloud, 서버엔 파일 없음 → <b>백엔드 중계 엔드포인트</b> 신설</li>
+        <li>요청 경로가 그 시설물의 첨부인지 DB로 검증(아니면 403), 확장자로 Content-Type 교정, 토큰 6시간 캐시</li>
+        <li>검증: 사진 1080×1920 로드, 음성 9.7초·영상 2.6초 재생, 게이트웨이 경유 200, 콘솔 오류 0건</li>
+        <li>운영 배포 전 <code>QFIELD_USERNAME</code>/<code>QFIELD_PASSWORD</code> Secret 주입 필요</li>
+      </ul>
+      <p><a href="../history_v1.20.md">history_v1.20.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v1.19</span>
         <span class="ver-title">음성 관련 항목 라벨 정리</span>
         <span class="date">2026-09-16</span>
