@@ -373,7 +373,8 @@
       <button type="button" class="vchip" role="tab" data-ver="1.10" aria-controls="pane-v1.10" title="헤더·시설물 패널 UI 개선과 목록 검색 추가"><span class="pv">v1.10</span><span class="pt">UI 개선 · 목록 검색</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.11" aria-controls="pane-v1.11" title="시·도 기본값을 서울특별시로 설정"><span class="pv">v1.11</span><span class="pt">기본 시·도 서울</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.12" aria-controls="pane-v1.12" title="상세 팝업에서 내부 관리용 항목 숨김"><span class="pv">v1.12</span><span class="pt">팝업 내부 항목 숨김</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="1.13" aria-controls="pane-v1.13" title="상세 팝업 일시 표기 정리"><span class="pv">v1.13<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">일시 표기 정리</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.13" aria-controls="pane-v1.13" title="상세 팝업 일시 표기 정리"><span class="pv">v1.13</span><span class="pt">일시 표기 정리</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.14" aria-controls="pane-v1.14" title="팝업을 열 때 화면이 위로 밀리던 오류 수정"><span class="pv">v1.14<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">화면 밀림 오류 수정</span></button>
     </div>
   </div>
 </nav>
@@ -1571,6 +1572,84 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
       <li><b>점검일시도 함께 적용</b> — 같은 성격의 일시 필드라 표기가 갈리면 어색하기 때문</li>
       <li>앞으로 일시 필드가 늘면 <code>DETAIL_FIELD_CONFIG</code>에 <code>isDateTime: true</code>만 붙이면 됩니다</li>
     </ul>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.14 ===================== -->
+<div class="vpane" data-ver="1.14" id="pane-v1.14" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.14</span>
+      <span>2026-09-16</span>
+      <span>sj-lab-mapservice</span>
+    </div>
+    <h1>팝업을 열 때 화면이<br>위로 밀리던 오류 수정</h1>
+    <p class="dek">
+      지도에서 시설물 핀을 클릭하면 본문 영역이 22px 위로 밀려 상단이 잘리고, 팝업 자체도 화면 밖으로 삐져나왔습니다.
+      원인은 서로 다른 두 가지였습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>본문 위치</dt><dd>38px → <b>60px</b></dd></div>
+      <div><dt>팝업 상단</dt><dd>&minus;6px → <b>84px</b></dd></div>
+      <div><dt>바뀐 파일</dt><dd>1개</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">시설물을 클릭해서 팝업을 띄울떄 main-content 영역이 위로 올라가서 상단부분이 잘려보이는 오류가 있어 해결해줘</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">원인</p>
+    <h2>재현해서 찾은 두 가지</h2>
+    <div class="finding">
+      <div class="fhead">
+        <span class="sev">원인 1</span>
+        <h3>scrollIntoView 가 상위 문서까지 스크롤</h3>
+        <span class="where">selectFacility()</span>
+      </div>
+      <div class="fbody">
+        <p>선택된 목록 항목을 보이게 하려고 <code>item.scrollIntoView()</code>를 썼는데, 이 API는 목록 컨테이너만이 아니라 <b>스크롤 가능한 모든 조상</b>을 함께 스크롤합니다. 그래서 화면 전체가 위로 밀려 헤더 아래가 잘렸습니다.</p>
+        <p class="fnext"><b>수정</b> — 컨테이너와 항목의 위치를 비교해 <b>필요한 만큼만</b> 목록 컨테이너를 스크롤하는 <code>scrollFacilityItemIntoView()</code>로 교체. 문서는 건드리지 않습니다.</p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="fhead">
+        <span class="sev warn">원인 2</span>
+        <h3>팝업 위치 보정이 실행되지 않음</h3>
+        <span class="where">showFacilityDetail()</span>
+      </div>
+      <div class="fbody">
+        <p>내용을 그린 뒤 같은 좌표로 <code>setPosition()</code>을 다시 호출했지만, <b>값이 바뀌지 않으면 OpenLayers가 변경 이벤트를 발생시키지 않아</b> <code>autoPan</code>이 아예 돌지 않았습니다. 게다가 지도 이동 애니메이션이 끝나기 전에 보정하면 애니메이션이 팝업을 다시 화면 밖으로 밀어냅니다.</p>
+        <p class="fnext"><b>수정</b> — <code>panIntoView({ margin: 24 })</code>를 쓰고, <code>view.getAnimating()</code>이 끝날 때까지(최대 1.5초) 기다린 뒤 한 번만 보정하는 <code>ensureFacilityPopupVisible()</code> 신설.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>수정 전후 측정값</h2>
+    <div class="cmp">
+      <div class="crow chead"><span>확인 항목</span><span>수정 전</span><span>수정 후</span></div>
+      <div class="crow"><span>지도 핀 클릭 후 본문 위치</span><span class="cb">38px (밀림)</span><span class="ca">60px (정상)</span></div>
+      <div class="crow"><span>팝업 상단 위치</span><span class="cb">&minus;6px (잘림)</span><span class="ca">84px (온전히 보임)</span></div>
+      <div class="crow"><span>목록 항목 클릭 후 본문 위치</span><span class="cb">60px</span><span class="ca">60px</span></div>
+      <div class="crow"><span>선택 항목이 목록에 보이는지</span><span class="cb">보임</span><span class="ca">보임</span></div>
+      <div class="crow"><span>콘솔 오류</span><span class="cb">0건</span><span class="ca">0건</span></div>
+    </div>
   </div>
 </section>
 </div>

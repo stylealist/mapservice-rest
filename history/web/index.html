@@ -112,6 +112,20 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v1.14</span>
+        <span class="ver-title">팝업을 열 때 화면이 위로 밀리던 오류 수정</span>
+        <span class="date">2026-09-16</span>
+      </div>
+      <ul>
+        <li><b>원인 1</b> — <code>scrollIntoView</code>가 목록뿐 아니라 상위 문서까지 스크롤. 컨테이너만 스크롤하도록 교체(본문 38px → 60px 복구)</li>
+        <li><b>원인 2</b> — 같은 좌표 <code>setPosition</code>은 변경 이벤트가 없어 <code>autoPan</code> 미실행. 지도 애니메이션 종료 후 <code>panIntoView</code> 호출(팝업 상단 −6px → 84px)</li>
+        <li>목록 클릭·지도 핀 클릭 두 경로 모두 정상, 콘솔 오류 0건</li>
+      </ul>
+      <p><a href="../history_v1.14.md">history_v1.14.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v1.13</span>
         <span class="ver-title">상세 팝업 일시 표기를 YYYY-MM-DD HH:MM 으로 정리</span>
         <span class="date">2026-09-16</span>
