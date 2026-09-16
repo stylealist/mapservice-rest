@@ -60,6 +60,7 @@ Eureka에 등록되는(`@EnableDiscoveryClient`) Spring Boot 3.3.2 / Java 17 마
 - 읽기 전용 DB 등 뷰 생성이 불가능한 경우: `qfield-facility.xml` 패턴을 따릅니다. XML 내 SQL에서 `json_build_object`, `json_agg`, `to_jsonb`, `ST_AsGeoJSON` 등을 활용해 DB 레벨에서 GeoJSON/JSON 문자열로 직접 조립해 반환합니다. 파라미터는 반드시 MyBatis `#{}` 바인딩을 사용합니다.
 - 시설물 공간 쿼리 및 행정구역 필터: `qfield.facility_total_view`의 EPSG:3857 점 좌표와 `public.g_emd`의 EPSG:4326 경계를 조인할 때, `LEFT JOIN LATERAL`과 `ST_Intersects(e.geom, ST_Transform(f.geom, 4326))` (LIMIT 1)로 `g_emd`의 GIST 인덱스를 활용합니다. 행정구역 코드는 접두어 계층 구조(sido 2자리, sgg 5자리, emd 8자리)이므로 `emd_cd LIKE code || '%'` 단일 조건으로 고속 필터링합니다 (g_sido 폴리곤 직접 조인이나 ST_MakeValid는 지양).
 - 행정구역 BBOX 조회: 폴리곤 전체 좌표를 변환하지 않고 `ST_Transform(ST_Envelope(geom), 3857)`로 BBOX만 변환하여 `[minX, minY, maxX, maxY]`를 계산합니다.
+- 첨부 파일 중계: 시설물 사진·음성·영상은 DB에 QField 프로젝트 내 상대 경로만 있고 원본은 인증이 필요한 QFieldCloud에 있습니다. `QfieldMediaService`가 토큰 로그인 → 프로젝트 식별 → 파일 다운로드를 거쳐 전달하며, **요청 경로가 그 시설물의 첨부인지 DB로 검증한 뒤에만** 응답합니다(아니면 403). 계정은 `QFIELD_USERNAME`/`QFIELD_PASSWORD` 환경변수로만 주입하고 `application.yml`에 적지 마세요.
 - 설정 테이블: 지도 시설물 아이콘은 `qfield.facility_icon`에서 관리하며 `GET /map/qfield/facility-icons`(`getFacilityIcons`)로 내려줍니다. 생성 스크립트는 `db/qfield_facility_icon.sql`이고 **DDL 실행은 담당자가 직접** 합니다. 테이블이 없거나 조회가 실패하면 서비스가 예외를 삼키고 `null`을 반환해 컨트롤러가 빈 배열(`[]`)을 내려주며, 프론트는 내장 기본 아이콘으로 동작합니다 — 이 경로는 의도된 것이므로 예외를 다시 던지도록 바꾸지 마세요.
 - 예외 및 검증: `QfieldFacilityController`는 파라미터 유효성 검증 실패 시 HTTP 400, 시설물 미존재 시 HTTP 404를 명확히 반환하며, 500 오류를 삼키지 않고 정확한 응답 코드를 제공합니다.
 

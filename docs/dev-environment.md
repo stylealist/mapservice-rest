@@ -55,6 +55,19 @@ powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 stop      # 이
 - scheduler는 DB 적재 때문에 이 스크립트에 넣지 않았습니다.
 - **백엔드만 재기동하면 Eureka에 죽은 인스턴스가 남아** 게이트웨이 요청의 절반이 500이 됩니다(리스 만료까지 1~3분). 기다리거나, 죽은 인스턴스를 직접 해제하세요: `Invoke-WebRequest -Method Delete "http://localhost:8761/eureka/apps/MAPSERVICE-REST/<instanceId>"` (인스턴스 목록은 `http://localhost:8761/eureka/apps/MAPSERVICE-REST`, Accept: application/json).
 
+**외부 서비스**: QFieldCloud `https://qfield.sj-lab.co.kr` — 현장조사 앱이 조사 데이터와 첨부 파일(사진·음성·영상)을 올리는 곳이고, `sj-qfieldsync`가 여기서 내려받아 DB에 적재합니다. **API는 인증이 필요**하므로(`/api/v1/` → 401) 브라우저가 첨부 파일을 직접 받을 수 없어, 백엔드 중계 엔드포인트(`/map/qfield/facilities/{totalId}/media`)를 통해 재생합니다. GeoServer는 `https://geoserver.sj-lab.co.kr`.
+
+**첨부 재생용 환경변수**: 미디어 중계는 QFieldCloud 계정이 있어야 동작합니다. 없으면 그 엔드포인트만 503이고 나머지는 정상입니다.
+
+```
+QFIELD_USERNAME  QFieldCloud 계정
+QFIELD_PASSWORD  비밀번호
+QFIELD_BASE_URL  기본값 https://qfield.sj-lab.co.kr
+```
+
+- 로컬 검증: 위 값을 환경변수로 설정한 PowerShell에서 `scripts\local-stack.ps1 start`를 실행하면 자식 프로세스가 물려받습니다. **저장소 파일(`application.yml` 등)에 값을 적지 말 것.**
+- 운영: `sj-lab-k8s-manifests`의 `mapservice-rest` 차트에 Secret 참조를 추가해야 합니다(미적용 — 배포 전 필요).
+
 **운영 대응**: 프론트 `https://sj-lab.co.kr` → `https://api.sj-lab.co.kr/map/...`(게이트웨이) → Eureka `https://eureka.sj-lab.co.kr`. 운영 프로파일은 저장소 밖(Helm/ConfigMap)에서 주입됩니다.
 
 - 프론트엔드의 `getApiUrl()`은 로컬에서 `http://localhost:8100` + `/map/...`을 호출하므로, **8100은 백엔드가 아니라 게이트웨이**입니다.

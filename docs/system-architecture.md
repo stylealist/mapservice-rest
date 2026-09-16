@@ -42,7 +42,7 @@
 
 **뷰와 생성 주체 (scheduler 매퍼 XML 기준)**: `map.v_convenience_store_geojson`, `v_bus_stop_info_geojson`, `v_cctv_info_geojson`, `v_pharmacy_info_geojson`, `v_hospital_info_geojson`, `v_government_office_geojson`, `v_fclt_info`, `v_fclt_info_geojson`. `qfield.facility_total_view`와 `public.g_sido/g_sgg/g_emd`는 scheduler가 만들지 않습니다.
 
-**시설물 데이터의 출처 (QField 계열)**: 현장조사 앱 `infra-manage-app`(QField 포크)으로 입력한 데이터가 QFieldCloud에 올라가고, `sj-qfieldsync` 워커가 30초 주기로 변경된 프로젝트만 감지해 GPKG를 내려받아 PostGIS `qfield` 스키마로 적재합니다. 프로젝트 테이블이 추가·삭제되면 같은 워커가 **`qfield.facility_total_view`(통합 뷰)를 재생성**합니다 — 즉 이 뷰의 정의 주체는 `sj-qfieldsync`입니다. 시설물 컬럼이 바뀌면 그 저장소부터 확인하세요.
+**시설물 데이터의 출처 (QField 계열)**: 현장조사 앱 `infra-manage-app`(QField 포크)으로 입력한 데이터가 QFieldCloud(**https://qfield.sj-lab.co.kr**)에 올라가고, `sj-qfieldsync` 워커가 30초 주기로 변경된 프로젝트만 감지해 GPKG를 내려받아 PostGIS `qfield` 스키마로 적재합니다. 프로젝트 테이블이 추가·삭제되면 같은 워커가 **`qfield.facility_total_view`(통합 뷰)를 재생성**합니다 — 즉 이 뷰의 정의 주체는 `sj-qfieldsync`입니다. 시설물 컬럼이 바뀌면 그 저장소부터 확인하세요.
 
 **설정 테이블 `qfield.facility_icon`**: 지도 시설물 아이콘(종류 판별 키워드·라벨·SVG 글리프·색상)을 담습니다. 생성·초기데이터 스크립트는 `db/qfield_facility_icon.sql`이며, **DDL 실행은 에이전트가 하지 않고 DB 권한이 있는 담당자가 직접 합니다**(프로젝트 규칙). 테이블이 없으면 API가 빈 배열을 돌려주고 프론트는 내장 기본 아이콘으로 동작하므로, 스크립트 실행 전에도 지도는 정상입니다. 아이콘을 추가·변경할 때는 프론트 코드가 아니라 이 테이블 행을 고칩니다.
 
@@ -60,11 +60,17 @@
 | `GET /map/governmentOffice-info` | `WfsController` | `map.v_government_office_geojson` | `map-wfs.js` |
 | `GET /map/qfield/facilities?sidoCd=&sggCd=&emdCd=` | `QfieldFacilityController` | `qfield.facility_total_view` + `public.g_emd` | `js/modules/map/map-facility.js` |
 | `GET /map/qfield/facilities/{totalId}` | `QfieldFacilityController` | `qfield.facility_total_view`, `public.g_emd/g_sgg/g_sido` | `map-facility.js` |
+| `GET /map/qfield/facilities/{totalId}/media?path=` | `QfieldFacilityController` → `QfieldMediaService` | `qfield.facility_total_view` + QFieldCloud 원본 파일 | `map-facility.js` (`buildFacilityMediaUrl`) |
 | `GET /map/qfield/facility-icons` | `QfieldFacilityController` | `qfield.facility_icon` | `map-facility.js` (`loadFacilityIconConfig`) |
 | `GET /map/admin-area/sido` | `QfieldFacilityController` | `public.g_sido` | `map-facility.js` |
 | `GET /map/admin-area/sgg?sidoCd=` | `QfieldFacilityController` | `public.g_sgg` | `map-facility.js` |
 | `GET /map/admin-area/emd?sggCd=` | `QfieldFacilityController` | `public.g_emd` | `map-facility.js` |
 
+- **시설물 첨부 파일(사진·음성·영상)**: `photo_1`~`photo_5`, `audio_memo`, `video` 컬럼에는 URL이 아니라 **QField 프로젝트 안의 상대 경로**가 들어 있습니다(예: `DCIM/JPEG_20260916071830596.jpg`, `audio/AUDIO_...m4a`, `video/VIDEO_...mp4`). 원본 파일은 QFieldCloud(**https://qfield.sj-lab.co.kr**)에 있고 **API가 인증을 요구**하며(`/api/v1/` → 401), `sj-qfieldsync`는 처리 후 내려받은 폴더를 삭제하고(`shutil.rmtree`) 차트 볼륨도 `emptyDir`라 파일이 남지 않습니다. 그래서 **백엔드가 대신 받아 전달하는 중계 엔드포인트**(`/map/qfield/facilities/{totalId}/media?path=...`)를 통해 재생합니다 — 프론트는 상대 경로를 이 URL로 조립하기만 합니다.
+  - 중계 흐름: `POST /api/v1/auth/login/`(토큰, 6시간 캐시) → `GET /api/v1/projects/`(`source_table`의 접두어로 프로젝트 식별, 캐시) → `GET /api/v1/files/{projectId}/{경로}/`.
+  - **요청된 경로가 그 시설물의 첨부인지 DB로 확인한 뒤에만 전달**합니다(아니면 403). 임의 파일 접근 차단용이므로 이 검증을 빼지 마세요.
+  - QFieldCloud가 돌려주는 `Content-Type`은 `application.force-download`라 브라우저가 재생하지 못합니다. 백엔드가 **확장자로 실제 타입을 정해** 내려줍니다.
+  - 계정은 `QFIELD_USERNAME`/`QFIELD_PASSWORD` 환경변수로만 주입합니다(미설정 시 이 엔드포인트만 503, 나머지 기능은 정상).
 - 시설물 목록(`/map/qfield/facilities`)의 `properties`는 `total_id`, `fclt_nm`, `inst_nm`, `daddr`, `facility_condition`, `repair_required_yn`, `emd_cd`입니다. `inst_nm`·`daddr`는 같은 이름(예: "강당")이 반복될 때 목록에서 구분하기 위한 보조 정보이므로 빼지 마세요.
 - 응답 형식: WFS 레이어는 `geojson` 텍스트(FeatureCollection), 오류 시 **HTTP 200 + 빈 바디**. QField/행정구역은 JSON 문자열 + 400/404 명시, `Cache-Control` 60초(시설물)·3600초(행정구역).
 - 좌표계: 시설물 `geom`은 EPSG:3857, 행정구역 경계는 EPSG:4326. 프론트 지도 뷰는 EPSG:3857입니다.
