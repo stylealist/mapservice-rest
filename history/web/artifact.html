@@ -374,7 +374,8 @@
       <button type="button" class="vchip" role="tab" data-ver="1.11" aria-controls="pane-v1.11" title="시·도 기본값을 서울특별시로 설정"><span class="pv">v1.11</span><span class="pt">기본 시·도 서울</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.12" aria-controls="pane-v1.12" title="상세 팝업에서 내부 관리용 항목 숨김"><span class="pv">v1.12</span><span class="pt">팝업 내부 항목 숨김</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.13" aria-controls="pane-v1.13" title="상세 팝업 일시 표기 정리"><span class="pv">v1.13</span><span class="pt">일시 표기 정리</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="1.14" aria-controls="pane-v1.14" title="팝업을 열 때 화면이 위로 밀리던 오류 수정"><span class="pv">v1.14<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">화면 밀림 오류 수정</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.14" aria-controls="pane-v1.14" title="팝업을 열 때 화면이 위로 밀리던 오류 수정"><span class="pv">v1.14</span><span class="pt">화면 밀림 오류 수정</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.15" aria-controls="pane-v1.15" title="상세 팝업에서 행정구역 이름 숨김"><span class="pv">v1.15<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">행정구역 이름 숨김</span></button>
     </div>
   </div>
 </nav>
@@ -1649,6 +1650,63 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
       <div class="crow"><span>목록 항목 클릭 후 본문 위치</span><span class="cb">60px</span><span class="ca">60px</span></div>
       <div class="crow"><span>선택 항목이 목록에 보이는지</span><span class="cb">보임</span><span class="ca">보임</span></div>
       <div class="crow"><span>콘솔 오류</span><span class="cb">0건</span><span class="ca">0건</span></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.15 ===================== -->
+<div class="vpane" data-ver="1.15" id="pane-v1.15" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.15</span>
+      <span>2026-09-16</span>
+      <span>sj-lab-mapservice</span>
+    </div>
+    <h1>상세 팝업에서<br>행정구역 이름 숨김</h1>
+    <p class="dek">
+      시도·시군구·읍면동은 주소로 이미 알 수 있고, 왼쪽 패널의 선택과 목록의 소속 줄에서도 확인됩니다.
+      팝업에서는 빼서 핵심 정보만 남겼습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>숨긴 항목</dt><dd>3개</dd></div>
+      <div><dt>남은 항목</dt><dd>8개</dd></div>
+      <div><dt>바뀐 파일</dt><dd>1개</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">시도, 시군구, 읍면동도 상세팝업에 나오지않아도 될거같아</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">구현</p>
+    <h2>지우지 않고 숨긴 이유</h2>
+    <ul class="notes">
+      <li>설정 배열에서 <b>아예 지우면</b> 팝업 하단의 "그 밖의 항목"(정의되지 않은 키를 이름 그대로 보여주는 영역)으로 <b>다시 새어 나옵니다</b>. v1.12에서 코드값을 숨길 때와 같은 이유로 <code>hidden: true</code> 플래그를 붙였습니다</li>
+      <li>앞으로 특정 항목을 감추려면 설정에 <code>hidden: true</code>만 붙이면 됩니다</li>
+      <li>행정구역 정보는 왼쪽 패널의 시·도 / 시·군·구 / 읍·면·동 선택과 목록의 소속 줄에서 계속 확인할 수 있습니다</li>
+    </ul>
+
+    <h2 style="margin-top:2.25rem">검증</h2>
+    <div class="grid2">
+      <div class="cell">
+        <h3>남은 항목 <span class="badge pass">8개</span></h3>
+        <p>기관명 · 도로명주소 · 지번주소 · 담당부서 · 담당자 · 전화번호 · 등록일시 · 수정일시</p>
+      </div>
+      <div class="cell">
+        <h3>숨김 확인 <span class="badge pass">3개 모두</span></h3>
+        <p>시도·시군구·읍면동이 팝업에서 사라졌고, "그 밖의 항목"으로도 나타나지 않는 것을 확인했습니다. 콘솔 오류 0건.</p>
+      </div>
     </div>
   </div>
 </section>
