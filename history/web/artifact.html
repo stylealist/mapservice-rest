@@ -375,7 +375,8 @@
       <button type="button" class="vchip" role="tab" data-ver="1.12" aria-controls="pane-v1.12" title="상세 팝업에서 내부 관리용 항목 숨김"><span class="pv">v1.12</span><span class="pt">팝업 내부 항목 숨김</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.13" aria-controls="pane-v1.13" title="상세 팝업 일시 표기 정리"><span class="pv">v1.13</span><span class="pt">일시 표기 정리</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.14" aria-controls="pane-v1.14" title="팝업을 열 때 화면이 위로 밀리던 오류 수정"><span class="pv">v1.14</span><span class="pt">화면 밀림 오류 수정</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="1.15" aria-controls="pane-v1.15" title="상세 팝업에서 행정구역 이름 숨김"><span class="pv">v1.15<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">행정구역 이름 숨김</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.15" aria-controls="pane-v1.15" title="상세 팝업에서 행정구역 이름 숨김"><span class="pv">v1.15</span><span class="pt">행정구역 이름 숨김</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.16" aria-controls="pane-v1.16" title="QField 앱·동기화 저장소 추가와 데이터 출처 확정"><span class="pv">v1.16<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">QField 계열 저장소 추가</span></button>
     </div>
   </div>
 </nav>
@@ -1708,6 +1709,85 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
         <p>시도·시군구·읍면동이 팝업에서 사라졌고, "그 밖의 항목"으로도 나타나지 않는 것을 확인했습니다. 콘솔 오류 0건.</p>
       </div>
     </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.16 ===================== -->
+<div class="vpane" data-ver="1.16" id="pane-v1.16" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.16</span>
+      <span>2026-09-16</span>
+      <span>mapservice-rest · sj-qfieldsync · infra-manage-app</span>
+    </div>
+    <h1>QField 앱·동기화 저장소 추가와<br>시설물 데이터 출처 확정</h1>
+    <p class="dek">
+      현장조사 앱과 동기화 배치를 총괄 세션에 연결하면서,
+      그동안 "출처 미확인"으로 남아 있던 시설물 데이터의 흐름이 끝까지 이어졌습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>작업 범위</dt><dd>9곳</dd></div>
+      <div><dt>Orca 목록</dt><dd>10곳</dd></div>
+      <div><dt>폴더 신뢰</dt><dd>3개 도구 갱신</dd></div>
+      <div><dt>데이터 출처</dt><dd class="ok">확정</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">작업저장소를 추가하려는데 C:\vscode_develop\sj-qfieldsync는 qfield앱에서 추가된 데이터가 sync되는 기능이고 C:\vscode_develop\infra-manage-app는 qfield app이야 추가해줘</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">데이터 흐름</p>
+    <h2>현장조사에서 지도까지 한 줄로</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">1 · 입력</span><span class="fv"><b>infra-manage-app</b> — QField(QGIS 기반) 포크를 시설물 점검용으로 커스터마이징한 현장조사 앱</span></div>
+      <div class="frow"><span class="fk">2 · 업로드</span><span class="fv">QFieldCloud 에 조사 데이터(GPKG) 업로드</span></div>
+      <div class="frow"><span class="fk">3 · 동기화</span><span class="fv"><b>sj-qfieldsync</b> — 30초 주기로 변경된 프로젝트만 감지해 PostGIS <code>qfield</code> 스키마에 적재. 테이블이 추가·삭제되면 <b><code>facility_total_view</code> 재생성</b></span></div>
+      <div class="frow"><span class="fk">4 · 조회</span><span class="fv">mapservice-rest → 게이트웨이 → 지도 프론트엔드</span></div>
+    </div>
+    <p class="promptnote">
+      즉 <b><code>facility_total_view</code>의 정의 주체는 <code>sj-qfieldsync</code></b> 입니다.
+      시설물 컬럼이 바뀌면 그 저장소부터 확인해야 합니다. 그동안 문서에 "출처 미확인"으로 남아 있던 부분이 해소됐습니다.
+    </p>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">추가한 저장소</p>
+    <h2>기억할 점</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>저장소</th><th>구성</th><th>주의</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>infra-manage-app</code></td>
+            <td>QField 포크, C++/QML, CMake+vcpkg</td>
+            <td>업스트림 구조 유지 — <b>커스텀 변경은 최소 지점에 집중</b>. 기본 브랜치가 <code>master</code>(다른 저장소는 <code>main</code>), 전체 빌드는 수 시간</td>
+          </tr>
+          <tr>
+            <td><code>sj-qfieldsync</code></td>
+            <td>파이썬 단일 워커(30초 주기)</td>
+            <td>QFieldCloud 메타 DB와 적재 대상 PostGIS <b>두 DB를 함께 다룸</b>. 로컬 실행 시 실제 DB에 적재되므로 사용자 확인 후에</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="notes" style="margin-top:1.5rem">
+      <li>등록 절차는 기존과 동일 — 작업 범위(9곳), Claude Code·Antigravity·Gemini 폴더 신뢰, Orca 프로젝트 목록(10곳)</li>
+      <li>두 저장소의 <code>CLAUDE.md</code>에 "통합 허브" 안내 섹션 추가</li>
+      <li>문서 반영: 구조도에 앱·동기화 계층, 계층 표 2행, 데이터 출처 문단, 저장소별 주의사항</li>
+    </ul>
   </div>
 </section>
 </div>

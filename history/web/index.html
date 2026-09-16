@@ -112,6 +112,20 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v1.16</span>
+        <span class="ver-title">QField 앱·동기화 저장소 추가와 시설물 데이터 출처 확정</span>
+        <span class="date">2026-09-16</span>
+      </div>
+      <ul>
+        <li><code>infra-manage-app</code>(QField 포크 현장조사 앱), <code>sj-qfieldsync</code>(QFieldCloud → PostGIS 동기화 배치) 추가 — 작업 범위 9곳, Orca 10곳</li>
+        <li><b>데이터 출처 확정</b>: 앱 → QFieldCloud → 동기화 워커(30초) → <code>qfield</code> 스키마 → 백엔드 → 지도. <code>facility_total_view</code>의 정의 주체는 <code>sj-qfieldsync</code></li>
+        <li>저장소별 주의사항 기록: 동기화 워커는 실제 DB 적재, QField 포크는 업스트림 구조 유지·기본 브랜치 <code>master</code></li>
+      </ul>
+      <p><a href="../history_v1.16.md">history_v1.16.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v1.15</span>
         <span class="ver-title">상세 팝업에서 행정구역 이름 숨김</span>
         <span class="date">2026-09-16</span>
