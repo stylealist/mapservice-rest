@@ -20,6 +20,8 @@
      │ 쓰기: sj-lab-scheduler (공공 API 수집 → INSERT + CREATE OR REPLACE VIEW map.v_*_geojson)
      ▼
 [DB] PostgreSQL 17 + PostGIS 3.4 (sjlab)            ← [외부] 공공데이터포털 · ITS · 생활안전지도
+  ▲ qfield 스키마 적재
+[동기화] sj-qfieldsync (파이썬 워커, 30초 주기) ← QFieldCloud ← [현장조사 앱] infra-manage-app (QField 포크)
 ```
 
 **데이터가 지도에 뜨기까지**: scheduler cron이 외부 API 수집 → `map.*` 테이블 적재 → `map.v_*_geojson` 뷰 재생성 → mapservice-rest가 뷰의 `geojson` 컬럼 select → 게이트웨이 → 프론트 `map-wfs.js`. 즉 WFS 레이어의 **뷰 정의 원본은 DB가 아니라 scheduler의 매퍼 XML**입니다.
@@ -35,8 +37,12 @@
 | AI | `fast-api-ai` · `C:\developer\workspace\fast-api-ai` | Python 3.12, FastAPI, py-eureka-client | `FAST-API-AI` (`APP_NAME: fast-api-ai`) | 그 저장소 `CLAUDE.md` |
 | DB | 개발 DB `sjlab` (MCP `sjlabDevDb`, 읽기 전용) | PostgreSQL 17.0 + PostGIS 3.4.3 | - | `docs/analysis/*.md` |
 | 배포 | `sj-lab-k8s-manifests` · `C:\developer\workspace\sj-lab-k8s-manifests` | 서비스별 Helm 차트, ArgoCD GitOps 소스 | - | 그 저장소 `CLAUDE.md` |
+| 현장조사 앱 | `infra-manage-app` · `C:\vscode_develop\infra-manage-app` | QField 포크(C++/QML, CMake+vcpkg). 기본 브랜치 `master` | - | 그 저장소 `CLAUDE.md` |
+| 수집 동기화 | `sj-qfieldsync` · `C:\vscode_develop\sj-qfieldsync` | 파이썬 단일 워커(30초 주기), QFieldCloud → PostGIS | - | 그 저장소 `CLAUDE.md` |
 
-**뷰와 생성 주체 (scheduler 매퍼 XML 기준)**: `map.v_convenience_store_geojson`, `v_bus_stop_info_geojson`, `v_cctv_info_geojson`, `v_pharmacy_info_geojson`, `v_hospital_info_geojson`, `v_government_office_geojson`, `v_fclt_info`, `v_fclt_info_geojson`. `qfield.facility_total_view`와 `public.g_sido/g_sgg/g_emd`는 scheduler가 만들지 않습니다(출처 미확인).
+**뷰와 생성 주체 (scheduler 매퍼 XML 기준)**: `map.v_convenience_store_geojson`, `v_bus_stop_info_geojson`, `v_cctv_info_geojson`, `v_pharmacy_info_geojson`, `v_hospital_info_geojson`, `v_government_office_geojson`, `v_fclt_info`, `v_fclt_info_geojson`. `qfield.facility_total_view`와 `public.g_sido/g_sgg/g_emd`는 scheduler가 만들지 않습니다.
+
+**시설물 데이터의 출처 (QField 계열)**: 현장조사 앱 `infra-manage-app`(QField 포크)으로 입력한 데이터가 QFieldCloud에 올라가고, `sj-qfieldsync` 워커가 30초 주기로 변경된 프로젝트만 감지해 GPKG를 내려받아 PostGIS `qfield` 스키마로 적재합니다. 프로젝트 테이블이 추가·삭제되면 같은 워커가 **`qfield.facility_total_view`(통합 뷰)를 재생성**합니다 — 즉 이 뷰의 정의 주체는 `sj-qfieldsync`입니다. 시설물 컬럼이 바뀌면 그 저장소부터 확인하세요.
 
 **설정 테이블 `qfield.facility_icon`**: 지도 시설물 아이콘(종류 판별 키워드·라벨·SVG 글리프·색상)을 담습니다. 생성·초기데이터 스크립트는 `db/qfield_facility_icon.sql`이며, **DDL 실행은 에이전트가 하지 않고 DB 권한이 있는 담당자가 직접 합니다**(프로젝트 규칙). 테이블이 없으면 API가 빈 배열을 돌려주고 프론트는 내장 기본 아이콘으로 동작하므로, 스크립트 실행 전에도 지도는 정상입니다. 아이콘을 추가·변경할 때는 프론트 코드가 아니라 이 테이블 행을 고칩니다.
 
@@ -112,6 +118,8 @@ git push → Jenkins(빌드 → 이미지 push: sj-lab-registry.kr.ncr.ntruss.co
   - `sj-lab-discoveryServer`: `target/`가 git에 추적되지만 편집 금지(그 저장소 훅이 막던 규칙). 설정은 `src/main/resources/`만 수정.
   - `sj-lab-scheduler`: 커밋 전 staged diff에 `password`/`secret`/`api_key`/`service_key` 등이 **새로 추가**됐는지 확인(그 저장소 `check-secrets.sh` 훅 규칙). 기존에 커밋된 키는 사용자와 상의 없이 로테이션·이전하지 않음. 로컬에서 띄우면 cron 배치가 실제 DB에 적재하므로 검증용 기동은 사용자 확인 후에.
   - `sj-lab-k8s-manifests`: 차트 수정 전 `git pull`(Jenkins 자동 커밋이 계속 쌓임), 수정 후 `helm lint <차트>`·`helm template <차트>` 확인. `image.tag`는 Jenkins 관리 값이므로 임의 변경 금지. 네임스페이스·리소스 제한 등은 같은 차트의 기존 패턴을 따를 것.
+  - `sj-qfieldsync`: QFieldCloud 메타 DB(`QFC_DB`)는 읽기 위주, 적재 대상은 PostGIS `qfield` 스키마로 서로 다른 두 DB를 다룹니다. 문법 확인은 `python -m py_compile qfield_data_sync.py`. **로컬에서 워커를 돌리면 실제 DB에 적재되므로 사용자 확인 후에** 실행할 것.
+  - `infra-manage-app`: 업스트림 QField 포크라 **커스텀 변경은 최소 지점에 집중**하고 업스트림 구조를 유지할 것. 기본 브랜치가 `master`(다른 저장소는 `main`)이고, CMake+vcpkg 전체 빌드는 수 시간이 걸리므로 빌드 전에 기존 빌드 디렉터리와 대상 플랫폼을 확인할 것.
   - `sj-lab-hub`: 기능 카드는 `src/App.js` 최상단 `features` 배열 하나가 단일 소스. 스타일은 파일 하단의 인라인 `xxxStyle` 객체 컨벤션을 유지하고, 검증은 `npm start`(3000) 또는 `npm run build`로 할 것.
   - `fast-api-ai`: `.py` 수정 후 `python -m py_compile <파일>`로 문법 확인(그 저장소 훅 규칙). `core/config.py`의 `INSTANCE_IP` 고정(127.0.0.1)은 의도된 것이므로 되돌리지 않음.
   - 각 저장소의 리뷰 체크리스트는 `<저장소>/.claude/agents/reviewer.md`에 있습니다. 이 세션의 `reviewer` 에이전트는 `mapservice-rest` 전용이므로, 다른 저장소 변경은 그 체크리스트 파일을 읽고 확인합니다.
