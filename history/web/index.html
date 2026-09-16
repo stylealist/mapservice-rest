@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>sj-lab 변경 이력</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f6f7f9;
+    --card: #ffffff;
+    --text: #1b1f24;
+    --muted: #5b6673;
+    --line: #e2e6ea;
+    --accent: #1f6feb;
+    --accent-soft: #e8f0fe;
+    --warn-bg: #fff6e6;
+    --warn-line: #f0c674;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14171a;
+      --card: #1c2025;
+      --text: #e6e9ec;
+      --muted: #9aa5b1;
+      --line: #2c3238;
+      --accent: #4c8dff;
+      --accent-soft: #1d2a3d;
+      --warn-bg: #2b2415;
+      --warn-line: #7a6222;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 0 16px 64px;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.7 "Malgun Gothic", "맑은 고딕", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  header { padding: 40px 0 24px; border-bottom: 1px solid var(--line); margin-bottom: 28px; }
+  h1 { margin: 0 0 8px; font-size: 26px; letter-spacing: -0.02em; }
+  .sub { color: var(--muted); margin: 0; }
+  h2 { font-size: 18px; margin: 36px 0 12px; }
+  section { margin-bottom: 8px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+  }
+  .ver-head { display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline; margin-bottom: 6px; }
+  .tag {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 999px;
+    padding: 2px 11px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .ver-title { font-size: 17px; font-weight: 700; }
+  .date { color: var(--muted); font-size: 13px; }
+  ul { margin: 10px 0 0; padding-left: 20px; }
+  li { margin-bottom: 4px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; white-space: nowrap; }
+  code {
+    background: var(--accent-soft);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-family: Consolas, "D2Coding", monospace;
+    font-size: 13px;
+  }
+  a { color: var(--accent); }
+  .table-scroll { overflow-x: auto; }
+  .note { background: var(--warn-bg); border: 1px solid var(--warn-line); border-radius: 8px; padding: 14px 18px; }
+  footer { margin-top: 40px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>sj-lab 변경 이력</h1>
+    <p class="sub">총괄 허브 <code>mapservice-rest</code> 기준 · 최종 갱신 2026-09-16</p>
+  </header>
+
+  <section>
+    <h2>접속 URL</h2>
+    <div class="card table-scroll">
+      <table>
+        <thead><tr><th>대상</th><th>URL</th><th>비고</th></tr></thead>
+        <tbody>
+          <tr><td><b>공유 웹사이트(발행)</b></td><td><a href="https://claude.ai/artifact/HhEYu2UmxSko5h8uef7hB9">https://claude.ai/artifact/HhEYu2UmxSko5h8uef7hB9</a></td><td>버전 전환기로 v1.0~ 전체 열람. 이 페이지보다 자세함</td></tr>
+          <tr><td>지도 프론트엔드</td><td><a href="http://localhost:4000">http://localhost:4000</a></td><td>로컬 스택 기동 후</td></tr>
+          <tr><td>API Gateway</td><td><a href="http://localhost:8100/map/admin-area/sido">http://localhost:8100/map/admin-area/sido</a></td><td>게이트웨이 경유 API 확인</td></tr>
+          <tr><td>Eureka 대시보드</td><td><a href="http://localhost:8761">http://localhost:8761</a></td><td>서비스 등록 상태</td></tr>
+          <tr><td>이 페이지(정적 서버)</td><td><a href="http://localhost:4100">http://localhost:4100</a></td><td><code>python -m http.server 4100 --directory history/web</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note">
+      로컬 스택 기동: <code>powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</code> ·
+      중지: <code>... local-stack.ps1 stop</code> · 상태: <code>... local-stack.ps1 status</code>
+    </div>
+  </section>
+
+  <section>
+    <h2>버전 이력</h2>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v1.7</span>
+        <span class="ver-title">아이콘 설정 테이블 생성 스크립트 실행</span>
+        <span class="date">2026-09-16</span>
+      </div>
+      <ul>
+        <li>사용자 지시로 <code>db/qfield_facility_icon.sql</code>을 <code>sjlab</code> DB에 실행 — 테이블 생성 + <b>7건 적재</b></li>
+        <li>규칙 예외 절차를 <code>CLAUDE.md</code>에 명시 (스크립트로 남기고 → 대상 DB·계정 밝히고 → history에 기록)</li>
+        <li>검증: API 200·7건, 콘솔 로그 확인, 오류 0건. 강당 754·주차 741·기본 483·체육 245·충전 107·식당 96·전시 48</li>
+      </ul>
+      <p><a href="../history_v1.7.md">history_v1.7.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v1.6</span>
+        <span class="ver-title">시설물 아이콘 설정을 DB(qfield 스키마)로 이관</span>
+        <span class="date">2026-09-16</span>
+      </div>
+      <ul>
+        <li><b><code>qfield.facility_icon</code></b> 테이블 설계 — 종류·키워드·SVG 글리프·색상·우선순위·기본아이콘 플래그. 생성 스크립트 <code>db/qfield_facility_icon.sql</code>(담당자 실행 필요)</li>
+        <li>백엔드 <code>GET /map/qfield/facility-icons</code> 추가 — 캐시 1시간, 테이블이 없으면 빈 배열</li>
+        <li>프론트는 초기화 때 설정을 불러와 적용하고, 실패하면 내장 대체값으로 계속 동작</li>
+        <li>아이콘 추가·변경이 <b>코드 배포 없이 DB 행 수정</b>으로 가능해짐</li>
+      </ul>
+      <p><a href="../history_v1.6.md">history_v1.6.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v1.5</span>
+        <span class="ver-title">시설물 상세 팝업을 아이콘 체계에 맞게 정리</span>
+        <span class="date">2026-09-16</span>
+      </div>
+      <ul>
+        <li>팝업 헤더에 지도 핀과 <b>같은 SVG 아이콘</b>과 종류·보수필요·상태 배지 추가</li>
+        <li>헤더에서 보여주는 필드는 본문 목록에서 제외해 중복 제거(<code>HEADER_FIELD_KEYS</code>)</li>
+        <li>배지 색을 핀 색과 통일 — 종류 파랑, 보수 필요 주황</li>
+        <li><b>팝업 헤더가 화면 위로 잘리던 문제 수정</b> — <code>autoPan</code> + 내용 렌더 후 <code>setPosition()</code> 재호출</li>
+      </ul>
+      <p><a href="../history_v1.5.md">history_v1.5.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v1.4</span>
+        <span class="ver-title">시설물 지도 아이콘을 시설 종류에 맞게 교체</span>
+        <span class="date">2026-09-16</span>
+      </div>
+      <ul>
+        <li>시설물 레이어가 쓰던 편의시설(상점) PNG 아이콘을 <b>SVG data URI 핀</b>으로 교체 — 이미지 파일 추가 없음</li>
+        <li>시설물명 키워드로 종류 판별 — 주차장(P), 전기차 충전소(번개), 강당·강의실·회의실(스크린), 구내식당·카페(컵), 체육시설(공), 전시시설(액자), 그 외 기관 건물</li>
+        <li><code>repair_required_yn = 'Y'</code>이면 핀 색을 주황으로 바꿔 보수 필요 시설을 구분</li>
+        <li>스타일 캐시로 피처 2,474건 렌더링 시 스타일 재생성 방지. Chrome 확인 결과 콘솔 오류 0건</li>
+      </ul>
+      <p><a href="../history_v1.4.md">history_v1.4.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v1.3</span>
+        <span class="ver-title">변경 이력 공유 웹사이트 발행</span>
+        <span class="date">2026-09-16</span>
+      </div>
+      <ul>
+        <li>로컬 파일로만 보던 이력을 링크 공유가 가능한 페이지로 발행 (버전 전환기 + 버전별 패널)</li>
+        <li>각 패널에 실행한 프롬프트 원문과 변경 결과물, 검증 결과를 함께 수록</li>
+      </ul>
+      <p><a href="../history_v1.3.md">history_v1.3.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v1.2</span>
+        <span class="ver-title">작업 규칙 추가 및 history/공유 웹사이트 체계 도입</span>
+        <span class="date">2026-09-16</span>
+      </div>
+      <ul>
+        <li><b>CLAUDE.md</b>에 작업 규칙 추가 — 작업 범위(문서에 명시된 저장소만), DB 읽기 전용(DDL/DCL/DML 금지), 파일 삭제 대신 <code>trash/&lt;날짜&gt;/</code>로 이동, 자동 push 금지</li>
+        <li>파일을 변경한 작업마다 <code>history/history_v&lt;major&gt;.&lt;minor&gt;.md</code> 작성 규칙 신설 (조회·질문만 한 턴은 기록하지 않음)</li>
+        <li>팀 공유용 정적 웹사이트 <code>history/web/index.html</code> 신설 — history 갱신 시 함께 갱신</li>
+      </ul>
+      <p><a href="../history_v1.2.md">history_v1.2.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v1.1</span>
+        <span class="ver-title">sj-lab 멀티 저장소 총괄 환경 구성</span>
+        <span class="date">2026-09-15 ~ 09-16</span>
+      </div>
+      <ul>
+        <li><b>docs/system-architecture.md</b> 신설 — DB → 백엔드 → Eureka → 게이트웨이 → 프론트 전체 구조, API 계약 표(11개 엔드포인트), 저장소를 넘나드는 변경 체크리스트</li>
+        <li><b>docs/dev-environment.md</b> 보강 — 저장소 경로·포트 표, 기동 순서, 폴더 신뢰 등록 위치, Orca 프로젝트 등록 방법</li>
+        <li><b>scripts/local-stack.ps1</b> 신설 — IntelliJ 없이 Eureka·mapservice-rest·게이트웨이·프론트를 한 번에 기동/중지/상태확인</li>
+        <li>게이트웨이·디스커버리·scheduler·fast-api-ai 저장소의 CLAUDE.md에 "통합 허브" 안내 추가</li>
+        <li>여섯 저장소를 Claude Code·Antigravity·Gemini CLI 신뢰 목록과 Orca 프로젝트 목록에 등록</li>
+        <li>검증: Eureka 등록(APIGATEWAY-SERVICE, MAPSERVICE-REST) 확인, 백엔드 API 12종 호출 정상(200/404/400)</li>
+      </ul>
+      <p><a href="../history_v1.1.md">history_v1.1.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v1.0</span>
+        <span class="ver-title">왼쪽 패널 시설물 탭 (QField 시설물 데이터 표출)</span>
+        <span class="date">2026-09-15 이전 · 소급 기록</span>
+      </div>
+      <ul>
+        <li><b>백엔드 신규 5파일</b> — <code>QfieldFacilityController/Service/ServiceImpl/Mapper</code> + <code>qfield-facility.xml</code>. DB 뷰 없이 <code>json_build_object</code>·<code>ST_AsGeoJSON</code>으로 GeoJSON을 직접 조립, 400/404 명시</li>
+        <li><b>프론트 신규 모듈</b> — <code>map-facility.js</code>(755줄). 행정구역 시·도 → 시·군·구 → 읍·면·동 연쇄 검색으로 목록·지도 동시 표출, 항목 선택 시 지도 이동 + 팝업 상세</li>
+        <li><b>UI</b> — <code>index.html</code>에 시설물 탭 추가(기본 활성 탭), <code>layer-panel.css</code> +294줄, 탭 전환 시 패널 제목 변경</li>
+        <li>설계: 레이어 <code>zIndex 1010</code>, <code>declutter:false</code>로 목록·지도 건수 일치, <code>AbortController</code>로 요청 경쟁 방지, <code>DocumentFragment</code>+<code>textContent</code>로 2,474건 렌더링</li>
+        <li>검증: 시설물 200(2,474건/1.5초), 행정구역 3종 200(50~110ms), 404·400 정상. 브라우저 전체 동작 확인은 미완</li>
+        <li>주의: 백엔드·프론트 모두 <b>아직 커밋되지 않은 작업 트리 변경</b></li>
+      </ul>
+      <p><a href="../history_v1.0.md">history_v1.0.md 원문 보기</a></p>
+    </div>
+  </section>
+
+  <section>
+    <h2>미해결 과제</h2>
+    <div class="card">
+      <ul>
+        <li><b>WFS 응답 과대</b> — 버스정류장 86MB/59초(20만 건), 병원 59MB/40초(6.4만 건). 전체 데이터를 한 번에 내려주는 구조라 개선 검토 필요</li>
+        <li><b>프론트 디버그 진입점 버그</b> — <code>window.mapInstance</code>가 항상 <code>undefined</code>(<code>map-core.js:154</code>, <code>map.js:104</code>). <code>window.getMap()</code>은 정상</li>
+        <li><b>Chrome 전체 기능 검증 미완</b> — 게이트웨이 경유 시설물 필터·WFS 레이어 6종 토글 확인 예정</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>저장소 구성</h2>
+    <div class="card table-scroll">
+      <table>
+        <thead><tr><th>저장소</th><th>역할</th><th>로컬 경로</th></tr></thead>
+        <tbody>
+          <tr><td>mapservice-rest</td><td>지도/GIS GeoJSON API (총괄 허브)</td><td><code>C:\developer\workspace\mapservice-rest</code></td></tr>
+          <tr><td>sj-lab-apigateway</td><td>Spring Cloud Gateway (라우팅·CORS)</td><td><code>C:\developer\workspace\sj-lab-apigateway</code></td></tr>
+          <tr><td>sj-lab-discoveryServer</td><td>Eureka 서비스 레지스트리</td><td><code>C:\developer\workspace\sj-lab-discoveryServer</code></td></tr>
+          <tr><td>sj-lab-scheduler</td><td>공공 API 수집 배치 → DB 적재·뷰 생성</td><td><code>C:\developer\workspace\sj-lab-scheduler</code></td></tr>
+          <tr><td>fast-api-ai</td><td>FastAPI 서비스 (AI/RAG 예정)</td><td><code>C:\developer\workspace\fast-api-ai</code></td></tr>
+          <tr><td>sj-lab-mapservice</td><td>지도 프론트엔드 (정적 SPA)</td><td><code>C:\vscode_develop\sj-lab-mapservice</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    이 페이지는 <code>history/web/index.html</code> 단일 파일입니다. 새 버전을 추가할 때 history 문서와 함께 갱신합니다.
+    비밀번호·토큰·DB 호스트 등 민감 정보는 기록하지 않습니다.
+  </footer>
+</div>
+</body>
+</html>

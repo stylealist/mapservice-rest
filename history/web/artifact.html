@@ -1,0 +1,1152 @@
+<title>sj-lab 작업 로그</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+
+<style>
+  :root {
+    --ground:   #EEF1F5;
+    --surface:  #FFFFFF;
+    --sunken:   #E3E8EF;
+    --ink:      #11202E;
+    --muted:    #566575;
+    --faint:    #8593A3;
+    --line:     #CFD8E2;
+    --line-soft:#E1E7EE;
+    --accent:   #1F5FA8;
+    --accent-w: #DDE9F6;
+    --warn:     #A8571C;
+    --warn-w:   #F4E5D6;
+    --ok:       #1B6B4F;
+
+    --f-display: "Noto Serif KR", "Nanum Myeongjo", Georgia, serif;
+    --f-body: "IBM Plex Sans KR", "Malgun Gothic", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --f-mono: "JetBrains Mono", "D2Coding", Consolas, monospace;
+
+    --gut: clamp(1rem, 4vw, 3rem);
+    --col: 72rem;
+  }
+
+  :root:not([data-theme="light"]) { color-scheme: light dark; }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:   #0E141B;
+      --surface:  #17202A;
+      --sunken:   #121A22;
+      --ink:      #E3E9EF;
+      --muted:    #9BA9B8;
+      --faint:    #6D7C8B;
+      --line:     #29343F;
+      --line-soft:#212B34;
+      --accent:   #6BA6E8;
+      --accent-w: #182B3F;
+      --warn:     #D89361;
+      --warn-w:   #31241A;
+      --ok:       #5FBF97;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:   #0E141B;
+    --surface:  #17202A;
+    --sunken:   #121A22;
+    --ink:      #E3E9EF;
+    --muted:    #9BA9B8;
+    --faint:    #6D7C8B;
+    --line:     #29343F;
+    --line-soft:#212B34;
+    --accent:   #6BA6E8;
+    --accent-w: #182B3F;
+    --warn:     #D89361;
+    --warn-w:   #31241A;
+    --ok:       #5FBF97;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 16px;
+    line-height: 1.68;
+    word-break: keep-all;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: var(--col); margin: 0 auto; padding-inline: var(--gut); }
+
+  /* ---------- 버전 전환기 ---------- */
+
+  .vswitch {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 50;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .vswitch-inner { max-width: var(--col); margin: 0 auto; padding: .5rem var(--gut) .6rem; }
+
+  .vswitch-top { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
+
+  .vswitch-label {
+    font-family: var(--f-mono);
+    font-size: .68rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .vstep { margin-left: auto; display: flex; align-items: center; gap: .35rem; }
+  .vnow { font-family: var(--f-mono); font-size: .72rem; color: var(--faint); margin-right: .25rem; }
+
+  .vstep button {
+    width: 1.9rem; height: 1.9rem;
+    font-size: 1.05rem; line-height: 1;
+    cursor: pointer; border-radius: 3px;
+    border: 1px solid var(--line);
+    background: transparent; color: var(--ink);
+  }
+  .vstep button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .vstep button:disabled { opacity: .35; cursor: default; }
+
+  .vgroup {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    gap: .4rem;
+    padding-top: .55rem;
+  }
+
+  .vchip {
+    font-family: var(--f-body);
+    text-align: left;
+    cursor: pointer;
+    min-width: 0;
+    display: flex; flex-direction: column; gap: .1rem;
+    padding: .4rem .65rem;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: transparent;
+    color: var(--ink);
+  }
+  .vchip:hover { border-color: var(--accent); }
+  .vchip .pv {
+    display: flex; align-items: center; gap: .35rem;
+    font-family: var(--f-mono);
+    font-size: .76rem; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+  }
+  .vchip .pt {
+    font-size: .78rem; line-height: 1.3;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .vchip[aria-current="true"] { background: var(--accent); border-color: var(--accent); }
+  .vchip[aria-current="true"] .pv, .vchip[aria-current="true"] .pt { color: #fff; }
+  :root[data-theme="dark"] .vchip[aria-current="true"] .pv,
+  :root[data-theme="dark"] .vchip[aria-current="true"] .pt { color: #0B1218; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .vchip[aria-current="true"] .pv,
+    :root:not([data-theme="light"]) .vchip[aria-current="true"] .pt { color: #0B1218; }
+  }
+  .vchip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--warn); flex-shrink: 0; }
+  .vchip:focus-visible, .vstep button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------- 머리말 ---------- */
+
+  .masthead {
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding-block: clamp(1.75rem, 4.5vw, 3rem) clamp(1.35rem, 3vw, 2rem);
+  }
+
+  .stamp {
+    display: flex; flex-wrap: wrap; align-items: baseline;
+    gap: .5rem 1.1rem;
+    font-family: var(--f-mono);
+    font-size: .74rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--faint);
+  }
+  .stamp .ver {
+    color: var(--accent); font-weight: 700;
+    border: 1px solid var(--accent); border-radius: 2px;
+    padding: .05rem .4rem; letter-spacing: .06em;
+  }
+
+  h1 {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: clamp(1.8rem, 4.6vw, 2.9rem);
+    line-height: 1.2;
+    letter-spacing: -.015em;
+    margin: 1rem 0 0;
+    text-wrap: balance;
+  }
+
+  .dek { max-width: 44rem; margin: .85rem 0 0; color: var(--muted); font-weight: 300; }
+
+  .facts {
+    margin-top: 1.8rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+    border-top: 1px solid var(--line);
+    border-left: 1px solid var(--line);
+    background: var(--line);
+    gap: .1rem;
+  }
+  .facts div {
+    background: var(--surface);
+    padding: .7rem .85rem .8rem;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .facts dt, .k {
+    font-family: var(--f-mono);
+    font-size: .67rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--faint); margin: 0 0 .2rem;
+  }
+  .facts dd { margin: 0; font-size: .93rem; font-weight: 500; }
+  .ok { color: var(--ok); font-weight: 600; }
+  .pending { color: var(--warn); font-weight: 600; }
+
+  /* ---------- 섹션 ---------- */
+
+  section { padding-block: clamp(2.25rem, 5vw, 3.4rem); }
+  section + section { border-top: 1px solid var(--line-soft); }
+  .band { background: var(--surface); border-block: 1px solid var(--line); }
+  .band + section { border-top: 0; }
+
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: .7rem; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 .5rem;
+  }
+
+  h2 {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: clamp(1.35rem, 3vw, 1.85rem);
+    line-height: 1.3; margin: 0 0 .5rem;
+    text-wrap: balance;
+  }
+  h3 { font-family: var(--f-body); font-weight: 600; font-size: 1rem; margin: 0 0 .35rem; }
+  .lede { max-width: 44rem; color: var(--muted); font-weight: 300; margin: 0 0 1.6rem; }
+  p { margin: 0 0 1rem; }
+  p:last-child { margin-bottom: 0; }
+
+  code {
+    font-family: var(--f-mono);
+    font-size: .86em;
+    background: var(--sunken);
+    padding: .06rem .3rem;
+    border-radius: 2px;
+  }
+
+  /* ---------- 프롬프트 ---------- */
+
+  .prompt {
+    background: var(--sunken);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    padding: .9rem 1.05rem;
+    overflow-x: auto;
+    margin: 0;
+    font-family: var(--f-mono);
+    font-size: .8rem;
+    line-height: 1.75;
+    color: var(--ink);
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .prompt + .prompt { margin-top: .5rem; }
+  .promptnote { font-size: .87rem; color: var(--muted); margin: .8rem 0 0; }
+
+  /* ---------- 표 ---------- */
+
+  .tbl { overflow-x: auto; border: 1px solid var(--line); background: var(--surface); }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th, td { text-align: left; padding: .6rem .85rem; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  thead th {
+    background: var(--sunken);
+    font-family: var(--f-mono);
+    font-size: .67rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--faint); font-weight: 500; white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .tag-new, .tag-mod {
+    font-family: var(--f-mono); font-size: .64rem; letter-spacing: .08em; text-transform: uppercase;
+    padding: .1rem .35rem; border-radius: 2px; white-space: nowrap;
+  }
+  .tag-new { background: var(--accent-w); color: var(--accent); }
+  .tag-mod { background: var(--sunken); color: var(--muted); }
+
+  /* ---------- 목록 ---------- */
+
+  .notes { margin: 0; padding: 0; list-style: none; display: grid; gap: .65rem; }
+  .notes li { position: relative; padding-left: 1rem; color: var(--muted); font-size: .93rem; }
+  .notes li::before {
+    content: ""; position: absolute; left: 0; top: .72em;
+    width: 6px; height: 1px; background: var(--accent);
+  }
+  .notes li b { color: var(--ink); font-weight: 600; }
+
+  .grid2 { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  @media (min-width: 52rem) { .grid2 { grid-template-columns: 1fr 1fr; } }
+  .cell { background: var(--surface); padding: 1.1rem 1.15rem 1.25rem; }
+  .cell.caution { border-left: 3px solid var(--warn); }
+  .cell h3 { display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; }
+  .badge {
+    font-family: var(--f-mono); font-size: .63rem; letter-spacing: .1em; text-transform: uppercase;
+    padding: .1rem .4rem; border-radius: 2px;
+  }
+  .badge.pass { background: var(--accent-w); color: var(--accent); }
+  .badge.skip { background: var(--warn-w); color: var(--warn); }
+
+  /* ---------- 흐름도 ---------- */
+
+  .flow {
+    display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line);
+    font-size: .9rem;
+  }
+  .frow {
+    background: var(--surface);
+    display: grid; grid-template-columns: 7.5rem minmax(0, 1fr);
+    gap: 0 1rem; padding: .75rem 1.05rem; align-items: baseline;
+  }
+  .frow .fk {
+    font-family: var(--f-mono); font-size: .72rem; letter-spacing: .06em;
+    color: var(--accent); text-transform: uppercase;
+  }
+  .frow .fv { color: var(--muted); min-width: 0; }
+  .frow .fv b { color: var(--ink); font-weight: 600; }
+  @media (max-width: 40rem) {
+    .frow { grid-template-columns: 1fr; gap: .15rem; }
+  }
+
+  /* ---------- 링크 ---------- */
+
+  a { color: var(--accent); }
+  .links { display: grid; gap: .45rem; margin: 0; padding: 0; list-style: none; }
+  .links li { display: flex; flex-wrap: wrap; gap: .25rem .7rem; align-items: baseline; font-size: .9rem; }
+  .links li em {
+    font-style: normal; font-family: var(--f-mono);
+    font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--faint);
+    min-width: 8.5rem;
+  }
+  .links li span.url { font-family: var(--f-mono); font-size: .82rem; word-break: break-all; }
+
+  footer {
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+    padding-block: 1.75rem 2.25rem;
+  }
+  .colophon { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--line-soft); font-size: .82rem; color: var(--faint); }
+
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<nav class="vswitch" aria-label="작업 버전">
+  <div class="vswitch-inner">
+    <div class="vswitch-top">
+      <span class="vswitch-label">sj-lab 작업 로그</span>
+      <div class="vstep">
+        <span class="vnow" aria-live="polite"></span>
+        <button type="button" class="vstep-prev" aria-label="이전 버전">&lsaquo;</button>
+        <button type="button" class="vstep-next" aria-label="다음 버전">&rsaquo;</button>
+      </div>
+    </div>
+    <div class="vgroup" role="tablist" aria-label="버전 목록">
+      <button type="button" class="vchip" role="tab" data-ver="1.0" aria-controls="pane-v1.0" title="왼쪽 패널 시설물 탭 — QField 시설물 데이터 표출"><span class="pv">v1.0</span><span class="pt">시설물 탭 데이터 표출</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.1" aria-controls="pane-v1.1" title="sj-lab 멀티 저장소 총괄 환경 구성"><span class="pv">v1.1</span><span class="pt">멀티 저장소 총괄 환경</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.2" aria-controls="pane-v1.2" title="작업 규칙 추가 및 history 체계 도입"><span class="pv">v1.2</span><span class="pt">작업 규칙 · history 체계</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.3" aria-controls="pane-v1.3" title="변경 이력 공유 웹사이트 발행"><span class="pv">v1.3</span><span class="pt">공유 웹사이트 발행</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.4" aria-controls="pane-v1.4" title="시설물 지도 아이콘을 시설 종류에 맞게 교체"><span class="pv">v1.4</span><span class="pt">시설물 아이콘 교체</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.5" aria-controls="pane-v1.5" title="시설물 상세 팝업을 아이콘 체계에 맞게 정리"><span class="pv">v1.5</span><span class="pt">상세 팝업 정리</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.6" aria-controls="pane-v1.6" title="시설물 아이콘 설정을 DB(qfield 스키마)로 이관"><span class="pv">v1.6</span><span class="pt">아이콘 설정 DB 이관</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.7" aria-controls="pane-v1.7" title="아이콘 설정 테이블 생성 스크립트 실행"><span class="pv">v1.7<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">설정 테이블 생성 실행</span></button>
+    </div>
+  </div>
+</nav>
+
+<!-- ===================== v1.0 ===================== -->
+<div class="vpane" data-ver="1.0" id="pane-v1.0" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.0</span>
+      <span>2026-09-15 이전 · 소급 기록</span>
+      <span>mapservice-rest · sj-lab-mapservice</span>
+    </div>
+    <h1>왼쪽 패널 시설물 탭<br>QField 시설물 데이터 표출</h1>
+    <p class="dek">
+      지도 왼쪽 레이어 패널에 시설물 탭을 만들고, 시·도 → 시·군·구 → 읍·면·동으로 좁혀가며
+      QField 시설물을 목록과 지도에 함께 표출합니다. 목록 항목을 고르면 지도가 이동하고 팝업으로 상세를 보여줍니다.
+    </p>
+    <dl class="facts">
+      <div><dt>백엔드 신규</dt><dd>5개 파일 / 304줄</dd></div>
+      <div><dt>프론트 신규</dt><dd>map-facility.js 755줄</dd></div>
+      <div><dt>API</dt><dd>5개 엔드포인트</dd></div>
+      <div><dt>시설물</dt><dd>2,474건 / 1.5초</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">데이터 흐름</p>
+    <h2>DB에서 왼쪽 패널까지</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">DB</span><span class="fv"><b>qfield.facility_total_view</b> (EPSG:3857 점) + <b>public.g_sido / g_sgg / g_emd</b> (EPSG:4326 경계)</span></div>
+      <div class="frow"><span class="fk">백엔드</span><span class="fv">MyBatis XML에서 <code>json_build_object</code> · <code>ST_AsGeoJSON</code>으로 <b>DB가 GeoJSON을 직접 조립</b></span></div>
+      <div class="frow"><span class="fk">게이트웨이</span><span class="fv"><code>/map/**</code> → <code>lb://MAPSERVICE-REST</code> (경로를 벗기지 않고 그대로 전달)</span></div>
+      <div class="frow"><span class="fk">프론트</span><span class="fv"><b>map-facility.js</b>가 목록 DOM과 OpenLayers 레이어를 동시에 갱신</span></div>
+    </div>
+    <p class="promptnote">
+      읽기 전용 DB라 뷰를 새로 만들 수 없어, 기존 WFS 방식(뷰의 <code>geojson</code> 컬럼 select) 대신 XML SQL에서 직접 조립하는 방식을 택했습니다.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">변경 결과물</p>
+    <h2>백엔드 신규 5개 파일</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>파일</th><th>줄 수</th><th>역할</th></tr></thead>
+        <tbody>
+          <tr><td><code>QfieldFacilityController.java</code></td><td class="num">96</td><td>엔드포인트 5개. 코드 자릿수 검증 실패 400, 미존재 404, <code>Cache-Control</code> 60초·3600초</td></tr>
+          <tr><td><code>QfieldFacilityServiceImpl.java</code></td><td class="num">43</td><td>매퍼 위임</td></tr>
+          <tr><td><code>QfieldFacilityService.java</code></td><td class="num">8</td><td>서비스 인터페이스</td></tr>
+          <tr><td><code>QfieldFacilityMapper.java</code></td><td class="num">11</td><td>MyBatis 매퍼 인터페이스</td></tr>
+          <tr><td><code>qfield-facility.xml</code></td><td class="num">146</td><td>select 5개 — 시설물 목록·상세, 시도·시군구·읍면동</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 style="margin-top:2.25rem">프론트엔드</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>파일</th><th>구분</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td><code>js/modules/map/map-facility.js</code></td><td><span class="tag-new">신규 755줄</span></td><td>함수 14개 — 초기화, 연쇄 select 바인딩, 목록·상세 조회, 선택·팝업·스타일</td></tr>
+          <tr><td><code>index.html</code></td><td><span class="tag-mod">+46 / −2</span></td><td>시설물 탭 마크업(연쇄 select 3개, 건수, 로딩·빈결과·오류, 목록). 기본 탭을 길찾기 → 시설물로 변경</td></tr>
+          <tr><td><code>css/components/layer-panel.css</code></td><td><span class="tag-mod">+294</span></td><td><code>.facility-*</code> 클래스 일습 — select, 목록, 선택 상태, 배지, 스피너, 팝업</td></tr>
+          <tr><td><code>js/modules/map/map.js</code></td><td><span class="tag-mod">+35</span></td><td>모듈 import · 초기화 호출 · <code>window.*</code> 전역 등록 8개</td></tr>
+          <tr><td><code>js/modules/ui.js</code></td><td><span class="tag-mod">+22</span></td><td>탭 전환 시 패널 제목 매핑, 패널 접기 후 <code>updateSize()</code></td></tr>
+          <tr><td><code>docs/map-architecture.md</code> · <code>ui-conventions.md</code></td><td><span class="tag-mod">+20</span></td><td>시설물 레이어 규격과 탭 컨벤션 문서화</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">설계 결정</p>
+    <h2>왜 이렇게 만들었나</h2>
+    <ul class="notes">
+      <li><b>레이어 우선순위 zIndex 1010</b> — 기존 WFS·WMS 레이어(1000) 위에 표시해 시설물이 가려지지 않게 함</li>
+      <li><b><code>declutter: false</code></b> — 목록 건수와 지도 표출 건수를 일치시키기 위해 라벨 겹침 제거 기능을 끔</li>
+      <li><b><code>AbortController</code> + 요청 순번</b> — 행정구역을 빠르게 바꿀 때 이전 응답이 나중에 도착해 화면을 덮어쓰는 문제 차단. 취소로 생긴 <code>AbortError</code>는 오류 UI를 띄우지 않음</li>
+      <li><b>이벤트 ID 분리</b> — 클릭 <code>facility-click-layer</code>, 호버 <code>facility-pointer-move</code>로 기존 <code>wfs-general-click</code>과 분리하고, 피처를 벗어나면 커서를 즉시 복원</li>
+      <li><b>공간 쿼리</b> — <code>LEFT JOIN LATERAL</code> + <code>ST_Intersects</code>(LIMIT 1)로 <code>g_emd</code>의 GIST 인덱스를 태우고, 행정구역은 <code>emd_cd LIKE code || '%'</code> 접두어 한 조건으로 필터</li>
+      <li><b>extent 변환 최소화</b> — 폴리곤 전체가 아니라 <code>ST_Transform(ST_Envelope(geom), 3857)</code>로 BBOX만 변환</li>
+      <li><b>대량 렌더링</b> — 2,474건을 <code>DocumentFragment</code>로 한 번에 삽입, XSS 방지를 위해 <code>textContent</code> 사용</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>어디까지 확인했나</h2>
+    <div class="grid2">
+      <div class="cell">
+        <h3>백엔드 직접 호출 <span class="badge pass">확인</span></h3>
+        <div class="tbl" style="margin-top:.8rem">
+          <table>
+            <thead><tr><th>호출</th><th>결과</th></tr></thead>
+            <tbody>
+              <tr><td><code>/map/qfield/facilities</code></td><td class="num">200 · 2,474건 · 1.5초</td></tr>
+              <tr><td><code>/map/admin-area/sido</code></td><td class="num">200 · 107ms</td></tr>
+              <tr><td><code>/map/admin-area/sgg?sidoCd=11</code></td><td class="num">200 · 48ms</td></tr>
+              <tr><td><code>/map/admin-area/emd?sggCd=11110</code></td><td class="num">200 · 47ms</td></tr>
+              <tr><td><code>/map/qfield/facilities/__none__</code></td><td class="num">404</td></tr>
+              <tr><td><code>/map/admin-area/sgg?sidoCd=abc</code></td><td class="num">400</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="cell caution">
+        <h3>브라우저 전체 동작 <span class="badge skip">미검증</span></h3>
+        <p>지도와 시설물 모듈 초기화까지는 Chrome에서 확인했으나, 게이트웨이를 거친 <b>목록 표출·행정구역 필터·팝업 동작</b>은 끝까지 확인하지 못했습니다.</p>
+        <p>두 저장소 모두 이 작업이 <b>커밋되지 않은 상태</b>입니다. 커밋할 때 백엔드 5개와 프론트 7개 파일을 함께 묶는 것이 좋습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.1 ===================== -->
+<div class="vpane" data-ver="1.1" id="pane-v1.1" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.1</span>
+      <span>2026-09-15 ~ 09-16</span>
+      <span>6개 저장소</span>
+    </div>
+    <h1>sj-lab 멀티 저장소<br>총괄 환경 구성</h1>
+    <p class="dek">
+      DB부터 프론트까지 한 세션에서 바라보고 작업하기 위해, 저장소 여섯 곳을 하나의 허브에 연결하고
+      전체 구조·API 계약·기동 방법을 문서로 고정했습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>연결 저장소</dt><dd>6개</dd></div>
+      <div><dt>신규 문서</dt><dd>2개</dd></div>
+      <div><dt>API 계약 표</dt><dd>11개 엔드포인트</dd></div>
+      <div><dt>로컬 스택</dt><dd class="ok">기동 성공</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청 7건</h2>
+    <pre class="prompt">/orchestration 현재 mapservice-rest 서버인데 관련있는 서버들을 설정하려고 하거든 msa 개발이라 서버에서는 apigateway서버인 C:\developer\workspace\sj-lab-apigateway, C:\developer\workspace\sj-lab-discoveryServer 네이밍 서버, 그리고 프론트인 C:\vscode_develop\sj-lab-mapservice 인데 .md 파일에 해당부분을 기입해서 db ~ 프론트까지 시스템 전체를 바라보고 바이브코딩을 하고싶어</pre>
+    <pre class="prompt">C:\developer\workspace\sj-lab-scheduler 스케쥴러와 C:\developer\workspace\fast-api-ai fast api로 추가했어 해당 경로도 추가후 이전에 작업했던 폴더를 포함해서 모든 폴더에 신뢰 확인도 진행해줘</pre>
+    <pre class="prompt">각 폴더들 프로젝트도 실행해서 왼쪽 프로젝트 목록에 나오도록 해줄수있어?</pre>
+    <pre class="prompt">apigateway, eureka 서버도 intellij에서 실행하지않고 수행되도록 해줘</pre>
+    <p class="promptnote">그 밖에 조회성 질문 3건(경로가 담긴 파일 확인, Chrome 검증 요청, 접속 주소 확인)이 있었습니다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">변경 결과물</p>
+    <h2>문서 · 스크립트 · 설정</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>파일</th><th>구분</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td><code>docs/system-architecture.md</code></td><td><span class="tag-new">신규</span></td><td>DB → 백엔드 → Eureka → 게이트웨이 → 프론트 구조도, 계층별 저장소 표, API 계약 표, 저장소를 넘나드는 변경 체크리스트</td></tr>
+          <tr><td><code>scripts/local-stack.ps1</code></td><td><span class="tag-new">신규</span></td><td>IntelliJ 없이 전체 스택을 기동·중지·상태확인 (<code>start</code> / <code>stop</code> / <code>status</code>)</td></tr>
+          <tr><td><code>docs/dev-environment.md</code></td><td><span class="tag-mod">수정</span></td><td>저장소 경로·포트 표 보강, 기동 순서, 폴더 신뢰 등록 위치, Orca 등록 방법</td></tr>
+          <tr><td><code>CLAUDE.md</code></td><td><span class="tag-mod">수정</span></td><td>구조 문서 로드, 다른 저장소 수정 전 해당 CLAUDE.md를 먼저 읽는 규칙</td></tr>
+          <tr><td><code>.claude/settings.local.json</code></td><td><span class="tag-mod">수정</span></td><td><code>additionalDirectories</code>에 5개 저장소 등록(로컬 전용)</td></tr>
+          <tr><td>게이트웨이·디스커버리·scheduler·fast-api-ai의 <code>CLAUDE.md</code></td><td><span class="tag-mod">수정</span></td><td>"통합 허브" 안내 섹션 추가</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="notes" style="margin-top:1.5rem">
+      <li><b>폴더 신뢰</b> — 여섯 저장소를 Claude Code·Antigravity CLI·Gemini CLI 세 곳의 신뢰 목록에 등록해 워커가 확인 창에서 멈추지 않게 함</li>
+      <li><b>Orca 프로젝트 목록</b> — <code>orca repo add</code>로 5개 저장소를 추가해 사이드바에 6개 표시</li>
+      <li><b>discoveryServer 빌드 주의</b> — <code>target/</code>이 git에 추적되므로 원본이 아닌 <code>.local-stack\build\</code> 복사본에서 빌드</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>로컬 스택과 API</h2>
+    <div class="grid2">
+      <div class="cell">
+        <h3>기동 <span class="badge pass">확인</span></h3>
+        <p>Eureka(8761) → mapservice-rest(랜덤 포트) → 게이트웨이(8100) → 프론트(4000) 순으로 기동에 성공했고,
+        Eureka 등록은 <code>APIGATEWAY-SERVICE(1)</code>, <code>MAPSERVICE-REST(1)</code>로 확인했습니다.</p>
+        <p>게이트웨이 경유 <code>/map/admin-area/sido</code> 호출도 200을 반환했습니다.</p>
+      </div>
+      <div class="cell caution">
+        <h3>발견한 문제 <span class="badge skip">미수정</span></h3>
+        <p><b>WFS 응답 과대</b> — 버스정류장 86MB·59초(20만 건), 병원 59MB·40초(6.4만 건), 약국 19MB·12초, 편의점 17MB·13초. 전체 데이터를 한 번에 내려주는 구조입니다.</p>
+        <p><b>디버그 진입점 버그</b> — <code>window.mapInstance</code>가 항상 <code>undefined</code>(<code>map-core.js:154</code>, <code>map.js:104</code>에서 지도 생성 전에 할당). <code>window.getMap()</code>은 정상입니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.2 ===================== -->
+<div class="vpane" data-ver="1.2" id="pane-v1.2" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.2</span>
+      <span>2026-09-16</span>
+      <span>mapservice-rest</span>
+    </div>
+    <h1>작업 규칙과<br>history 체계 도입</h1>
+    <p class="dek">
+      세션이 지켜야 할 규칙을 CLAUDE.md에 고정하고, 파일을 바꾼 작업마다 버전 문서를 남기는 체계를 만들었습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>추가 규칙</dt><dd>6개</dd></div>
+      <div><dt>신규 문서</dt><dd>history 3종</dd></div>
+      <div><dt>기록 기준</dt><dd>파일 변경 시</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>규칙 목록</h2>
+    <pre class="prompt">- 한글로 설명해줘
+- DB는 맘대로 DDL,DCL,DML등을 사용해서 수정하지말것
+- 파일을 삭제할경우에는 따로 폴더를 하나 만들어서 삭제한 파일들을 담을것
+- 자동으로 PUSH하지말것
+- 변경한 사항을 돌렸을때마다 history폴더에 history_v1.1 history_v1.2~~ 이런식으로 버전관리를해서 넣어주고 내용은 내가 실행한 프롬프트내용과 변경된 결과물을 작성해줘
+- 변경한 사항을 돌렸을때마다 history/web폴더에 history_v1.1를 참고해서 팀간에 공유가 가능하도록 웹사이트로 만들어줘
+- C:\developer\workspace\disaster-rest-harness 경로에서안에서만 진행해줘
+- history.md 파일들에 접속 url 링크도 추가해줘</pre>
+    <p class="promptnote">
+      경로 규칙은 다른 프로젝트(<code>disaster-rest-harness</code>)의 것이라 확인을 거쳐
+      <b>"문서에 명시된 저장소에서만 진행"</b>으로 바꿔 적었습니다. history 위치는 허브 저장소 안, 기록 시점은 파일을 바꿨을 때만으로 정했습니다.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">적용된 규칙</p>
+    <h2>무엇을 어떻게 지키나</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>규칙</th><th>적용 방법</th></tr></thead>
+        <tbody>
+          <tr><td>작업 범위</td><td><code>docs/dev-environment.md</code> 저장소 표에 있는 6개 저장소만. 그 밖의 경로는 확인 후 표에 추가</td></tr>
+          <tr><td>DB</td><td>조회만. DDL·DCL·DML 임의 실행 금지, 필요한 SQL은 제안만. scheduler 기동도 확인 후</td></tr>
+          <tr><td>파일 삭제</td><td>지우지 않고 <code>trash/&lt;YYYY-MM-DD&gt;/</code>에 원래 경로 구조로 이동</td></tr>
+          <tr><td>git push</td><td>자동 push 금지. 커밋은 <code>git -C &lt;경로&gt;</code>로 저장소별</td></tr>
+          <tr><td>변경 기록</td><td>파일을 바꾼 작업마다 <code>history/history_v&lt;major&gt;.&lt;minor&gt;.md</code></td></tr>
+          <tr><td>공유 웹사이트</td><td>history 갱신 시 <code>history/web/</code> 페이지도 함께 갱신</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="notes" style="margin-top:1.5rem">
+      <li><b>history 문서 3종 신설</b> — <code>history_v1.0.md</code>(소급), <code>history_v1.1.md</code>, <code>history_v1.2.md</code></li>
+      <li><b>접속 URL 표</b> — 각 history 문서 맨 앞에 프론트·게이트웨이·Eureka·공유 페이지 주소를 표로 넣음</li>
+      <li><b><code>history/web/index.html</code> 신설</b> — 외부 CDN 없이 단일 HTML, 오프라인에서도 열림</li>
+    </ul>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.3 ===================== -->
+<div class="vpane" data-ver="1.3" id="pane-v1.3" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.3</span>
+      <span>2026-09-16</span>
+      <span>mapservice-rest</span>
+    </div>
+    <h1>변경 이력<br>공유 웹사이트 발행</h1>
+    <p class="dek">
+      로컬 파일로만 보던 변경 이력을 링크로 공유할 수 있는 페이지로 발행했습니다.
+      버전 전환기로 v1.0부터 현재까지를 한 페이지에서 넘겨 봅니다.
+    </p>
+    <dl class="facts">
+      <div><dt>수록 버전</dt><dd>4개 (v1.0 ~ v1.3)</dd></div>
+      <div><dt>구성</dt><dd>버전 전환기 + 패널</dd></div>
+      <div><dt>접근</dt><dd>링크 공유</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">이런식으로 웹사이트에서 변경내역을 볼 수 있으면 좋겠어
+https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식으로 해달라는거야</pre>
+    <p class="promptnote">
+      기존 <code>history/web/index.html</code>은 로컬 파일이라 팀원에게 링크로 공유할 수 없었습니다.
+      예시로 주신 페이지와 같은 <b>버전 전환기 + 버전별 패널</b> 구조로 다시 만들어 발행했습니다.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">구성</p>
+    <h2>페이지 구조</h2>
+    <ul class="notes">
+      <li><b>버전 전환기</b> — 상단에 고정되어 v1.0~v1.3을 오가며, 이전·다음 버튼과 최신 표시 점을 제공</li>
+      <li><b>버전별 패널</b> — 머리말(요약 수치) · 실행한 프롬프트 원문 · 변경 결과물 표 · 설계 결정 · 검증 결과</li>
+      <li><b>프롬프트 원문 보존</b> — 요청 문구를 그대로 실어 "무엇을 시켰고 무엇이 나왔는지"를 함께 봄</li>
+      <li><b>미해결 항목 표시</b> — 확인한 것과 확인하지 못한 것을 나누어 적어, 다음 사람이 이어받기 쉽게 함</li>
+      <li><b>테마 대응</b> — 보는 사람의 라이트·다크 설정에 맞춰 표시</li>
+    </ul>
+
+    <h2 style="margin-top:2.25rem">변경 결과물</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>파일</th><th>구분</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td><code>history/web/artifact.html</code></td><td><span class="tag-new">신규</span></td><td>발행되는 공유 페이지의 원본. 버전 전환기와 4개 버전 패널</td></tr>
+          <tr><td><code>history/web/index.html</code></td><td><span class="tag-mod">수정</span></td><td>맨 위에 공유 페이지 주소 안내 추가(오프라인용 요약 페이지로 유지)</td></tr>
+          <tr><td><code>history/history_v1.0~1.3.md</code></td><td><span class="tag-mod">수정</span></td><td>접속 URL 표에 공유 페이지 주소 추가</td></tr>
+          <tr><td><code>CLAUDE.md</code></td><td><span class="tag-mod">수정</span></td><td>history 갱신 시 발행 페이지도 함께 갱신하는 규칙 추가</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">다음 작업 후보</p>
+    <h2>아직 남은 것</h2>
+    <ul class="notes">
+      <li><b>Chrome 전체 기능 검증</b> — 게이트웨이를 거친 시설물 필터·WFS 레이어 6종 토글 동작 확인</li>
+      <li><b>WFS 대용량 응답 개선</b> — 버스정류장 86MB·병원 59MB. BBOX·줌 기반 필터링이나 압축 검토</li>
+      <li><b><code>window.mapInstance</code> 버그</b> — 수정 여부 결정 필요. 프론트 CLAUDE.md 안내 문구도 함께 정정</li>
+      <li><b>커밋</b> — 여섯 저장소의 변경이 모두 작업 트리에만 있음</li>
+    </ul>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.4 ===================== -->
+<div class="vpane" data-ver="1.4" id="pane-v1.4" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.4</span>
+      <span>2026-09-16</span>
+      <span>sj-lab-mapservice</span>
+    </div>
+    <h1>시설물 지도 아이콘을<br>시설 종류에 맞게 교체</h1>
+    <p class="dek">
+      시설물 레이어가 편의시설(상점) 아이콘을 그대로 쓰고 있어 지도에서 시설물이 상점처럼 보였습니다.
+      시설물명으로 종류를 판별해 주차장·충전소·강당·식당·체육시설에 맞는 아이콘을 그리도록 바꿨습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>바뀐 파일</dt><dd>프론트 2개</dd></div>
+      <div><dt>아이콘 종류</dt><dd>6종 + 기본</dd></div>
+      <div><dt>렌더링</dt><dd>2,474건 / 오류 0</dd></div>
+      <div><dt>이미지 파일</dt><dd class="ok">추가 없음 (SVG)</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">/orchestration 현재 시설물관리 웹사이트에 시설물에 대한 지도 아이콘이 상점 모양으로 되어있는데 시설물에 맞게 변경해줘</pre>
+    <p class="promptnote">
+      DB를 조회해 실제 시설물 구성을 먼저 확인했습니다 — 주차장 42, 강당 14, 카페 10, 구내식당 10,
+      전기차 충전소 8, 소형강의실 8, 테니스장·농구장 등 체육시설, 회의실, 전시시설.
+      기관 내 시설이라 상점 아이콘과 의미가 맞지 않았습니다.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">아이콘 구성</p>
+    <h2>시설물명으로 종류를 판별</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>종류</th><th>판별 키워드</th><th>글리프</th></tr></thead>
+        <tbody>
+          <tr><td>주차장</td><td><code>주차</code></td><td>P</td></tr>
+          <tr><td>전기차 충전소</td><td><code>충전</code></td><td>번개</td></tr>
+          <tr><td>강당 · 강의실 · 회의실</td><td><code>강당</code> <code>강의</code> <code>회의</code> <code>세미나</code> <code>교육</code></td><td>스크린 + 받침</td></tr>
+          <tr><td>구내식당 · 카페</td><td><code>식당</code> <code>카페</code> <code>급식</code> <code>매점</code></td><td>포크와 컵</td></tr>
+          <tr><td>체육시설</td><td><code>테니스</code> <code>농구</code> <code>족구</code> <code>운동</code> <code>체육</code> <code>구장</code></td><td>공</td></tr>
+          <tr><td>전시시설</td><td><code>전시</code> <code>홍보관</code> <code>박물</code></td><td>액자</td></tr>
+          <tr><td>그 외</td><td>—</td><td>기관 건물</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="notes" style="margin-top:1.5rem">
+      <li><b>보수 필요 구분</b> — <code>repair_required_yn === 'Y'</code>이면 핀 색을 파랑(<code>#2563eb</code>)에서 주황(<code>#d97706</code>)으로 바꿔 한눈에 보이게 함</li>
+      <li><b>선택 표시</b> — 기존과 같이 강조 링을 그리고 아이콘을 1.25배로 확대</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">설계 결정</p>
+    <h2>왜 SVG로 그렸나</h2>
+    <ul class="notes">
+      <li><b>이미지 파일을 추가하지 않음</b> — <code>buildFacilityIconUrl()</code>이 SVG data URI를 만들어 씁니다. 확대해도 선명하고, 색만 바꿔 재사용할 수 있으며, 저장소에 바이너리가 늘지 않습니다</li>
+      <li><b>스타일 캐시</b> — 종류·색·선택 상태 조합을 <code>facilityStyleCache</code>에 담아, 피처 2,474건을 그릴 때 <code>ol.style.Style</code>을 반복 생성하지 않습니다</li>
+      <li><b>색은 글리프에 적지 않음</b> — 글리프 안의 문자열 <code>COLOR</code>를 핀 색으로 치환하므로, 새 종류를 추가할 때 색 처리를 신경 쓰지 않아도 됩니다</li>
+      <li><b>확장 방법</b> — <code>FACILITY_ICON_TYPES</code>에 <code>{ type, keywords, glyph }</code> 한 줄을 추가하면 새 종류가 잡힙니다</li>
+    </ul>
+
+    <h2 style="margin-top:2.25rem">바뀐 파일</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>파일</th><th>구분</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td><code>js/modules/map/map-facility.js</code></td><td><span class="tag-mod">수정</span></td><td>상점 PNG → SVG 핀. 종류 판별·글리프·스타일 캐시 함수 추가</td></tr>
+          <tr><td><code>docs/map-architecture.md</code></td><td><span class="tag-mod">수정</span></td><td>시설물 레이어 아이콘 규격(판별·색상·캐시·확장 방법) 문서화</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>브라우저에서 확인</h2>
+    <div class="grid2">
+      <div class="cell">
+        <h3>렌더링 <span class="badge pass">확인</span></h3>
+        <p>로컬 스택을 띄우고 Chrome에서 <code>http://localhost:4000</code>을 열어 시설물 2,474건이 그려지는 것과 <b>콘솔 오류 0건</b>을 확인했습니다.</p>
+        <p>스타일 함수가 돌려준 아이콘을 집계해 주차장 741건이 P 아이콘으로 분류되는 것을 확인했고, 지도에서 P·스크린·공·번개·컵·건물 아이콘이 종류별로 표시되는 것을 눈으로 확인했습니다.</p>
+      </div>
+      <div class="cell caution">
+        <h3>범위 밖 <span class="badge skip">변경 없음</span></h3>
+        <p>백엔드는 손대지 않았습니다. 목록 API가 이미 <code>fclt_nm</code>과 <code>repair_required_yn</code>을 내려주고 있어 프론트에서만 처리했습니다.</p>
+        <p>오른쪽 사이드 탭의 "편의시설" 버튼 아이콘은 기존 WFS 레이어용이라 그대로 뒀습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.5 ===================== -->
+<div class="vpane" data-ver="1.5" id="pane-v1.5" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.5</span>
+      <span>2026-09-16</span>
+      <span>sj-lab-mapservice</span>
+    </div>
+    <h1>시설물 상세 팝업을<br>아이콘 체계에 맞게 정리</h1>
+    <p class="dek">
+      지도 핀은 종류별 아이콘으로 바뀌었는데 팝업은 그대로였습니다.
+      팝업 헤더에 같은 아이콘과 종류·상태 배지를 넣고, 중복 필드를 정리했으며, 팝업이 화면 위로 잘리던 문제도 고쳤습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>바뀐 파일</dt><dd>프론트 3개</dd></div>
+      <div><dt>헤더 배지</dt><dd>종류 · 보수필요 · 상태</dd></div>
+      <div><dt>함께 고친 결함</dt><dd class="pending">팝업 헤더 잘림</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">선택된 시설물 팝업도 아이콘에 맞게 정리해줘</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">변경 내용</p>
+    <h2>헤더를 지도와 같은 규칙으로</h2>
+    <ul class="notes">
+      <li><b>같은 SVG를 헤더 아이콘으로</b> — <code>renderFacilityPopupHeader()</code>가 지도 핀과 동일한 아이콘을 그려, 종류가 달라도 지도와 팝업이 항상 같은 그림을 보여줌</li>
+      <li><b>배지 줄 추가</b> — 종류(주차장·전기차 충전소·강당/강의실·구내식당/카페·체육시설·전시시설), 보수 필요, 상태</li>
+      <li><b>불러오는 중에도 헤더 표시</b> — 목록에 이미 있는 값으로 먼저 채워, 응답을 기다리는 동안에도 무엇을 열었는지 보임</li>
+      <li><b>중복 정리</b> — 헤더에서 보여주는 <code>fclt_nm</code>·<code>facility_condition</code>·<code>repair_required_yn</code>은 본문 목록에서 제외(<code>HEADER_FIELD_KEYS</code>). 단 <code>DETAIL_FIELD_CONFIG</code>에는 남겨 둬야 "그 밖의 항목"으로 새어 나오지 않음</li>
+    </ul>
+
+    <h2 style="margin-top:2.25rem">색 통일</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>항목</th><th>이전</th><th>이후</th></tr></thead>
+        <tbody>
+          <tr><td>보수 필요 배지</td><td class="cb">빨강 <code>#b91c1c</code></td><td>주황 <code>#b45309</code> — 핀 경고색과 통일</td></tr>
+          <tr><td>종류 배지</td><td>없음</td><td>파랑 <code>#1d4ed8</code> — 핀 기본색과 통일</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">함께 고친 결함</p>
+    <h2>팝업 헤더가 화면 위로 잘리던 문제</h2>
+    <p class="lede">
+      팝업은 시설물 위쪽으로 그려지는데, 화면 위쪽 시설물을 선택하면 헤더(아이콘·제목·배지)가 잘려 보이지 않았습니다. 검증 중에 발견했습니다.
+    </p>
+    <ul class="notes">
+      <li>오버레이에 <code>autoPan</code>(여백 20px, 250ms)을 켬</li>
+      <li><b>그것만으로는 부족</b> — 처음 위치를 잡는 시점에는 "불러오는 중" 상태라 팝업 높이가 작아, autoPan이 실제 높이를 모른 채 계산함</li>
+      <li><b>상세 내용을 그린 뒤 <code>setPosition(coordinate)</code>을 한 번 더 호출</b>해 확정된 높이로 다시 계산하도록 함</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>브라우저에서 확인</h2>
+    <div class="grid2">
+      <div class="cell">
+        <h3>팝업 <span class="badge pass">확인</span></h3>
+        <p>주차장 시설물(<code>동해병원 주차장</code>)을 선택해 헤더 아이콘·제목·<code>주차장</code> 배지가 표시되는 것을 확인했습니다. 본문에는 기관명·주소·행정구역·담당자가 남고 헤더와 겹치는 필드는 빠졌습니다.</p>
+        <p>선택된 핀의 스타일이 P 아이콘 + 1.25배 확대인 것도 확인했습니다. <b>콘솔 오류 0건.</b></p>
+      </div>
+      <div class="cell">
+        <h3>잘림 수정 <span class="badge pass">전후 비교</span></h3>
+        <p>수정 전 캡처에서는 팝업 본문만 보이고 헤더가 화면 밖으로 잘렸습니다. 수정 후 같은 시설물을 열었을 때 헤더부터 본문까지 전체가 보이는 것을 캡처로 확인했습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.6 ===================== -->
+<div class="vpane" data-ver="1.6" id="pane-v1.6" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.6</span>
+      <span>2026-09-16</span>
+      <span>mapservice-rest · sj-lab-mapservice</span>
+    </div>
+    <h1>시설물 아이콘 설정을<br>DB(qfield 스키마)로 이관</h1>
+    <p class="dek">
+      아이콘 종류·키워드·색·글리프가 프론트 코드에 박혀 있어, 종류를 하나 늘리려면 배포가 필요했습니다.
+      설정을 <code>qfield.facility_icon</code> 테이블로 옮겨 DB 행만 고치면 바뀌도록 했습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>신규 API</dt><dd>1개</dd></div>
+      <div><dt>바뀐 파일</dt><dd>백엔드 5 · 프론트 1</dd></div>
+      <div><dt>초기 데이터</dt><dd>아이콘 7종</dd></div>
+      <div><dt>DDL 실행</dt><dd class="pending">담당자 필요</dd></div>
+      <div><dt>스크립트 전 동작</dt><dd class="ok">기본 아이콘으로 정상</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">아이콘 관련을 모두 하드코딩하는건 좋은방법이 아닌거같아 db의 qfield 스키마에 db화 해서 관리해줄수있어?</pre>
+    <p class="promptnote">
+      프로젝트 규칙상 에이전트는 DDL을 실행하지 않습니다. 테이블 생성·초기 데이터 스크립트를
+      <code>db/qfield_facility_icon.sql</code>로 만들어 두었고, <b>DB 권한이 있는 담당자가 직접 실행</b>하면 적용됩니다.
+      실행 전에도 지도는 내장 기본 아이콘으로 정상 동작합니다.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">테이블</p>
+    <h2>qfield.facility_icon</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>컬럼</th><th>용도</th></tr></thead>
+        <tbody>
+          <tr><td><code>icon_type</code></td><td>아이콘 식별자 (parking, charger, hall, dining, sports, exhibition, default)</td></tr>
+          <tr><td><code>icon_label</code></td><td>팝업 배지에 표시할 종류 이름</td></tr>
+          <tr><td><code>keywords</code></td><td><code>text[]</code> — <code>fclt_nm</code>에 이 단어가 있으면 해당 아이콘 사용</td></tr>
+          <tr><td><code>glyph_svg</code></td><td>핀 안에 그릴 SVG 조각. 문자열 <code>COLOR</code>가 핀 색으로 치환됨</td></tr>
+          <tr><td><code>pin_color</code> / <code>warn_color</code></td><td>기본 핀 색 / 보수 필요 시 핀 색</td></tr>
+          <tr><td><code>sort_order</code></td><td>키워드 판별 우선순위</td></tr>
+          <tr><td><code>is_default</code></td><td>종류 미판별 시 쓰는 기본 아이콘 — 부분 유니크 인덱스로 한 건만 허용</td></tr>
+          <tr><td><code>use_yn</code></td><td><code>'n'</code>이면 사용하지 않음</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="promptnote">기존 <code>qfield.qfield_info</code>와 같은 명명 방식(스네이크 케이스, <code>use_yn</code>, <code>reg_date</code>/<code>update_at</code>)을 따랐습니다.</p>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">동작</p>
+    <h2>설정이 화면까지 오는 길</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">DB</span><span class="fv"><b>qfield.facility_icon</b> — 아이콘 7종(기본 포함)</span></div>
+      <div class="frow"><span class="fk">백엔드</span><span class="fv"><code>GET /map/qfield/facility-icons</code> — <code>json_agg</code>으로 배열 반환, 캐시 1시간</span></div>
+      <div class="frow"><span class="fk">프론트</span><span class="fv"><code>loadFacilityIconConfig()</code>가 초기화 때 불러와 설정 교체 → 스타일 캐시 비우고 다시 그림</span></div>
+      <div class="frow"><span class="fk">실패 시</span><span class="fv">내장 <code>FALLBACK_FACILITY_ICON_TYPES</code>로 계속 동작 — 지도가 멈추지 않음</span></div>
+    </div>
+    <ul class="notes" style="margin-top:1.5rem">
+      <li><b>아이콘 추가는 이제 DB 행 추가</b> — 코드 배포 없이 브라우저 새로고침으로 반영(API 캐시 1시간)</li>
+      <li><b>테이블이 없어도 200</b> — 서비스가 조회 실패를 경고 로그로 남기고 빈 배열을 돌려주므로, 스크립트 실행 전에도 화면이 깨지지 않음</li>
+      <li><b>대체값은 대체값으로만</b> — 프론트의 내장 배열은 DB 실패 시에만 쓰며, DB에 종류를 추가할 때 코드에 같이 넣지 않도록 문서에 명시</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>확인한 것과 발견한 것</h2>
+    <div class="grid2">
+      <div class="cell">
+        <h3>동작 <span class="badge pass">확인</span></h3>
+        <p>백엔드 재빌드·기동 후 신규 엔드포인트가 <b>200 + <code>[]</code></b>를 반환(테이블 미생성 상태). 로그에는 원인과 함께 경고 1줄만 남습니다.</p>
+        <p>게이트웨이 경유 4회 연속 200. Chrome에서 시설물 2,474건 렌더링, <b>콘솔 오류 0건</b>. 아이콘 분포는 주차 741 · 체육 245 · 충전 107 · 기본 483 · 그 외 898.</p>
+      </div>
+      <div class="cell caution">
+        <h3>운영 이슈 <span class="badge skip">기록</span></h3>
+        <p>백엔드만 재기동하니 Eureka에 죽은 인스턴스가 남아 <b>게이트웨이 요청의 절반이 500</b>이었습니다(리스 만료까지 1~3분).</p>
+        <p>죽은 인스턴스를 직접 해제해 해결했고, 대처법을 <code>docs/dev-environment.md</code>에 적었습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.7 ===================== -->
+<div class="vpane" data-ver="1.7" id="pane-v1.7" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.7</span>
+      <span>2026-09-16</span>
+      <span>DB sjlab · qfield 스키마</span>
+    </div>
+    <h1>아이콘 설정 테이블<br>생성 스크립트 실행</h1>
+    <p class="dek">
+      v1.6에서 만들어 둔 <code>db/qfield_facility_icon.sql</code>을 사용자 지시로 실행했습니다.
+      이제 지도 아이콘이 코드가 아니라 DB 설정으로 그려집니다.
+    </p>
+    <dl class="facts">
+      <div><dt>대상</dt><dd>sjlab · qfield</dd></div>
+      <div><dt>적재</dt><dd>아이콘 7종</dd></div>
+      <div><dt>API</dt><dd class="ok">200 · 7건</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">sql 실행해줘</pre>
+    <p class="promptnote">
+      프로젝트 규칙은 "DB는 조회만, DDL·DML은 제안만"입니다. 이번에는 <b>사용자가 특정 스크립트를 지목해 실행을 지시</b>했으므로 예외로 실행했습니다.
+      같은 상황을 위해 <code>CLAUDE.md</code>의 DB 규칙에 예외 절차(스크립트로 먼저 남기고 → 대상 DB·계정을 밝히고 → 결과를 history에 기록)를 명시했습니다.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">실행 내용</p>
+    <h2>무엇을 어디에</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">스크립트</span><span class="fv"><code>db/qfield_facility_icon.sql</code> — 테이블 생성 + 초기 데이터 UPSERT</span></div>
+      <div class="frow"><span class="fk">대상</span><span class="fv">백엔드 <code>application.yml</code>의 datasource(<b>sjlab</b>) — 이 DB에 있어야 API가 읽음</span></div>
+      <div class="frow"><span class="fk">방법</span><span class="fv"><code>psql</code>이 없어 Node <code>pg</code> 드라이버로 실행. 비밀번호는 설정 파일에서 읽어 쓰고 <b>출력하지 않음</b></span></div>
+      <div class="frow"><span class="fk">결과</span><span class="fv">테이블 생성 + <b>7건 적재</b>(기본 아이콘 1건 포함)</span></div>
+    </div>
+
+    <h2 style="margin-top:2.25rem">적재된 설정</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>icon_type</th><th>icon_label</th><th>키워드 수</th><th>sort_order</th><th>is_default</th></tr></thead>
+        <tbody>
+          <tr><td><code>parking</code></td><td>주차장</td><td class="num">1</td><td class="num">10</td><td>false</td></tr>
+          <tr><td><code>charger</code></td><td>전기차 충전소</td><td class="num">1</td><td class="num">20</td><td>false</td></tr>
+          <tr><td><code>hall</code></td><td>강당·강의실</td><td class="num">6</td><td class="num">30</td><td>false</td></tr>
+          <tr><td><code>dining</code></td><td>구내식당·카페</td><td class="num">4</td><td class="num">40</td><td>false</td></tr>
+          <tr><td><code>sports</code></td><td>체육시설</td><td class="num">7</td><td class="num">50</td><td>false</td></tr>
+          <tr><td><code>exhibition</code></td><td>전시시설</td><td class="num">3</td><td class="num">60</td><td>false</td></tr>
+          <tr><td><code>default</code></td><td>시설물</td><td class="num">0</td><td class="num">999</td><td><b>true</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>DB 설정이 화면까지</h2>
+    <div class="grid2">
+      <div class="cell">
+        <h3>적용 확인 <span class="badge pass">확인</span></h3>
+        <p>게이트웨이 경유 <code>GET /map/qfield/facility-icons</code>가 <b>200 · 7건</b>을 반환하고, Chrome 콘솔에 <code>시설물 아이콘 설정 7건을 DB에서 불러왔습니다</code> 로그가 남습니다(오류 0건).</p>
+        <p>아이콘 분포 — 강당 754 · 주차 741 · 기본 483 · 체육 245 · 충전 107 · 식당 96 · 전시 48 (합계 2,474). v1.6에서 "기타"로 묶이던 강당·식당·전시가 이제 각각 구분됩니다. 팝업 배지 라벨도 DB 값을 씁니다.</p>
+      </div>
+      <div class="cell caution">
+        <h3>중간에 겪은 문제 <span class="badge skip">해결</span></h3>
+        <p>설정 파일의 비밀번호가 <b>따옴표로 감싸여 있어</b> 따옴표까지 값으로 넘어가 인증에 실패했습니다(<code>password authentication failed</code>). 따옴표를 벗기고 재실행해 해결했으며, 값은 한 번도 출력하지 않았습니다.</p>
+      </div>
+    </div>
+    <ul class="notes" style="margin-top:1.5rem">
+      <li>앞으로 아이콘 추가·변경은 <b><code>qfield.facility_icon</code> 행 수정</b>으로 끝납니다</li>
+      <li>API 캐시가 1시간이라 즉시 반영이 필요하면 브라우저 강력 새로고침(Ctrl+F5)</li>
+    </ul>
+  </div>
+</section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p class="k">접속 URL</p>
+    <ul class="links">
+      <li><em>프론트엔드</em><span class="url">http://localhost:4000</span></li>
+      <li><em>API Gateway</em><span class="url">http://localhost:8100/map/admin-area/sido</span></li>
+      <li><em>Eureka</em><span class="url">http://localhost:8761</span></li>
+      <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.3.md</span></li>
+    </ul>
+    <p class="colophon">
+      총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 수행하지 않았습니다 ·
+      비밀번호·토큰·DB 호스트 등 민감 정보는 싣지 않습니다.
+    </p>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var chips = Array.prototype.slice.call(document.querySelectorAll('.vchip'));
+    var panes = Array.prototype.slice.call(document.querySelectorAll('.vpane'));
+    var now = document.querySelector('.vnow');
+    var prev = document.querySelector('.vstep-prev');
+    var next = document.querySelector('.vstep-next');
+    var index = chips.length - 1;
+
+    function show(i) {
+      index = Math.max(0, Math.min(chips.length - 1, i));
+      var ver = chips[index].getAttribute('data-ver');
+      chips.forEach(function (c) {
+        var on = c.getAttribute('data-ver') === ver;
+        c.setAttribute('aria-current', on ? 'true' : 'false');
+        c.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      panes.forEach(function (p) { p.hidden = p.getAttribute('data-ver') !== ver; });
+      now.textContent = 'v' + ver + ' · ' + (index + 1) + '/' + chips.length;
+      prev.disabled = index === 0;
+      next.disabled = index === chips.length - 1;
+    }
+
+    chips.forEach(function (c, i) {
+      c.addEventListener('click', function () { show(i); });
+    });
+    prev.addEventListener('click', function () { show(index - 1); });
+    next.addEventListener('click', function () { show(index + 1); });
+
+    show(chips.length - 1);
+  })();
+</script>
