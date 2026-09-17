@@ -1,4 +1,4 @@
-# sj-lab 시스템 전체 구조 (DB → 프론트엔드)
+﻿# sj-lab 시스템 전체 구조 (DB → 프론트엔드)
 
 이 저장소(`mapservice-rest`)에서 띄운 총괄 세션이 DB부터 프론트엔드까지 한 번에 보고 작업하기 위한 지도입니다. 로컬 경로·포트·CORS는 `docs/dev-environment.md`, MCP·DB 접속은 `docs/mcp.md`를 봅니다. 각 저장소 코드 규칙의 원본은 그 저장소의 `CLAUDE.md`이며, 여기에는 저장소를 넘나들 때 필요한 사실만 요약합니다.
 
@@ -52,12 +52,12 @@
 
 | 외부 경로 (게이트웨이) | 백엔드 컨트롤러 | DB 원천 | 프론트 호출 위치 |
 |---|---|---|---|
-| `GET /map/convenience-store` | `WfsController` | `map.v_convenience_store_geojson` | `js/modules/map/map-wfs.js` |
-| `GET /map/busStop-info` | `WfsController` | `map.v_bus_stop_info_geojson` | `map-wfs.js` |
-| `GET /map/cctv-info` | `WfsController` | `map.v_cctv_info_geojson` | `map-wfs.js` |
-| `GET /map/pharmacy-info` | `WfsController` | `map.v_pharmacy_info_geojson` | `map-wfs.js` |
-| `GET /map/hospital-info` | `WfsController` | `map.v_hospital_info_geojson` | `map-wfs.js` |
-| `GET /map/governmentOffice-info` | `WfsController` | `map.v_government_office_geojson` | `map-wfs.js` |
+| `GET /map/convenience-store?bbox=&limit=` | `WfsController` | `map.convenience_store`(bbox) / `map.v_convenience_store_geojson`(전체) | `js/modules/map/map-wfs.js` |
+| `GET /map/busStop-info?bbox=&limit=` | `WfsController` | `map.bus_stop_info`(bbox) / `map.v_bus_stop_info_geojson`(전체) | `map-wfs.js` |
+| `GET /map/cctv-info?bbox=&limit=` | `WfsController` | `map.cctv_info`(bbox) / `map.v_cctv_info_geojson`(전체) | `map-wfs.js` |
+| `GET /map/pharmacy-info?bbox=&limit=` | `WfsController` | `map.pharmacy`(bbox) / `map.v_pharmacy_info_geojson`(전체) | `map-wfs.js` |
+| `GET /map/hospital-info?bbox=&limit=` | `WfsController` | `map.hospital`(bbox) / `map.v_hospital_info_geojson`(전체) | `map-wfs.js` |
+| `GET /map/governmentOffice-info?bbox=&limit=` | `WfsController` | `map.government_office`(bbox) / `map.v_government_office_geojson`(전체) | `map-wfs.js` |
 | `GET /map/qfield/facilities?sidoCd=&sggCd=&emdCd=` | `QfieldFacilityController` | `qfield.facility_total_view` + `public.g_emd` | `js/modules/map/map-facility.js` |
 | `GET /map/qfield/facilities/{totalId}` | `QfieldFacilityController` | `qfield.facility_total_view`, `public.g_emd/g_sgg/g_sido` | `map-facility.js` |
 | `GET /map/qfield/facilities/{totalId}/media?path=` | `QfieldFacilityController` → `QfieldMediaService` | `qfield.facility_total_view` + QFieldCloud 원본 파일 | `map-facility.js` (`buildFacilityMediaUrl`) |
@@ -72,7 +72,13 @@
   - QFieldCloud가 돌려주는 `Content-Type`은 `application.force-download`라 브라우저가 재생하지 못합니다. 백엔드가 **확장자로 실제 타입을 정해** 내려줍니다.
   - 계정은 `QFIELD_USERNAME`/`QFIELD_PASSWORD` 환경변수로만 주입합니다(미설정 시 이 엔드포인트만 503, 나머지 기능은 정상).
 - 시설물 목록(`/map/qfield/facilities`)의 `properties`는 `total_id`, `fclt_nm`, `inst_nm`, `daddr`, `facility_condition`, `repair_required_yn`, `emd_cd`입니다. `inst_nm`·`daddr`는 같은 이름(예: "강당")이 반복될 때 목록에서 구분하기 위한 보조 정보이므로 빼지 마세요.
-- 응답 형식: WFS 레이어는 `geojson` 텍스트(FeatureCollection), 오류 시 **HTTP 200 + 빈 바디**. QField/행정구역은 JSON 문자열 + 400/404 명시, `Cache-Control` 60초(시설물)·3600초(행정구역).
+- **WFS 레이어의 화면 영역 조회(`bbox`·`limit`)**: 전국 데이터를 통째로 내려주면 버스정류장 85MB·병원 61MB(합계 약 200MB)라 최초 표출이 수십 초 걸렸습니다. 그래서 두 가지 모드를 둡니다.
+  - `bbox=minX,minY,maxX,maxY`(**EPSG:3857**, 지도 뷰와 같은 좌표계)를 주면 그 영역 안의 피처만 조립합니다. `limit`은 개수 상한(기본 3000, 최대 20000)이며, 상한을 넘으면 bbox 를 `limit`개 격자로 나눠 **칸마다 하나씩 뽑는 방식으로 화면 전체에 고르게 퍼진 표본**을 내려줍니다(한쪽에 몰리지 않음). bbox 형식이 틀리면 400.
+  - `bbox` 없이 부르면 **기존대로 전국 전체**를 내려줍니다(뷰 그대로). 이전 버전 프론트가 붙어도 동작하게 하려고 남겨 둔 경로입니다.
+  - bbox 모드의 SQL은 뷰가 아니라 원본 테이블(`map.bus_stop_info` 등)을 직접 조회합니다. **뷰와 같은 중복 제거(`distinct on` 좌표)와 같은 properties 구성을 `wfs-geojson.xml`에 옮겨 적어 둔 것이므로, scheduler 쪽 뷰 정의가 바뀌면 이 XML도 같은 작업에서 함께 고쳐야 합니다.**
+  - 프론트는 화면보다 가로·세로 50% 넓은 영역을 받아 두고, 그 안에서 움직이는 동안은 요청하지 않습니다(`map-wfs.js`의 `wfsFetchState`).
+- **응답 압축**: `server.compression`이 켜져 있어 GeoJSON 응답은 gzip으로 나갑니다(실측 10배 이상 축소). 게이트웨이는 `Accept-Encoding`을 그대로 넘기므로 브라우저까지 적용됩니다.
+- 응답 형식: WFS 레이어는 `geojson` 텍스트(FeatureCollection), 오류 시 **HTTP 200 + 빈 바디**. QField/행정구역은 JSON 문자열 + 400/404 명시, `Cache-Control` 60초(시설물)·3600초(행정구역), WFS 300초.
 - 좌표계: 시설물 `geom`은 EPSG:3857, 행정구역 경계는 EPSG:4326. 프론트 지도 뷰는 EPSG:3857입니다.
 - 행정구역 코드는 접두어 계층(sido 2자리 → sgg 5자리 → emd 8자리)이며 백엔드와 프론트가 같은 자릿수 검증을 가정합니다.
 - 이 표는 코드에서 확인한 사실만 담습니다. 엔드포인트를 추가·변경하면 이 표도 함께 고칩니다.
@@ -130,3 +136,4 @@ git push → Jenkins(빌드 → 이미지 push: sj-lab-registry.kr.ncr.ntruss.co
   - `fast-api-ai`: `.py` 수정 후 `python -m py_compile <파일>`로 문법 확인(그 저장소 훅 규칙). `core/config.py`의 `INSTANCE_IP` 고정(127.0.0.1)은 의도된 것이므로 되돌리지 않음.
   - 각 저장소의 리뷰 체크리스트는 `<저장소>/.claude/agents/reviewer.md`에 있습니다. 이 세션의 `reviewer` 에이전트는 `mapservice-rest` 전용이므로, 다른 저장소 변경은 그 체크리스트 파일을 읽고 확인합니다.
 - `sj-lab-mapservice`와 `mapservice-rest`는 public 저장소입니다. DB 호스트·비밀번호·토큰을 문서나 코드에 적지 않습니다.
+

@@ -4,6 +4,11 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.mapservice.mapper.WfsMapper">
+    <!--
+      전체 조회: 뷰가 전국 데이터를 FeatureCollection 하나로 이미 조립해 둔 것을 그대로 내려준다.
+      뷰 정의의 원본은 이 저장소가 아니라 sj-lab-scheduler 의 매퍼 XML 이다.
+      응답이 최대 80MB 대라 화면 표출용으로는 아래 *ByBbox 를 쓴다.
+    -->
     <select id="convenienceStore" resultType="String">
         select geojson from map.v_convenience_store_geojson
     </select>
@@ -21,5 +26,445 @@
     </select>
     <select id="governmentOfficeInfo" resultType="String">
         select geojson from map.v_government_office_geojson
+    </select>
+
+    <!--
+      화면 영역 조회(bbox + limit).
+
+      - 뷰는 전국을 json_agg 로 한 행에 말아 두어 뒤에서 걸러낼 수 없으므로, 뷰와 같은 결과가 나오도록
+        원본 테이블에 같은 중복 제거(distinct on 좌표)와 같은 properties 구성을 그대로 옮겨 적었다.
+        뷰 정의(scheduler)가 바뀌면 여기도 함께 고쳐야 한다.
+      - where 절의 st_intersects 는 각 테이블의 geom GIST 인덱스를 탄다.
+      - 상한(limit)에 걸릴 때 화면 한쪽에만 몰리지 않도록, bbox 를 limit 개의 격자로 나눠
+        칸마다 한 개씩 먼저 뽑고(row_number) 그다음 두 번째를 뽑는 순서로 자른다.
+        그래서 개수가 상한 이하이면 전부 나오고, 넘으면 화면 전체에 고르게 퍼진 표본이 나온다.
+      - 모든 원본 테이블의 geom 은 EPSG:3857 이다(편의점은 geometry_columns 에 0 으로 등록돼 있지만 값은 3857).
+      - 파라미터는 산술에 쓰이면 타입을 추론하지 못하므로 double precision 으로 캐스팅한다.
+    -->
+    <select id="convenienceStoreByBbox" resultType="String">
+        with bounds as (
+            select st_makeenvelope(#{minX}, #{minY}, #{maxX}, #{maxY}, 3857) as box,
+                   #{minX}::double precision as min_x,
+                   #{minY}::double precision as min_y,
+                   greatest((#{maxX}::double precision - #{minX}::double precision)
+                            / ceil(sqrt(#{limit}::double precision)), 1e-6) as cell_w,
+                   greatest((#{maxY}::double precision - #{minY}::double precision)
+                            / ceil(sqrt(#{limit}::double precision)), 1e-6) as cell_h
+        ), dedup as (
+            select distinct on (c.x, c.y)
+                   c.objt_id,
+                   c.fclty_nm,
+                   c.adres,
+                   c.rn_adres,
+                   c.x,
+                   c.y,
+                   c.geom
+              from map.convenience_store c, bounds b
+             where c.geom is not null
+               and st_intersects(c.geom, b.box)
+             order by c.x, c.y, c.objt_id desc
+        ), ranked as (
+            select d.*,
+                   row_number() over (
+                       partition by floor((st_x(d.geom) - b.min_x) / b.cell_w),
+                                    floor((st_y(d.geom) - b.min_y) / b.cell_h)
+                       order by d.objt_id desc
+                   ) as rn
+              from dedup d, bounds b
+        ), capped as (
+            select * from ranked
+             order by rn, objt_id desc
+             limit #{limit}
+        ), feat as (
+            select json_build_object(
+                       'type', 'Feature',
+                       'id', 'map:convenience_store.' || objt_id::text,
+                       'geometry', st_asgeojson(geom)::json,
+                       'properties', json_build_object(
+                           'fclty_nm', fclty_nm,
+                           'adres', adres,
+                           'rn_adres', rn_adres,
+                           'x', x,
+                           'y', y)) as feature
+              from capped
+        )
+        select json_build_object(
+                   'type', 'FeatureCollection',
+                   'features', coalesce(json_agg(feature), '[]'::json))::text
+          from feat
+    </select>
+
+    <select id="busStopInfoByBbox" resultType="String">
+        with bounds as (
+            select st_makeenvelope(#{minX}, #{minY}, #{maxX}, #{maxY}, 3857) as box,
+                   #{minX}::double precision as min_x,
+                   #{minY}::double precision as min_y,
+                   greatest((#{maxX}::double precision - #{minX}::double precision)
+                            / ceil(sqrt(#{limit}::double precision)), 1e-6) as cell_w,
+                   greatest((#{maxY}::double precision - #{minY}::double precision)
+                            / ceil(sqrt(#{limit}::double precision)), 1e-6) as cell_h
+        ), dedup as (
+            select distinct on (s.lon, s.lat)
+                   s.id,
+                   s.city_mgmt_name,
+                   s.city_name,
+                   s.city_code,
+                   s.stop_name,
+                   s.stop_code,
+                   s.lon,
+                   s.lat,
+                   s.collected_on,
+                   s.geom
+              from map.bus_stop_info s, bounds b
+             where s.geom is not null
+               and st_intersects(s.geom, b.box)
+             order by s.lon, s.lat, s.id desc
+        ), ranked as (
+            select d.*,
+                   row_number() over (
+                       partition by floor((st_x(d.geom) - b.min_x) / b.cell_w),
+                                    floor((st_y(d.geom) - b.min_y) / b.cell_h)
+                       order by d.id desc
+                   ) as rn
+              from dedup d, bounds b
+        ), capped as (
+            select * from ranked
+             order by rn, id desc
+             limit #{limit}
+        ), feat as (
+            select json_build_object(
+                       'type', 'Feature',
+                       'id', 'map:bus_stop_info.' || id::text,
+                       'geometry', st_asgeojson(geom)::json,
+                       'properties', json_build_object(
+                           'city_mgmt_name', city_mgmt_name,
+                           'city_name', city_name,
+                           'city_code', city_code,
+                           'stop_name', stop_name,
+                           'stop_code', stop_code,
+                           'lon', lon,
+                           'lat', lat,
+                           'collected_on', collected_on)) as feature
+              from capped
+        )
+        select json_build_object(
+                   'type', 'FeatureCollection',
+                   'features', coalesce(json_agg(feature), '[]'::json))::text
+          from feat
+    </select>
+
+    <select id="cctvInfoByBbox" resultType="String">
+        with bounds as (
+            select st_makeenvelope(#{minX}, #{minY}, #{maxX}, #{maxY}, 3857) as box,
+                   #{minX}::double precision as min_x,
+                   #{minY}::double precision as min_y,
+                   greatest((#{maxX}::double precision - #{minX}::double precision)
+                            / ceil(sqrt(#{limit}::double precision)), 1e-6) as cell_w,
+                   greatest((#{maxY}::double precision - #{minY}::double precision)
+                            / ceil(sqrt(#{limit}::double precision)), 1e-6) as cell_h
+        ), dedup as (
+            select distinct on (c.coordx, c.coordy)
+                   c.id,
+                   c.cctv_type,
+                   c.cctv_format,
+                   c.cctv_name,
+                   c.cctv_url,
+                   c.cctv_resolution,
+                   c.road_section_id,
+                   c.file_create_time,
+                   c.coordx,
+                   c.coordy,
+                   c.geom
+              from map.cctv_info c, bounds b
+             where c.geom is not null
+               and st_intersects(c.geom, b.box)
+             order by c.coordx, c.coordy, c.id desc
+        ), ranked as (
+            select d.*,
+                   row_number() over (
+                       partition by floor((st_x(d.geom) - b.min_x) / b.cell_w),
+                                    floor((st_y(d.geom) - b.min_y) / b.cell_h)
+                       order by d.id desc
+                   ) as rn
+              from dedup d, bounds b
+        ), capped as (
+            select * from ranked
+             order by rn, id desc
+             limit #{limit}
+        ), feat as (
+            select json_build_object(
+                       'type', 'Feature',
+                       'id', 'map:cctv_info.' || id::text,
+                       'geometry', st_asgeojson(geom)::json,
+                       'properties', json_build_object(
+                           'cctv_type', cctv_type,
+                           'cctv_format', cctv_format,
+                           'cctv_name', cctv_name,
+                           'cctv_url', cctv_url,
+                           'cctv_resolution', cctv_resolution,
+                           'road_section_id', road_section_id,
+                           'file_create_time', file_create_time,
+                           'x', coordx,
+                           'y', coordy)) as feature
+              from capped
+        )
+        select json_build_object(
+                   'type', 'FeatureCollection',
+                   'features', coalesce(json_agg(feature), '[]'::json))::text
+          from feat
+    </select>
+
+    <select id="pharmacyInfoByBbox" resultType="String">
+        with bounds as (
+            select st_makeenvelope(#{minX}, #{minY}, #{maxX}, #{maxY}, 3857) as box,
+                   #{minX}::double precision as min_x,
+                   #{minY}::double precision as min_y,
+                   greatest((#{maxX}::double precision - #{minX}::double precision)
+                            / ceil(sqrt(#{limit}::double precision)), 1e-6) as cell_w,
+                   greatest((#{maxY}::double precision - #{minY}::double precision)
+                            / ceil(sqrt(#{limit}::double precision)), 1e-6) as cell_h
+        ), dedup as (
+            select distinct on (p.wgs84_lon, p.wgs84_lat)
+                   p.id,
+                   p.hpid,
+                   p.duty_name,
+                   p.duty_addr,
+                   p.duty_tel1,
+                   p.duty_fax,
+                   p.duty_time1s,
+                   p.duty_time1c,
+                   p.duty_time2s,
+                   p.duty_time2c,
+                   p.duty_time3s,
+                   p.duty_time3c,
+                   p.duty_time4s,
+                   p.duty_time4c,
+                   p.duty_time5s,
+                   p.duty_time5c,
+                   p.duty_time6s,
+                   p.duty_time6c,
+                   p.wgs84_lon,
+                   p.wgs84_lat,
+                   p.post_cdn1,
+                   p.post_cdn2,
+                   p.collected_on,
+                   p.geom
+              from map.pharmacy p, bounds b
+             where p.geom is not null
+               and st_intersects(p.geom, b.box)
+             order by p.wgs84_lon, p.wgs84_lat, p.id desc
+        ), ranked as (
+            select d.*,
+                   row_number() over (
+                       partition by floor((st_x(d.geom) - b.min_x) / b.cell_w),
+                                    floor((st_y(d.geom) - b.min_y) / b.cell_h)
+                       order by d.id desc
+                   ) as rn
+              from dedup d, bounds b
+        ), capped as (
+            select * from ranked
+             order by rn, id desc
+             limit #{limit}
+        ), feat as (
+            select json_build_object(
+                       'type', 'Feature',
+                       'id', 'map:pharmacy.' || id::text,
+                       'geometry', st_asgeojson(geom)::json,
+                       'properties', json_build_object(
+                           'hpid', hpid,
+                           'duty_name', duty_name,
+                           'duty_addr', duty_addr,
+                           'duty_tel1', duty_tel1,
+                           'duty_fax', duty_fax,
+                           'duty_time1s', duty_time1s,
+                           'duty_time1c', duty_time1c,
+                           'duty_time2s', duty_time2s,
+                           'duty_time2c', duty_time2c,
+                           'duty_time3s', duty_time3s,
+                           'duty_time3c', duty_time3c,
+                           'duty_time4s', duty_time4s,
+                           'duty_time4c', duty_time4c,
+                           'duty_time5s', duty_time5s,
+                           'duty_time5c', duty_time5c,
+                           'duty_time6s', duty_time6s,
+                           'duty_time6c', duty_time6c,
+                           'wgs84_lon', wgs84_lon,
+                           'wgs84_lat', wgs84_lat,
+                           'post_cdn1', post_cdn1,
+                           'post_cdn2', post_cdn2,
+                           'collected_on', collected_on)) as feature
+              from capped
+        )
+        select json_build_object(
+                   'type', 'FeatureCollection',
+                   'features', coalesce(json_agg(feature), '[]'::json))::text
+          from feat
+    </select>
+
+    <select id="hospitalInfoByBbox" resultType="String">
+        with bounds as (
+            select st_makeenvelope(#{minX}, #{minY}, #{maxX}, #{maxY}, 3857) as box,
+                   #{minX}::double precision as min_x,
+                   #{minY}::double precision as min_y,
+                   greatest((#{maxX}::double precision - #{minX}::double precision)
+                            / ceil(sqrt(#{limit}::double precision)), 1e-6) as cell_w,
+                   greatest((#{maxY}::double precision - #{minY}::double precision)
+                            / ceil(sqrt(#{limit}::double precision)), 1e-6) as cell_h
+        ), dedup as (
+            select distinct on (h.wgs84_lon, h.wgs84_lat)
+                   h.id,
+                   h.hpid,
+                   h.duty_name,
+                   h.duty_addr,
+                   h.duty_tel1,
+                   h.duty_div,
+                   h.duty_div_nam,
+                   h.duty_emcls,
+                   h.duty_emcls_name,
+                   h.duty_eryn,
+                   h.duty_time1s,
+                   h.duty_time1c,
+                   h.duty_time2s,
+                   h.duty_time2c,
+                   h.duty_time3s,
+                   h.duty_time3c,
+                   h.duty_time4s,
+                   h.duty_time4c,
+                   h.duty_time5s,
+                   h.duty_time5c,
+                   h.duty_time6s,
+                   h.duty_time6c,
+                   h.duty_time7s,
+                   h.duty_time7c,
+                   h.wgs84_lon,
+                   h.wgs84_lat,
+                   h.post_cdn1,
+                   h.post_cdn2,
+                   h.collected_on,
+                   h.geom
+              from map.hospital h, bounds b
+             where h.geom is not null
+               and st_intersects(h.geom, b.box)
+             order by h.wgs84_lon, h.wgs84_lat, h.id desc
+        ), ranked as (
+            select d.*,
+                   row_number() over (
+                       partition by floor((st_x(d.geom) - b.min_x) / b.cell_w),
+                                    floor((st_y(d.geom) - b.min_y) / b.cell_h)
+                       order by d.id desc
+                   ) as rn
+              from dedup d, bounds b
+        ), capped as (
+            select * from ranked
+             order by rn, id desc
+             limit #{limit}
+        ), feat as (
+            select json_build_object(
+                       'type', 'Feature',
+                       'id', 'map:hospital.' || id::text,
+                       'geometry', st_asgeojson(geom)::json,
+                       'properties', json_build_object(
+                           'hpid', hpid,
+                           'duty_name', duty_name,
+                           'duty_addr', duty_addr,
+                           'duty_tel1', duty_tel1,
+                           'duty_div', duty_div,
+                           'duty_div_nam', duty_div_nam,
+                           'duty_emcls', duty_emcls,
+                           'duty_emcls_name', duty_emcls_name,
+                           'duty_eryn', duty_eryn,
+                           'duty_time1s', duty_time1s,
+                           'duty_time1c', duty_time1c,
+                           'duty_time2s', duty_time2s,
+                           'duty_time2c', duty_time2c,
+                           'duty_time3s', duty_time3s,
+                           'duty_time3c', duty_time3c,
+                           'duty_time4s', duty_time4s,
+                           'duty_time4c', duty_time4c,
+                           'duty_time5s', duty_time5s,
+                           'duty_time5c', duty_time5c,
+                           'duty_time6s', duty_time6s,
+                           'duty_time6c', duty_time6c,
+                           'duty_time7s', duty_time7s,
+                           'duty_time7c', duty_time7c,
+                           'wgs84_lon', wgs84_lon,
+                           'wgs84_lat', wgs84_lat,
+                           'post_cdn1', post_cdn1,
+                           'post_cdn2', post_cdn2,
+                           'collected_on', collected_on)) as feature
+              from capped
+        )
+        select json_build_object(
+                   'type', 'FeatureCollection',
+                   'features', coalesce(json_agg(feature), '[]'::json))::text
+          from feat
+    </select>
+
+    <select id="governmentOfficeInfoByBbox" resultType="String">
+        with bounds as (
+            select st_makeenvelope(#{minX}, #{minY}, #{maxX}, #{maxY}, 3857) as box,
+                   #{minX}::double precision as min_x,
+                   #{minY}::double precision as min_y,
+                   greatest((#{maxX}::double precision - #{minX}::double precision)
+                            / ceil(sqrt(#{limit}::double precision)), 1e-6) as cell_w,
+                   greatest((#{maxY}::double precision - #{minY}::double precision)
+                            / ceil(sqrt(#{limit}::double precision)), 1e-6) as cell_h
+        ), dedup as (
+            select distinct on (g.x_coord, g.y_coord)
+                   g.objt_id,
+                   g.fclty_nm,
+                   g.fclty_ty,
+                   g.fclty_cd,
+                   g.adres,
+                   g.rn_adres,
+                   g.telno,
+                   g.ctprvn_cd,
+                   g.sgg_cd,
+                   g.emd_cd,
+                   g.x_coord,
+                   g.y_coord,
+                   g.data_yr,
+                   g.geom
+              from map.government_office g, bounds b
+             where g.geom is not null
+               and st_intersects(g.geom, b.box)
+             order by g.x_coord, g.y_coord, g.objt_id desc
+        ), ranked as (
+            select d.*,
+                   row_number() over (
+                       partition by floor((st_x(d.geom) - b.min_x) / b.cell_w),
+                                    floor((st_y(d.geom) - b.min_y) / b.cell_h)
+                       order by d.objt_id desc
+                   ) as rn
+              from dedup d, bounds b
+        ), capped as (
+            select * from ranked
+             order by rn, objt_id desc
+             limit #{limit}
+        ), feat as (
+            select json_build_object(
+                       'type', 'Feature',
+                       'id', 'map:government_office.' || objt_id::text,
+                       'geometry', st_asgeojson(geom)::json,
+                       'properties', json_build_object(
+                           'objt_id', objt_id,
+                           'fclty_nm', fclty_nm,
+                           'fclty_ty', fclty_ty,
+                           'fclty_cd', fclty_cd,
+                           'adres', adres,
+                           'rn_adres', rn_adres,
+                           'telno', telno,
+                           'ctprvn_cd', ctprvn_cd,
+                           'sgg_cd', sgg_cd,
+                           'emd_cd', emd_cd,
+                           'x_coord', x_coord,
+                           'y_coord', y_coord,
+                           'data_yr', data_yr)) as feature
+              from capped
+        )
+        select json_build_object(
+                   'type', 'FeatureCollection',
+                   'features', coalesce(json_agg(feature), '[]'::json))::text
+          from feat
     </select>
 </mapper>

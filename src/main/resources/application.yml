@@ -7,6 +7,12 @@ server:
   message:
     basename: messages
   forward-headers-strategy: framework
+  # GeoJSON 응답은 같은 키가 피처마다 반복돼 압축률이 매우 높다(실측 10배 이상).
+  # 게이트웨이는 클라이언트의 Accept-Encoding 을 그대로 전달하므로 여기서 켜면 브라우저까지 적용된다.
+  compression:
+    enabled: true
+    mime-types: application/json,application/geo+json,text/plain,text/xml
+    min-response-size: 2KB
 #  port: ${random.int(10000,51000)}
 
 spring:

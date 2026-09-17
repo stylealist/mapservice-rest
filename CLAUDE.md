@@ -57,6 +57,7 @@ Eureka에 등록되는(`@EnableDiscoveryClient`) Spring Boot 3.3.2 / Java 17 마
 
 핵심 포인트:
 - 기존 레이어(편의점, 버스정류장, CCTV, 약국, 병원, 관공서): DB 뷰(예: `map.v_bus_stop_info_geojson`)에서 이미 완성된 `geojson` 텍스트 컬럼을 그대로 select할 뿐이며, GeoJSON 조립은 DB에서 이루어집니다. 새 레이어 추가 시 DB 뷰를 생성할 수 있다면 `geojson` 컬럼을 가진 뷰를 추가한 뒤 동일 패턴으로 4개 계층(`WfsMapper`, `wfs-geojson.xml`, `WfsService`/`WfsServiceImpl`, `WfsController`)에 메서드를 추가합니다.
+- WFS 레이어의 화면 영역 조회: `WfsController`의 6개 엔드포인트는 `bbox`(EPSG:3857 `minX,minY,maxX,maxY`)와 `limit`을 선택 파라미터로 받습니다. `bbox`가 있으면 뷰가 아니라 **원본 테이블**을 조회하는 `*ByBbox` 문(`wfs-geojson.xml`)을 타고, 없으면 기존처럼 뷰의 전국 데이터를 그대로 내려줍니다(구버전 프론트 호환용). `*ByBbox` 문은 뷰와 같은 중복 제거·properties 구성을 옮겨 적은 것이므로 **scheduler의 뷰 정의가 바뀌면 이 XML도 함께 고쳐야** 결과가 어긋나지 않습니다. 상한을 넘을 때는 bbox 를 격자로 나눠 칸마다 하나씩 뽑아(`row_number`) 화면 전체에 고르게 퍼진 표본을 내려줍니다 — 이 정렬을 단순 `limit`으로 바꾸면 화면 한쪽만 채워집니다.
 - 읽기 전용 DB 등 뷰 생성이 불가능한 경우: `qfield-facility.xml` 패턴을 따릅니다. XML 내 SQL에서 `json_build_object`, `json_agg`, `to_jsonb`, `ST_AsGeoJSON` 등을 활용해 DB 레벨에서 GeoJSON/JSON 문자열로 직접 조립해 반환합니다. 파라미터는 반드시 MyBatis `#{}` 바인딩을 사용합니다.
 - 시설물 공간 쿼리 및 행정구역 필터: `qfield.facility_total_view`의 EPSG:3857 점 좌표와 `public.g_emd`의 EPSG:4326 경계를 조인할 때, `LEFT JOIN LATERAL`과 `ST_Intersects(e.geom, ST_Transform(f.geom, 4326))` (LIMIT 1)로 `g_emd`의 GIST 인덱스를 활용합니다. 행정구역 코드는 접두어 계층 구조(sido 2자리, sgg 5자리, emd 8자리)이므로 `emd_cd LIKE code || '%'` 단일 조건으로 고속 필터링합니다 (g_sido 폴리곤 직접 조인이나 ST_MakeValid는 지양).
 - 행정구역 BBOX 조회: 폴리곤 전체 좌표를 변환하지 않고 `ST_Transform(ST_Envelope(geom), 3857)`로 BBOX만 변환하여 `[minX, minY, maxX, maxY]`를 계산합니다.
