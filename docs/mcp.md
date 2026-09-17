@@ -7,12 +7,17 @@ Claude Code가 이 저장소 루트의 `.mcp.json`으로 sj-lab 공용 MCP 서�
 
 두 환경변수의 실제 값은 `.claude/settings.local.json`의 `env`에 넣습니다(이 저장소 전용·로컬 전용, `.gitignore`로 커밋 제외).
 
+이 파일은 MCP 전용이 아니라 **이 저장소의 로컬 비밀값 보관처**입니다. `scripts/local-stack.ps1`도 백엔드를 띄울 때 여기서 QFieldCloud 계정(`QFIELD_*`)을 읽어 넣습니다(자세한 내용은 `docs/dev-environment.md`).
+
 ```json
 {
   "enabledMcpjsonServers": ["github", "sjlabDevDb"],
   "env": {
     "GITHUB_PERSONAL_ACCESS_TOKEN": "github_pat_...",
-    "SJLAB_DEV_DATABASE_URL": "postgresql://readonly_user:비밀번호@호스트:5432/DB명"
+    "SJLAB_DEV_DATABASE_URL": "postgresql://readonly_user:비밀번호@호스트:5432/DB명",
+    "QFIELD_USERNAME": "QFieldCloud 계정",
+    "QFIELD_PASSWORD": "비밀번호",
+    "QFIELD_BASE_URL": "https://qfield.sj-lab.co.kr"
   }
 }
 ```

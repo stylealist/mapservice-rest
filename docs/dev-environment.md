@@ -57,7 +57,7 @@ powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 stop      # 이
 
 **외부 서비스**: QFieldCloud `https://qfield.sj-lab.co.kr` — 현장조사 앱이 조사 데이터와 첨부 파일(사진·음성·영상)을 올리는 곳이고, `sj-qfieldsync`가 여기서 내려받아 DB에 적재합니다. **API는 인증이 필요**하므로(`/api/v1/` → 401) 브라우저가 첨부 파일을 직접 받을 수 없어, 백엔드 중계 엔드포인트(`/map/qfield/facilities/{totalId}/media`)를 통해 재생합니다. GeoServer는 `https://geoserver.sj-lab.co.kr`.
 
-**첨부 재생용 환경변수**: 미디어 중계는 QFieldCloud 계정이 있어야 동작합니다. 없으면 그 엔드포인트만 503이고 나머지는 정상입니다.
+**첨부 재생용 환경변수**: 미디어 중계는 QFieldCloud 계정이 있어야 동작합니다. 없으면 그 엔드포인트만 503(`NOT_CONFIGURED`)이고 나머지는 정상입니다.
 
 ```
 QFIELD_USERNAME  QFieldCloud 계정
@@ -65,8 +65,15 @@ QFIELD_PASSWORD  비밀번호
 QFIELD_BASE_URL  기본값 https://qfield.sj-lab.co.kr
 ```
 
-- 로컬 검증: 위 값을 환경변수로 설정한 PowerShell에서 `scripts\local-stack.ps1 start`를 실행하면 자식 프로세스가 물려받습니다. **저장소 파일(`application.yml` 등)에 값을 적지 말 것.**
-- 운영: `sj-lab-k8s-manifests`의 `mapservice-rest` 차트에 Secret 참조를 추가해야 합니다(미적용 — 배포 전 필요).
+- **로컬**: `scripts\local-stack.ps1`의 `loadQfieldCredentials`가 백엔드 기동 직전에 ① 이미 설정된 환경변수 ② `.claude\settings.local.json`의 `env` 순으로 읽어 넣습니다. 그래서 값이 한 번 들어가 있으면 그냥 `start`만 해도 첨부가 재생됩니다. 기동 로그의 `QField 계정 적용:` / `주의: QField 계정이 없어...` 줄로 어느 쪽인지 확인할 수 있습니다.
+- **저장소 파일(`application.yml`, 스크립트 등)에 값을 적지 말 것** — 이 저장소는 public입니다. 로컬 값은 `.gitignore` 대상인 `.claude\settings.local.json`에만 둡니다.
+- **운영**: `sj-lab-k8s-manifests`의 `mapservice-rest` 차트가 `qfield-credentials` Secret을 `optional: true`로 참조합니다(v1.25). Secret이 생성되어 현재 정상 동작합니다.
+- 양쪽 확인은 같은 URL 형태로 합니다 — 200과 올바른 `Content-Type`(`image/jpeg`·`audio/mp4`·`video/mp4`)이 나오면 정상입니다.
+
+```
+http://localhost:8100/map/qfield/facilities/{totalId}/media?path=...
+https://api.sj-lab.co.kr/map/qfield/facilities/{totalId}/media?path=...
+```
 
 **운영 대응**: 프론트 `https://sj-lab.co.kr` → `https://api.sj-lab.co.kr/map/...`(게이트웨이) → Eureka `https://eureka.sj-lab.co.kr`. 운영 프로파일은 저장소 밖(Helm/ConfigMap)에서 주입됩니다.
 

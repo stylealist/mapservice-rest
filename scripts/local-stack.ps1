@@ -73,6 +73,42 @@ function invokeMavenPackage([string]$projectDir, [string]$jdkHome) {
   }
 }
 
+function loadQfieldCredentials {
+  <#
+    시설물 첨부(사진·음성·영상) 중계용 QFieldCloud 계정을 백엔드 프로세스에 넘긴다.
+    값이 없으면 미디어 엔드포인트만 503(NOT_CONFIGURED)이 되고 나머지 기능은 정상이다.
+
+    읽는 순서:
+      1. 이미 설정된 환경변수 (셸에서 직접 넣은 경우 그대로 존중)
+      2. .claude\settings.local.json 의 env  ← 이 저장소의 로컬 비밀값 보관처(.gitignore 대상)
+
+    저장소 파일(application.yml 등)에는 절대 적지 않는다 — 이 저장소는 public 이다.
+  #>
+  $keys = @('QFIELD_USERNAME', 'QFIELD_PASSWORD', 'QFIELD_BASE_URL')
+  if (-not ($keys | Where-Object { -not [Environment]::GetEnvironmentVariable($_) })) { return }
+
+  $settingsPath = Join-Path $hubRoot '.claude\settings.local.json'
+  if (Test-Path $settingsPath) {
+    try {
+      $localEnv = (Get-Content $settingsPath -Raw -Encoding UTF8 | ConvertFrom-Json).env
+      foreach ($key in $keys) {
+        if (-not [Environment]::GetEnvironmentVariable($key) -and $localEnv -and $localEnv.$key) {
+          Set-Item -Path "env:$key" -Value $localEnv.$key
+        }
+      }
+    } catch {
+      Write-Host "  주의: settings.local.json 을 읽지 못했습니다($($_.Exception.Message))"
+    }
+  }
+
+  if ($env:QFIELD_USERNAME -and $env:QFIELD_PASSWORD) {
+    Write-Host "  QField 계정 적용: $($env:QFIELD_USERNAME) (첨부 재생 가능)"
+  } else {
+    Write-Host '  주의: QField 계정이 없어 첨부(사진·음성·영상) 재생은 503 입니다.'
+    Write-Host '        .claude\settings.local.json 의 env 에 QFIELD_USERNAME/QFIELD_PASSWORD 를 넣으세요.'
+  }
+}
+
 function startJava([string]$name, [string]$jar, [string]$jdkHome, [string[]]$extraArgs) {
   if (-not (Test-Path $jar)) { throw "jar 없음: $jar (-NoBuild 없이 다시 실행하세요)" }
   $log = Join-Path $stateDir "$name.log"
@@ -115,6 +151,7 @@ function startStack {
   } else { Write-Host '  건너뜀: 8761 이미 사용 중' }
 
   if ($needBackend) {
+    loadQfieldCredentials   # 자식 프로세스가 환경변수를 물려받으므로 기동 직전에 채운다
     startJava 'mapservice-rest' (Join-Path $hubRoot 'target\sj-lab-mapservice-rest.jar') $jdkHome @() | Out-Null
     waitUntil { Select-String -Path (Join-Path $stateDir 'mapservice-rest.log') -Pattern 'Started MapServiceRestApplication' -Quiet } 180 'mapservice-rest'
   } else { Write-Host '  건너뜀: mapservice-rest 이미 실행 중' }
