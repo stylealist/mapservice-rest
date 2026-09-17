@@ -112,6 +112,51 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v1.30</span>
+        <span class="ver-title">웹사이트 탭 아이콘(favicon)을 메인 로고로 변경 + v1.28~v1.29 커밋·푸시</span>
+        <span class="date">2026-09-17</span>
+      </div>
+      <ul>
+        <li>빈 아이콘(<code>data:,</code>) → <code>images/favicon.svg</code> 신규 — 헤더 로고 배지와 같은 파란 그라데이션 둥근 사각형 + 흰색 로고 글리프</li>
+        <li><code>index.html</code>과 독립 팝업 페이지(로드뷰·지도 편집기) 3곳에 적용, <code>docs/ui-conventions.md</code>에 "로고 변경 시 favicon도 함께" 규칙 추가</li>
+        <li>Chrome 확인 — 3개 페이지 모두 200 <code>image/svg+xml</code>, 16px에서도 로고 식별 가능</li>
+        <li><code>sj-lab-mapservice</code>·<code>mapservice-rest</code> 커밋 후 <code>origin/main</code> 푸시</li>
+      </ul>
+      <p><a href="../history_v1.30.md">history_v1.30.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v1.29</span>
+        <span class="ver-title">시설물 상세 팝업을 지도 이동이 끝난 뒤 최종 위치에서 한 번에 표시</span>
+        <span class="date">2026-09-17</span>
+      </div>
+      <ul>
+        <li>원인 — 팝업이 바로 <code>setPosition</code>돼 핀 아래에 먼저 보이고, 가운데 이동·<code>autoPan</code>이 겹친 뒤 높이 기준 오프셋으로 위로 점프</li>
+        <li><code>is-positioning</code>(<code>visibility: hidden</code>)으로 자리만 잡고 <code>revealFacilityPopup()</code>이 이동·보정 이동이 모두 끝난 뒤 숨김 해제, 오버레이 <code>autoPan</code> 끔</li>
+        <li>연속 선택·닫기 시 대기 취소, 응답이 1.2초보다 늦으면 "불러오는 중" 상태로 먼저 표시</li>
+        <li>Chrome 1400×950 매 프레임 기록 — 핀 클릭·목록 클릭·연속 선택 모두 이동 중 노출 0프레임, 보인 뒤 위치 변화 0px, 콘솔 오류 0건</li>
+      </ul>
+      <p><a href="../history_v1.29.md">history_v1.29.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v1.28</span>
+        <span class="ver-title">시설물을 선택하면 보이는 지도 영역의 가운데로 이동</span>
+        <span class="date">2026-09-17</span>
+      </div>
+      <ul>
+        <li>원인 두 가지 — 지도 핀 클릭은 이동 자체를 안 했고, 목록 클릭 이동도 <code>#map</code> 요소 기준이라 좌측 패널(겹쳐 뜸)·하단 넘침 때문에 눈으로는 왼쪽 160px·아래 30px 치우침</li>
+        <li><code>selectFacility(totalId, zoomIn)</code>이 항상 가운데로 이동(목록은 줌 16까지 확대, 핀 클릭은 배율 유지), <code>getFacilityViewCenter()</code>가 보이는 영역을 매번 재서 계산 — 패널 접힘·창 크기 변화 자동 반영</li>
+        <li>1400×950에서 핀 클릭·목록 클릭·패널 접힘 모두 0~5px 이내, 콘솔 오류 0건</li>
+        <li>패널을 연 채 창 너비가 약 1,250px 미만이면 오른쪽 팝업이 잘리지 않도록 그만큼만 비켜남(의도된 동작)</li>
+      </ul>
+      <p><a href="../history_v1.28.md">history_v1.28.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v1.27</span>
         <span class="ver-title">로컬에서도 첨부(사진·오디오·영상)가 재생되도록 계정 주입 자동화</span>
         <span class="date">2026-09-17</span>
