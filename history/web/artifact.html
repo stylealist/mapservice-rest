@@ -383,7 +383,7 @@
       <span class="vswitch-label">sj-lab 작업 로그</span>
       <div class="vgroups" role="tablist" aria-label="버전 묶음">
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
-        <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.30</button>
+        <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.31</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -424,7 +424,8 @@
       <button type="button" class="vchip" role="tab" data-ver="1.27" aria-controls="pane-v1.27" title="로컬에서도 첨부(사진·오디오·영상)가 재생되도록 계정 주입 자동화"><span class="pv">v1.27</span><span class="pt">로컬 첨부 재생 정상화</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.28" aria-controls="pane-v1.28" title="시설물을 선택하면 보이는 지도 영역의 가운데로 이동"><span class="pv">v1.28</span><span class="pt">선택 시설물 가운데 이동</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.29" aria-controls="pane-v1.29" title="상세 팝업을 지도 이동이 끝난 뒤 최종 위치에서 한 번에 표시"><span class="pv">v1.29</span><span class="pt">팝업 흔들림 제거</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="1.30" aria-controls="pane-v1.30" title="웹사이트 탭 아이콘을 메인 로고로 변경하고 v1.28~v1.29 커밋·푸시"><span class="pv">v1.30<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">탭 아이콘 · 커밋·푸시</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.30" aria-controls="pane-v1.30" title="웹사이트 탭 아이콘을 메인 로고로 변경하고 v1.28~v1.29 커밋·푸시"><span class="pv">v1.30</span><span class="pt">탭 아이콘 · 커밋·푸시</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.31" aria-controls="pane-v1.31" title="sj-lab-hub 탭 아이콘을 허브 전용 모양으로 신규 제작"><span class="pv">v1.31<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">허브 탭 아이콘</span></button>
     </div>
   </div>
 </nav>
@@ -3011,6 +3012,75 @@ GET /map/busStop-info                                        (bbox 없으면 기
 </section>
 </div>
 
+<!-- ===================== v1.31 ===================== -->
+<div class="vpane" data-ver="1.31" id="pane-v1.31" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.31</span>
+      <span>2026-09-17</span>
+      <span>sj-lab-hub</span>
+    </div>
+    <h1>허브 탭 아이콘을<br>허브에 맞는 모양으로 새로</h1>
+    <p class="dek">
+      지도 서비스와 같은 집 모양을 쓰지 않고, 네 기능 카드로 들어가는 허브의 역할을 담아
+      카드 색 네 개를 2×2 타일로 배치한 아이콘을 만들었습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>아이콘</dt><dd>public/favicon.svg</dd></div>
+      <div><dt>빌드 포함</dt><dd class="ok">build/favicon.svg</dd></div>
+      <div><dt>응답</dt><dd class="ok">200 image/svg+xml</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+      <div><dt>커밋·푸시</dt><dd class="ok">완료</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">커밋하고 푸시해줘</pre>
+    <pre class="prompt">sj-lab-hub 탭 아이콘은 동일한 아이콘이 아니라 sj-lab-hub에 맞는 아이콘 모양으로 신규로 만들어서 반영해줘</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">디자인</p>
+    <h2>네 기능으로 들어가는 입구</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">배경</span><span class="fv">허브 화면 배경과 같은 <b>슬레이트 그라데이션</b>(<code>#475569</code> → <code>#1e293b</code>) 둥근 사각형</span></div>
+      <div class="frow"><span class="fk">위 타일</span><span class="fv">시설물 관리 <code>#3b82f6</code> · 3D 가시화 <code>#10b981</code></span></div>
+      <div class="frow"><span class="fk">아래 타일</span><span class="fv">Lab <code>#f59e0b</code> · OpenAPI <code>#8b5cf6</code></span></div>
+    </div>
+    <p class="promptnote">색은 <code>src/App.js</code> <code>features</code> 카드의 그라데이션 시작색을 그대로 썼습니다. 지도 서비스의 파란 집 아이콘과 탭에 나란히 떠도 한눈에 구분됩니다.</p>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">반영 방식</p>
+    <h2>템플릿이 아니라 빌드 설정으로</h2>
+    <ul class="notes">
+      <li><code>webpack.config.js</code>의 <code>HtmlWebpackPlugin</code>에 <code>favicon</code> 옵션 추가 — 빌드 때 <code>build/</code>로 복사하고 <code>&lt;link rel="icon"&gt;</code>을 자동 주입</li>
+      <li><b>템플릿에 link만 넣으면 배포본에서 404</b> — <code>public/</code>은 개발 서버만 서빙하고 빌드 결과로 복사되지 않습니다</li>
+      <li><code>CLAUDE.md</code>에 규칙 추가 — 카드를 추가·삭제하거나 색을 바꾸면 아이콘도 함께 고칠 것</li>
+    </ul>
+    <div class="grid2" style="margin-top:1.5rem">
+      <div class="cell">
+        <h3>빌드 <span class="badge pass">확인</span></h3>
+        <p><code>npm run build</code> 성공, <code>build/favicon.svg</code> 생성과 <code>index.html</code> 링크 주입 확인.</p>
+      </div>
+      <div class="cell">
+        <h3>브라우저 <span class="badge pass">확인</span></h3>
+        <p>빌드본을 임시 포트 3011로 띄워 확인(기본 3000 미사용, 확인 후 종료). 아이콘 200, 카드 4개 정상, 콘솔 오류 0건. 16px에서도 네 색 타일이 구분됩니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -3019,7 +3089,7 @@ GET /map/busStop-info                                        (bbox 없으면 기
       <li><em>API Gateway</em><span class="url">http://localhost:8100/map/admin-area/sido</span></li>
       <li><em>Eureka</em><span class="url">http://localhost:8761</span></li>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.30.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.31.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·

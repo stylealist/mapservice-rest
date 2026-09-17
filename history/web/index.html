@@ -112,6 +112,22 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v1.31</span>
+        <span class="ver-title">sj-lab-hub 탭 아이콘(favicon)을 허브 전용 모양으로 신규 제작</span>
+        <span class="date">2026-09-17</span>
+      </div>
+      <ul>
+        <li>허브 배경색(슬레이트) 둥근 사각형 위에 네 기능 카드 색(파랑·초록·주황·보라)을 2×2 타일로 배치 — 지도 서비스의 집 모양과 구분</li>
+        <li><code>public/favicon.svg</code> 신규, <code>webpack.config.js</code> <code>HtmlWebpackPlugin</code>의 <code>favicon</code> 옵션으로 빌드 결과에 복사·링크 주입</li>
+        <li><code>npm run build</code> 성공, 빌드본 Chrome 확인 — 아이콘 200 <code>image/svg+xml</code>, 카드 4개 정상, 콘솔 오류 0건</li>
+        <li><code>CLAUDE.md</code>에 카드 변경 시 아이콘도 함께 고치는 규칙 추가</li>
+        <li><code>sj-lab-hub</code>·<code>mapservice-rest</code> 커밋 후 <code>origin/main</code> 푸시</li>
+      </ul>
+      <p><a href="../history_v1.31.md">history_v1.31.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v1.30</span>
         <span class="ver-title">웹사이트 탭 아이콘(favicon)을 메인 로고로 변경 + v1.28~v1.29 커밋·푸시</span>
         <span class="date">2026-09-17</span>
