@@ -383,7 +383,7 @@
       <span class="vswitch-label">sj-lab 작업 로그</span>
       <div class="vgroups" role="tablist" aria-label="버전 묶음">
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
-        <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.25</button>
+        <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.26</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -419,7 +419,8 @@
       <button type="button" class="vchip" role="tab" data-ver="1.22" aria-controls="pane-v1.22" title="음성 변환(STT)이 DB에 들어오지 않던 원인 정리"><span class="pv">v1.22</span><span class="pt">STT 원인 추적</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.23" aria-controls="pane-v1.23" title="운영 워커가 음성 변환 텍스트를 빈 값으로 덮어쓰던 문제 수정"><span class="pv">v1.23</span><span class="pt">빈 값 덮어쓰기 방지</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.24" aria-controls="pane-v1.24" title="팝업을 핀 오른쪽으로 옮기고 헤더 드래그 이동"><span class="pv">v1.24</span><span class="pt">팝업 위치 · 드래그 이동</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="1.25" aria-controls="pane-v1.25" title="실서버 첨부 재생 503 해결(계정 Secret 주입)"><span class="pv">v1.25<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">운영 첨부 재생 503</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.25" aria-controls="pane-v1.25" title="실서버 첨부 재생 503 해결(계정 Secret 주입)"><span class="pv">v1.25</span><span class="pt">운영 첨부 재생 503</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.26" aria-controls="pane-v1.26" title="WFS 레이어 최초 로딩 속도 개선(화면 영역 조회 + 응답 압축)"><span class="pv">v1.26<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">레이어 로딩 속도 개선</span></button>
     </div>
   </div>
 </nav>
@@ -2549,6 +2550,134 @@ kubectl rollout restart deployment/mapservice-rest -n sj-lab</div>
 </section>
 </div>
 
+<!-- ===================== v1.26 ===================== -->
+<div class="vpane" data-ver="1.26" id="pane-v1.26" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.26</span>
+      <span>2026-09-17</span>
+      <span>mapservice-rest · sj-lab-mapservice</span>
+    </div>
+    <h1>WFS 레이어 최초 로딩 속도 개선<br>화면 영역만 받아오기</h1>
+    <p class="dek">
+      화면에 200개를 그리려고 전국 20만 개를 받고 있었습니다.
+      백엔드에 화면 영역(bbox) 조회를 넣고 응답 압축을 켜서, 6개 레이어 합계 203MB·29.4초가 718KB·1.2초가 됐습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>전송량</dt><dd class="ok">203MB → 718KB</dd></div>
+      <div><dt>소요 시간</dt><dd class="ok">29.4초 → 1.2초</dd></div>
+      <div><dt>바뀐 파일</dt><dd>백엔드 5 · 프론트 1</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+      <div><dt>최종 재검증</dt><dd class="ok">완료</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">편의점, 약국, 병원, 관공서, 버스, cctv 레이어가 데이터가 많다보니까
+처음 불러올떄 시간이 많이 걸리는데 속도 개선해줄수있어?</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">원인</p>
+    <h2>받는 양이 그리는 양과 무관했습니다</h2>
+    <p class="lede">
+      레이어를 켜면 전국 데이터를 통째로 받은 뒤 브라우저에서 잘라 썼습니다.
+      실제로 화면에 그리는 건 줌 레벨에 따라 100~3000개입니다. 응답 압축도 꺼져 있었습니다.
+    </p>
+    <div class="cmd">레이어        피처 수     응답 크기   DB 쿼리
+버스정류장    203,389     84.5 MB     4,730ms
+병원           64,498     56.6 MB     2,852ms
+편의점         48,880     16.2 MB     1,146ms
+약국           24,533     18.2 MB       877ms
+CCTV           11,756      6.3 MB       339ms
+관공서          9,000      4.3 MB       340ms</div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">백엔드</p>
+    <h2>bbox · limit 을 받는 조회 추가</h2>
+    <div class="cmd">GET /map/busStop-info?bbox=minX,minY,maxX,maxY&amp;limit=3000   (EPSG:3857)
+GET /map/busStop-info                                        (bbox 없으면 기존처럼 전국 전체)</div>
+    <ul class="notes">
+      <li><code>st_intersects(geom, st_makeenvelope(..., 3857))</code> 로 각 테이블의 <b>geom GIST 인덱스</b>를 탑니다</li>
+      <li>상한을 넘으면 bbox 를 격자로 나눠 <b>칸마다 하나씩</b> 뽑아(<code>row_number</code>) 화면 전체에 고르게 퍼진 표본을 내려줍니다 — 단순 <code>limit</code>이면 화면 한쪽만 채워집니다</li>
+      <li>뷰가 아니라 원본 테이블을 조회하되 <b>뷰와 같은 중복 제거·properties 구성</b>을 옮겼습니다. scheduler 의 뷰 정의가 바뀌면 이 XML 도 함께 고쳐야 합니다</li>
+      <li><code>bbox</code> 없는 호출을 남긴 것은 <b>구버전 프론트가 붙어도 동작하게</b> 하기 위해서입니다</li>
+      <li><code>server.compression</code> 활성화 — GeoJSON 은 같은 키가 반복돼 압축률이 매우 높습니다</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">프론트엔드</p>
+    <h2>화면보다 50% 넓은 영역만 받아 두고 그 안에선 재요청하지 않음</h2>
+    <ul class="notes">
+      <li><code>wfsFetchState</code> — 레이어별로 <b>어디까지 받아왔는지</b>(<code>extent</code>·<code>zoom</code>·<code>complete</code>) 기록</li>
+      <li><code>needsServerFetch()</code> — ① 아직 안 받음 ② 화면이 받아둔 영역 밖 ③ 상한에 걸린 영역인데 줌인, 세 경우에만 재요청</li>
+      <li><code>mergeFeaturesIntoCache()</code> — 피처 id 기준 중복 제거로 캐시에 합침</li>
+      <li><code>renderLayerFromCache()</code> — 그리는 일을 한 곳으로 모음(뷰포트 필터 → 줌별 상한 → 공간 샘플링)</li>
+      <li>예전 전체 파싱 경로는 <b>bbox 를 모르는 구버전 백엔드용 안전장치</b>로만 남겼습니다</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>게이트웨이 경유 실측과 실제 Chrome 확인</h2>
+    <div class="grid2">
+      <div class="cell">
+        <h3>백엔드 <span class="badge pass">확인</span></h3>
+        <p>6개 레이어 합계 <b>203MB·29.4초 → 718KB·1.2초</b>. 전체 조회 경로도 압축이 붙어 203MB → 21.8MB 로 줄었습니다.</p>
+      </div>
+      <div class="cell">
+        <h3>브라우저 <span class="badge pass">확인</span></h3>
+        <p>레이어를 켜고 화면에 뜰 때까지 버스정류장 315ms · 병원 544ms · 편의점 266ms. 받아둔 영역 밖으로 이동하면 추가 조회, 버퍼 안 소폭 이동은 요청 <b>0건</b>. 콘솔 오류 0건.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">최종 재검증</p>
+    <h2>격자 표본 방식으로 바꾼 뒤 세 가지를 다시 확인했습니다</h2>
+    <p class="lede">
+      작업 도중 개발 DB와 운영 API가 함께 불통이 되어 한 차례 중단됐다가, 복구 후 모두 확인을 마쳤습니다.
+    </p>
+    <div class="grid2">
+      <div class="cell">
+        <h3>JDBC 바인딩 경로 <span class="badge pass">확인</span></h3>
+        <p>게이트웨이 경유로 6개 레이어 전부 200 응답. 파라미터 타입 추론 오류 없음. 병원 3,000건이 gzip 310KB.</p>
+      </div>
+      <div class="cell">
+        <h3>브라우저 <span class="badge pass">확인</span></h3>
+        <p>버스정류장 460ms · 병원 623ms · 편의점 442ms. 영역 밖 이동은 추가 조회, 버퍼 안 이동은 요청 0건. 아이콘이 화면 전체에 고르게 분포. 콘솔 오류 0건.</p>
+      </div>
+    </div>
+
+    <h2 style="margin-top:2.25rem">표본 분포 (전국 bbox, limit 900 · 9개 구역별 개수)</h2>
+    <div class="cmd">편의점        27 169  73     버스정류장    24 147  55     병원        34 175  59
+              56 253 155                   51 264 171                 57 243 166
+              72  81  14                   67 110  11                 68  87  11</div>
+    <p class="promptnote">
+      빈 구역 없이 전 구역에 분포합니다. 가운데(수도권)가 많은 것은 시설 자체가 거기 몰려 있기 때문입니다 —
+      단순 <code>limit</code>이면 한 구역에 900개가 전부 몰리고, 중심 거리순이면 가운데 한 칸에만 몰립니다.
+    </p>
+  </div>
+</section>
+</div>
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -2557,7 +2686,7 @@ kubectl rollout restart deployment/mapservice-rest -n sj-lab</div>
       <li><em>API Gateway</em><span class="url">http://localhost:8100/map/admin-area/sido</span></li>
       <li><em>Eureka</em><span class="url">http://localhost:8761</span></li>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.3.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.26.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 수행하지 않았습니다 ·

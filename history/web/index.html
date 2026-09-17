@@ -112,6 +112,22 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v1.26</span>
+        <span class="ver-title">WFS 레이어 최초 로딩 속도 개선(화면 영역 조회 + 응답 압축)</span>
+        <span class="date">2026-09-17</span>
+      </div>
+      <ul>
+        <li>화면에 100~3000개를 그리면서 전국 데이터를 통째로 받고 있었음(6개 합계 <b>203MB·29.4초</b>)</li>
+        <li>백엔드 6개 엔드포인트에 <code>bbox</code>(EPSG:3857)·<code>limit</code> 추가 — GIST 인덱스 사용, 상한 초과 시 격자로 나눠 <b>화면 전체에 고르게 퍼진 표본</b> 반환. <code>bbox</code> 없는 호출은 기존대로 동작(구버전 프론트 호환)</li>
+        <li><code>server.compression</code> 활성화, 프론트는 화면보다 50% 넓은 영역만 받아 두고 그 안에선 재요청하지 않음</li>
+        <li>결과 <b>718KB·1.2초</b>. 브라우저에서 버스정류장 315ms·병원 544ms·편의점 266ms, 콘솔 오류 0건</li>
+        <li>최종 SQL(격자 표본) 재검증 완료 — JDBC 바인딩 경로 6개 모두 200, 전국 9개 구역에 빈 곳 없이 분포, 브라우저 442~623ms</li>
+      </ul>
+      <p><a href="../history_v1.26.md">history_v1.26.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v1.25</span>
         <span class="ver-title">실서버 첨부 재생 503 해결(QFieldCloud 계정 Secret 주입)</span>
         <span class="date">2026-09-17</span>
