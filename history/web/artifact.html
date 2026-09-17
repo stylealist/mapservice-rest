@@ -90,7 +90,29 @@
 
   .vswitch-inner { max-width: var(--col); margin: 0 auto; padding: .5rem var(--gut) .6rem; }
 
-  .vswitch-top { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
+  .vswitch-top { display: flex; align-items: center; gap: .8rem; border-bottom: 1px solid var(--line); }
+
+  /* 버전이 늘어 칩이 여러 줄이 되지 않도록 5개씩 묶어 탭으로 전환한다 */
+  .vgroups { display: flex; gap: .15rem; overflow-x: auto; scrollbar-width: thin; min-width: 0; }
+
+  .vgroups button {
+    font-family: var(--f-mono);
+    font-size: .74rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    cursor: pointer;
+    padding: .45rem .7rem .4rem;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    background: transparent;
+    color: var(--muted);
+  }
+
+  .vgroups button:hover { color: var(--ink); }
+  .vgroups button[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+  .vgroups button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   .vswitch-label {
     font-family: var(--f-mono);
@@ -115,10 +137,16 @@
 
   .vgroup {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: .4rem;
     padding-top: .55rem;
   }
+
+  .vgroup[hidden] { display: none; }
+
+  @media (max-width: 64rem) { .vgroup { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 44rem) { .vgroup { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 30rem) { .vgroup { grid-template-columns: 1fr; } }
 
   .vchip {
     font-family: var(--f-body);
@@ -353,13 +381,17 @@
   <div class="vswitch-inner">
     <div class="vswitch-top">
       <span class="vswitch-label">sj-lab 작업 로그</span>
+      <div class="vgroups" role="tablist" aria-label="버전 묶음">
+        <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
+        <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.25</button>
+      </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
         <button type="button" class="vstep-prev" aria-label="이전 버전">&lsaquo;</button>
         <button type="button" class="vstep-next" aria-label="다음 버전">&rsaquo;</button>
       </div>
     </div>
-    <div class="vgroup" role="tablist" aria-label="버전 목록">
+    <div class="vgroup" id="vgroup-0" role="tabpanel" aria-labelledby="gtab-0" hidden>
       <button type="button" class="vchip" role="tab" data-ver="1.0" aria-controls="pane-v1.0" title="왼쪽 패널 시설물 탭 — QField 시설물 데이터 표출"><span class="pv">v1.0</span><span class="pt">시설물 탭 데이터 표출</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.1" aria-controls="pane-v1.1" title="sj-lab 멀티 저장소 총괄 환경 구성"><span class="pv">v1.1</span><span class="pt">멀티 저장소 총괄 환경</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.2" aria-controls="pane-v1.2" title="작업 규칙 추가 및 history 체계 도입"><span class="pv">v1.2</span><span class="pt">작업 규칙 · history 체계</span></button>
@@ -375,6 +407,8 @@
       <button type="button" class="vchip" role="tab" data-ver="1.12" aria-controls="pane-v1.12" title="상세 팝업에서 내부 관리용 항목 숨김"><span class="pv">v1.12</span><span class="pt">팝업 내부 항목 숨김</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.13" aria-controls="pane-v1.13" title="상세 팝업 일시 표기 정리"><span class="pv">v1.13</span><span class="pt">일시 표기 정리</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.14" aria-controls="pane-v1.14" title="팝업을 열 때 화면이 위로 밀리던 오류 수정"><span class="pv">v1.14</span><span class="pt">화면 밀림 오류 수정</span></button>
+    </div>
+    <div class="vgroup" id="vgroup-1" role="tabpanel" aria-labelledby="gtab-1" hidden>
       <button type="button" class="vchip" role="tab" data-ver="1.15" aria-controls="pane-v1.15" title="상세 팝업에서 행정구역 이름 숨김"><span class="pv">v1.15</span><span class="pt">행정구역 이름 숨김</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.16" aria-controls="pane-v1.16" title="QField 앱·동기화 저장소 추가와 데이터 출처 확정"><span class="pv">v1.16</span><span class="pt">QField 계열 저장소 추가</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.17" aria-controls="pane-v1.17" title="상세 팝업에 점검 결과·사진·음성·영상 추가"><span class="pv">v1.17</span><span class="pt">점검 결과·미디어 표시</span></button>
@@ -2536,20 +2570,37 @@ kubectl rollout restart deployment/mapservice-rest -n sj-lab</div>
   (function () {
     var chips = Array.prototype.slice.call(document.querySelectorAll('.vchip'));
     var panes = Array.prototype.slice.call(document.querySelectorAll('.vpane'));
+    var groupTabs = Array.prototype.slice.call(document.querySelectorAll('.vgroups button'));
+    var groups = Array.prototype.slice.call(document.querySelectorAll('.vgroup'));
     var now = document.querySelector('.vnow');
     var prev = document.querySelector('.vstep-prev');
     var next = document.querySelector('.vstep-next');
     var index = chips.length - 1;
 
+    // 칩이 속한 묶음만 펼친다 (버전이 늘어도 한 줄로 유지)
+    function showGroup(groupIndex) {
+      groups.forEach(function (g, i) { g.hidden = i !== groupIndex; });
+      groupTabs.forEach(function (t, i) { t.setAttribute('aria-selected', i === groupIndex ? 'true' : 'false'); });
+      groupTabs.forEach(function (t, i) { t.tabIndex = i === groupIndex ? 0 : -1; });
+    }
+
+    function groupIndexOfChip(chip) {
+      var parent = chip.closest('.vgroup');
+      return Math.max(0, groups.indexOf(parent));
+    }
+
     function show(i) {
       index = Math.max(0, Math.min(chips.length - 1, i));
-      var ver = chips[index].getAttribute('data-ver');
+      var chip = chips[index];
+      var ver = chip.getAttribute('data-ver');
+
       chips.forEach(function (c) {
         var on = c.getAttribute('data-ver') === ver;
         c.setAttribute('aria-current', on ? 'true' : 'false');
         c.setAttribute('aria-selected', on ? 'true' : 'false');
       });
       panes.forEach(function (p) { p.hidden = p.getAttribute('data-ver') !== ver; });
+      showGroup(groupIndexOfChip(chip)); // 이전/다음으로 묶음을 넘어가도 따라 이동
       now.textContent = 'v' + ver + ' · ' + (index + 1) + '/' + chips.length;
       prev.disabled = index === 0;
       next.disabled = index === chips.length - 1;
@@ -2557,6 +2608,9 @@ kubectl rollout restart deployment/mapservice-rest -n sj-lab</div>
 
     chips.forEach(function (c, i) {
       c.addEventListener('click', function () { show(i); });
+    });
+    groupTabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { showGroup(i); });
     });
     prev.addEventListener('click', function () { show(index - 1); });
     next.addEventListener('click', function () { show(index + 1); });
