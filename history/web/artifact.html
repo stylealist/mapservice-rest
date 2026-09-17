@@ -383,7 +383,8 @@
       <button type="button" class="vchip" role="tab" data-ver="1.20" aria-controls="pane-v1.20" title="사진·음성·영상 실제 재생(QFieldCloud 중계)"><span class="pv">v1.20</span><span class="pt">첨부 파일 재생</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.21" aria-controls="pane-v1.21" title="오디오 플레이어가 보이지 않던 오류 수정"><span class="pv">v1.21</span><span class="pt">오디오 표시 수정</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.22" aria-controls="pane-v1.22" title="음성 변환(STT)이 DB에 들어오지 않던 원인 정리"><span class="pv">v1.22</span><span class="pt">STT 원인 추적</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="1.23" aria-controls="pane-v1.23" title="운영 워커가 음성 변환 텍스트를 빈 값으로 덮어쓰던 문제 수정"><span class="pv">v1.23<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">빈 값 덮어쓰기 방지</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.23" aria-controls="pane-v1.23" title="운영 워커가 음성 변환 텍스트를 빈 값으로 덮어쓰던 문제 수정"><span class="pv">v1.23</span><span class="pt">빈 값 덮어쓰기 방지</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.24" aria-controls="pane-v1.24" title="팝업이 핀을 가리던 문제 수정과 헤더 드래그 이동"><span class="pv">v1.24<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">팝업 위치 · 드래그 이동</span></button>
     </div>
   </div>
 </nav>
@@ -2358,6 +2359,81 @@ except Exception:
         <p>ffmpeg는 최초 배포(8/27)부터 이미지에 있고 배포 태그 7은 9/3 빌드라 <b>누락 가능성은 낮습니다</b>. 가장 유력한 후보는 <b>컨테이너의 외부 네트워크 차단</b>(구글 STT 호출 불가)입니다.</p>
         <p>로컬과 운영 워커를 같은 DB로 동시에 돌리면 서로 덮어쓸 수 있으니, 검증 중에는 한쪽만 띄우세요.</p>
       </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.24 ===================== -->
+<div class="vpane" data-ver="1.24" id="pane-v1.24" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.24</span>
+      <span>2026-09-17</span>
+      <span>sj-lab-mapservice</span>
+    </div>
+    <h1>팝업을 핀 오른쪽으로 옮기고<br>헤더 드래그 이동 추가</h1>
+    <p class="dek">
+      시설물을 누르면 팝업이 핀 위쪽 절반을 덮고 있었습니다. 간격을 핀 높이에 맞추고,
+      헤더를 잡아 원하는 자리로 옮길 수 있게 했습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>배치</dt><dd>핀 위 → <b>핀 오른쪽</b></dd></div>
+      <div><dt>드래그</dt><dd>헤더로 이동</dd></div>
+      <div><dt>지도 이동 시</dt><dd class="ok">시설물 계속 추종</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">1. 시설물을 눌렀을때 팝업이 시설물을 반정도 가리고있어 팝업 위치 조정해줘
+2. 상세 팝업을 헤더부분을 드래그앤드롭해서 이동 할 수 있도록 변경 해줘</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">수정 1</p>
+    <h2>핀 높이만큼 띄우기</h2>
+    <p class="lede">
+      선택된 핀은 원본 24×32 아이콘을 1.25배로 그려 <b>기준점 위로 40px</b>를 차지합니다.
+      그런데 팝업 오프셋이 <code>-15</code>뿐이라 핀 위쪽 절반이 가려졌습니다.
+    </p>
+    <ul class="notes">
+      <li>오프셋을 <b><code>-48</code></b>로 조정 (핀 40px + 여백 8px)</li>
+      <li>값을 상수(<code>FACILITY_POPUP_OFFSET</code>)로 빼서 아이콘 크기가 바뀌면 함께 고치도록 함</li>
+    </ul>
+
+    <h2 style="margin-top:2.25rem">수정 2 — 헤더 드래그 이동</h2>
+    <ul class="notes">
+      <li>헤더를 잡아 끌면 팝업이 따라옵니다(포인터 캡처 사용, 닫기 버튼에서 시작한 드래그는 무시)</li>
+      <li><b>오버레이 좌표는 시설물에 고정한 채 <code>offset</code>만 변경</b> — 옮긴 뒤에도 지도를 움직이면 팝업이 시설물을 계속 따라다닙니다</li>
+      <li>다른 시설물을 열면 기본 위치로 복귀(이전 드래그 위치가 남지 않도록)</li>
+      <li>모바일에서 드래그가 지도 제스처로 새지 않도록 <code>touch-action: none</code></li>
+    </ul>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>측정값</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>확인</th><th>결과</th></tr></thead>
+        <tbody>
+          <tr><td>핀 오른쪽 배치</td><td>팝업 왼쪽이 핀에서 <b>9px</b> 떨어짐, 겹침 없음</td></tr><tr><td>세로 정렬</td><td>팝업 중심과 핀 기준점 차이 <b>0px</b></td></tr>
+          <tr><td>드래그</td><td>헤더를 (+160, +90) 끌자 오프셋 <code>[0, -48]</code> → <code>[160, 42]</code></td></tr>
+          <tr><td>드래그 후 지도 이동</td><td>팝업이 시설물을 따라 이동 (화면 X 650 → 566)</td></tr>
+          <tr><td>콘솔 오류</td><td class="num">0건</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </section>

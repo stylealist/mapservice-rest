@@ -112,6 +112,21 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v1.24</span>
+        <span class="ver-title">팝업을 핀 오른쪽으로 옮기고 헤더 드래그 이동 추가</span>
+        <span class="date">2026-09-17</span>
+      </div>
+      <ul>
+        <li>팝업이 핀을 가리던 문제 → 간격을 넓힌 뒤 <b>핀 오른쪽 배치</b>로 변경(가로 9px, 세로 중심 차이 0px)</li>
+        <li>세로 가운데 정렬은 OpenLayers가 내용 채우기 전 높이로 계산해 어긋나므로 <b>직접 보정</b></li>
+        <li>헤더를 잡아 끌어 팝업 이동 — 좌표는 시설물에 고정하고 <code>offset</code>만 바꿔 <b>지도를 움직여도 계속 추종</b></li>
+        <li>다른 시설물을 열면 기본 위치로 복귀, 콘솔 오류 0건</li>
+      </ul>
+      <p><a href="../history_v1.24.md">history_v1.24.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v1.23</span>
         <span class="ver-title">운영 워커가 음성 텍스트를 빈 값으로 덮어쓰던 문제 수정</span>
         <span class="date">2026-09-17</span>
