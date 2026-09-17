@@ -383,7 +383,7 @@
       <span class="vswitch-label">sj-lab 작업 로그</span>
       <div class="vgroups" role="tablist" aria-label="버전 묶음">
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
-        <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.26</button>
+        <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.27</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -420,7 +420,8 @@
       <button type="button" class="vchip" role="tab" data-ver="1.23" aria-controls="pane-v1.23" title="운영 워커가 음성 변환 텍스트를 빈 값으로 덮어쓰던 문제 수정"><span class="pv">v1.23</span><span class="pt">빈 값 덮어쓰기 방지</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.24" aria-controls="pane-v1.24" title="팝업을 핀 오른쪽으로 옮기고 헤더 드래그 이동"><span class="pv">v1.24</span><span class="pt">팝업 위치 · 드래그 이동</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.25" aria-controls="pane-v1.25" title="실서버 첨부 재생 503 해결(계정 Secret 주입)"><span class="pv">v1.25</span><span class="pt">운영 첨부 재생 503</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="1.26" aria-controls="pane-v1.26" title="WFS 레이어 최초 로딩 속도 개선(화면 영역 조회 + 응답 압축)"><span class="pv">v1.26<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">레이어 로딩 속도 개선</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.26" aria-controls="pane-v1.26" title="WFS 레이어 최초 로딩 속도 개선(화면 영역 조회 + 응답 압축)"><span class="pv">v1.26</span><span class="pt">레이어 로딩 속도 개선</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.27" aria-controls="pane-v1.27" title="로컬에서도 첨부(사진·오디오·영상)가 재생되도록 계정 주입 자동화"><span class="pv">v1.27<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">로컬 첨부 재생 정상화</span></button>
     </div>
   </div>
 </nav>
@@ -2678,6 +2679,97 @@ GET /map/busStop-info                                        (bbox 없으면 기
 </section>
 </div>
 
+<!-- ===================== v1.27 ===================== -->
+<div class="vpane" data-ver="1.27" id="pane-v1.27" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.27</span>
+      <span>2026-09-17</span>
+      <span>mapservice-rest</span>
+    </div>
+    <h1>로컬에서도 첨부가 재생되도록<br>QField 계정 주입 자동화</h1>
+    <p class="dek">
+      운영은 v1.25 Secret 생성으로 정상화됐는데, 로컬은 계정을 넣을 방법이 "띄우기 전에 셸에서 직접" 뿐이었습니다.
+      그래서 <code>local-stack.ps1 start</code> 만 하면 첨부만 503 이었습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>로컬</dt><dd class="ok">503 → 200</dd></div>
+      <div><dt>실서버</dt><dd class="ok">200 유지</dd></div>
+      <div><dt>바뀐 파일</dt><dd>스크립트 1 · 문서 3</dd></div>
+      <div><dt>저장소에 계정</dt><dd class="ok">넣지 않음</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">이전에 반영했던 실서버에서 사진, 오디오, 비디오가 안나오는 이슈가
+실서버에서는 문제가없는데 로컬에서 나오지않는 오류가 있어.
+로컬에서도 실서버에서도 이미지, 오디오, 비디오를 확인 할 수 있도록 해줘</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">원인</p>
+    <h2>계정 주입 경로가 운영에만 생겼습니다</h2>
+    <p class="lede">
+      미디어 중계는 QFieldCloud 계정이 없으면 <b>그 엔드포인트만</b> 503(<code>NOT_CONFIGURED</code>)을 냅니다.
+      운영에는 Secret 참조가 붙었지만 로컬에는 자동 경로가 없었습니다.
+    </p>
+    <div class="cmd">대상      사진                오디오              영상
+로컬      503                 503                 503
+실서버    200 image/jpeg      200 audio/mp4       200 video/mp4</div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">수정</p>
+    <h2>기동 직전에 계정을 채워 넣습니다</h2>
+    <ul class="notes">
+      <li><code>local-stack.ps1</code> 에 <code>loadQfieldCredentials</code> 추가 — <b>① 이미 설정된 환경변수 → ② <code>.claude\settings.local.json</code> 의 env</b> 순으로 읽습니다</li>
+      <li>셸에서 직접 넣은 값이 있으면 <b>그대로 존중</b>하고, 없을 때만 파일에서 채웁니다</li>
+      <li><b>저장소 파일에는 계정을 적지 않았습니다</b> — 이 저장소는 public 이라 값은 <code>.gitignore</code> 대상 파일에만 두고 스크립트는 읽기만 합니다</li>
+      <li>기동 로그로 어느 쪽인지 바로 보입니다</li>
+    </ul>
+    <div class="cmd">QField 계정 적용: stylealist (첨부 재생 가능)
+주의: QField 계정이 없어 첨부(사진·음성·영상) 재생은 503 입니다.</div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>로컬과 실서버가 같은 원본을 같은 타입으로 내려줍니다</h2>
+    <div class="cmd">대상      종류      상태  Content-Type   크기
+로컬      사진      200   image/jpeg      84KB
+로컬      오디오    200   audio/mp4      154KB
+로컬      영상      200   video/mp4    1,121KB
+실서버    사진      200   image/jpeg      84KB
+실서버    오디오    200   audio/mp4      154KB
+실서버    영상      200   video/mp4    1,121KB</div>
+    <p class="promptnote">크기가 바이트 단위까지 같아 같은 원본을 받아오는 것이 확인됩니다.</p>
+
+    <h2 style="margin-top:2.25rem">브라우저 (로컬 상세 팝업)</h2>
+    <div class="grid2">
+      <div class="cell">
+        <h3>재생 <span class="badge pass">확인</span></h3>
+        <p>사진 1080×1920 로드, 오디오 9.7초·영상 2.6초(1080×1920) 모두 재생 시작됨(<code>paused=false</code>), 미디어 오류 없음.</p>
+      </div>
+      <div class="cell">
+        <h3>요청 <span class="badge pass">확인</span></h3>
+        <p>팝업에서 나간 미디어 요청 3건 모두 200 이고 <code>image/jpeg</code>·<code>audio/mp4</code>·<code>video/mp4</code>. 콘솔 오류 0건.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -2686,7 +2778,7 @@ GET /map/busStop-info                                        (bbox 없으면 기
       <li><em>API Gateway</em><span class="url">http://localhost:8100/map/admin-area/sido</span></li>
       <li><em>Eureka</em><span class="url">http://localhost:8761</span></li>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.26.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.27.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 수행하지 않았습니다 ·

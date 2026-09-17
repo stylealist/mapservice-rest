@@ -112,6 +112,21 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v1.27</span>
+        <span class="ver-title">로컬에서도 첨부(사진·오디오·영상)가 재생되도록 계정 주입 자동화</span>
+        <span class="date">2026-09-17</span>
+      </div>
+      <ul>
+        <li>운영은 v1.25 Secret 생성으로 정상화됐으나, 로컬은 계정 주입 경로가 "셸에서 직접 환경변수" 뿐이라 첨부만 503</li>
+        <li><code>local-stack.ps1</code>에 <code>loadQfieldCredentials</code> 추가 — ① 이미 설정된 환경변수 ② <code>.claude/settings.local.json</code>의 <code>env</code> 순으로 읽어 기동 직전 주입</li>
+        <li><b>저장소 파일에는 계정을 적지 않음</b>(public 저장소) — 값은 <code>.gitignore</code> 대상 파일에만 두고 스크립트는 읽기만 함</li>
+        <li>로컬·실서버 모두 200, 사진/오디오/영상 크기가 바이트 단위까지 동일. 브라우저에서 사진 1080×1920, 오디오 9.7초·영상 2.6초 재생 확인, 콘솔 오류 0건</li>
+      </ul>
+      <p><a href="../history_v1.27.md">history_v1.27.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v1.26</span>
         <span class="ver-title">WFS 레이어 최초 로딩 속도 개선(화면 영역 조회 + 응답 압축)</span>
         <span class="date">2026-09-17</span>
