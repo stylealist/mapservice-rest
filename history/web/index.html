@@ -112,6 +112,20 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v1.23</span>
+        <span class="ver-title">운영 워커가 음성 텍스트를 빈 값으로 덮어쓰던 문제 수정</span>
+        <span class="date">2026-09-17</span>
+      </div>
+      <ul>
+        <li>로컬 워커가 채운 텍스트를 운영 워커가 빈 값으로 덮어쓰던 문제 — <code>_txt</code>는 빈 값이면 기존 값 유지하도록 UPSERT 수정</li>
+        <li>차트는 <code>APP_ENV</code>를 주는데 코드는 <code>FLASK_ENV</code>만 봐 운영에서도 로컬 경로 사용 → 둘 다 인정하고 볼륨 경로로 정렬</li>
+        <li>기동 시 STT 환경 점검 로그(모듈·ffmpeg·외부 네트워크) 추가 — 남은 원인은 이 세 줄로 확정</li>
+      </ul>
+      <p><a href="../history_v1.23.md">history_v1.23.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v1.22</span>
         <span class="ver-title">음성 변환(STT)이 DB에 들어오지 않던 원인 정리</span>
         <span class="date">2026-09-16</span>
