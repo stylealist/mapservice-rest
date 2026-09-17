@@ -112,6 +112,20 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v1.25</span>
+        <span class="ver-title">실서버 첨부 재생 503 해결(QFieldCloud 계정 Secret 주입)</span>
+        <span class="date">2026-09-17</span>
+      </div>
+      <ul>
+        <li>503은 계정 미설정 시 백엔드가 내는 코드 — 운영 차트에 주입 설정이 없었음</li>
+        <li>차트에 <code>QFIELD_BASE_URL</code> + 계정 <b>Secret 참조</b> 추가(값은 차트에 넣지 않음, <code>optional: true</code>로 파드 기동 영향 없음)</li>
+        <li><code>helm lint</code> 통과. <b>남은 작업</b>: 클러스터에 <code>qfield-credentials</code> Secret 생성 후 롤아웃</li>
+      </ul>
+      <p><a href="../history_v1.25.md">history_v1.25.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v1.24</span>
         <span class="ver-title">팝업을 핀 오른쪽으로 옮기고 헤더 드래그 이동 추가</span>
         <span class="date">2026-09-17</span>

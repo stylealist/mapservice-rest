@@ -384,7 +384,8 @@
       <button type="button" class="vchip" role="tab" data-ver="1.21" aria-controls="pane-v1.21" title="오디오 플레이어가 보이지 않던 오류 수정"><span class="pv">v1.21</span><span class="pt">오디오 표시 수정</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.22" aria-controls="pane-v1.22" title="음성 변환(STT)이 DB에 들어오지 않던 원인 정리"><span class="pv">v1.22</span><span class="pt">STT 원인 추적</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.23" aria-controls="pane-v1.23" title="운영 워커가 음성 변환 텍스트를 빈 값으로 덮어쓰던 문제 수정"><span class="pv">v1.23</span><span class="pt">빈 값 덮어쓰기 방지</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="1.24" aria-controls="pane-v1.24" title="팝업이 핀을 가리던 문제 수정과 헤더 드래그 이동"><span class="pv">v1.24<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">팝업 위치 · 드래그 이동</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.24" aria-controls="pane-v1.24" title="팝업을 핀 오른쪽으로 옮기고 헤더 드래그 이동"><span class="pv">v1.24</span><span class="pt">팝업 위치 · 드래그 이동</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.25" aria-controls="pane-v1.25" title="실서버 첨부 재생 503 해결(계정 Secret 주입)"><span class="pv">v1.25<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">운영 첨부 재생 503</span></button>
     </div>
   </div>
 </nav>
@@ -2434,6 +2435,81 @@ except Exception:
           <tr><td>콘솔 오류</td><td class="num">0건</td></tr>
         </tbody>
       </table>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.25 ===================== -->
+<div class="vpane" data-ver="1.25" id="pane-v1.25" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.25</span>
+      <span>2026-09-17</span>
+      <span>sj-lab-k8s-manifests</span>
+    </div>
+    <h1>실서버 첨부 재생 503 해결<br>QFieldCloud 계정 Secret 주입</h1>
+    <p class="dek">
+      로컬에서는 사진·음성·영상이 재생되는데 실서버만 503이었습니다.
+      계정이 설정되지 않았을 때 백엔드가 의도적으로 내는 코드였고, 운영 차트에 주입 설정이 없었습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>원인</dt><dd>계정 미주입</dd></div>
+      <div><dt>바뀐 파일</dt><dd>차트 2개</dd></div>
+      <div><dt>helm lint</dt><dd class="ok">통과</dd></div>
+      <div><dt>남은 작업</dt><dd class="pending">Secret 생성</dd></div>
+      <div><dt>커밋</dt><dd class="pending">미커밋</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">로컬에서는 사진, 오디오, 비디오가 잘나오는데 실서버에서는
+GET https://api.sj-lab.co.kr/map/qfield/facilities/FACIL_T18_10/media?path=... 503 (Service Unavailable)</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">원인과 수정</p>
+    <h2>계정이 없으면 이 엔드포인트만 503</h2>
+    <pre class="fcode">if (username.isBlank() || password.isBlank()) {
+    throw new MediaException(MediaError.NOT_CONFIGURED, ...);  // → 503
+}</pre>
+    <ul class="notes">
+      <li>차트에 <code>QFIELD_BASE_URL</code> 환경변수와 <code>QFIELD_USERNAME</code>·<code>QFIELD_PASSWORD</code> <b>Secret 참조</b> 추가</li>
+      <li><b>계정 값은 차트에 넣지 않습니다</b> — 참조만 두고 실제 값은 클러스터 Secret에</li>
+      <li><code>optional: true</code>로 두어 <b>Secret이 없어도 파드는 정상 기동</b>하고 미디어 엔드포인트만 503</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">남은 작업</p>
+    <h2>Secret 생성 (클러스터 권한 필요)</h2>
+    <p class="lede">로컬에 쿠버네티스 접근 권한이 없어 실행하지 못했습니다.</p>
+    <div class="cmd">kubectl create secret generic qfield-credentials -n sj-lab \
+  --from-literal=username='&lt;QFieldCloud 계정&gt;' \
+  --from-literal=password='&lt;비밀번호&gt;'
+
+kubectl rollout restart deployment/mapservice-rest -n sj-lab</div>
+    <p class="promptnote">배포 후 <code>.../media?path=DCIM%2FJPEG_....jpg</code> 가 <b>200 image/jpeg</b> 로 오면 정상입니다.</p>
+
+    <h2 style="margin-top:2.25rem">검증</h2>
+    <div class="grid2">
+      <div class="cell">
+        <h3>차트 <span class="badge pass">확인</span></h3>
+        <p><code>helm lint</code> 통과(0 failed), <code>helm template</code> 렌더링에서 base-url 값 주입과 Secret 참조(optional)를 확인했습니다.</p>
+      </div>
+      <div class="cell">
+        <h3>무관한 로그 <span class="badge pass">정상</span></h3>
+        <p>콘솔의 <code>캐시된 데이터가 없습니다: convenience_store</code> 등은 WFS 레이어를 켜지 않은 상태에서 지도를 움직일 때 나오는 안내 로그로, 이번 문제와 무관합니다.</p>
+      </div>
     </div>
   </div>
 </section>
