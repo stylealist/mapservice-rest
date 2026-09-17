@@ -112,6 +112,52 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v1.35</span>
+        <span class="ver-title">편의점·약국·병원·관공서·버스·CCTV 레이어 팝업도 헤더 드래그로 이동</span>
+        <span class="date">2026-09-17</span>
+      </div>
+      <ul>
+        <li>시설물 팝업 전용이던 드래그를 공용 모듈 <code>map-popup-drag.js</code>(<code>bindOverlayHeaderDrag</code>)로 분리</li>
+        <li><code>showWfsPopup()</code>(WFS 6종 공통)·<code>showWmsPopup()</code>에 연결, 시설물 팝업도 공용 함수로 교체</li>
+        <li>좌표 고정 + offset 변경이라 옮긴 뒤에도 지도 이동을 따라감, 닫기 버튼은 드래그에서 제외</li>
+        <li>Chrome 확인 — WFS 6종·WMS·시설물 8종 모두 드래그 (−140, +70)·지도 이동 추종·닫기 정상, 페이지 오류 0건</li>
+        <li>v1.33~v1.35를 <code>sj-lab-mapservice</code> <code>8fb60bb</code>와 <code>mapservice-rest</code> 이력 커밋으로 <code>origin/main</code> 푸시</li>
+      </ul>
+      <p><a href="../history_v1.35.md">history_v1.35.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v1.34</span>
+        <span class="ver-title">상세 팝업에 "보수 불필요"도 표시</span>
+        <span class="date">2026-09-17</span>
+      </div>
+      <ul>
+        <li>원인 — 헤더는 <code>Y</code>일 때만 배지, 본문 행은 빈 값이면 <code>-</code>·값이 있으면 정비요청/양호(필터와 용어 불일치)</li>
+        <li>헤더에 <code>보수 불필요</code>(초록) 배지 추가, 본문 행을 보수 필요/보수 불필요로 통일하고 빈 값은 <code>emptyValue: "N"</code>으로 보수 불필요 처리</li>
+        <li>판정은 목록 필터와 같은 기준(Y면 필요, 그 밖은 불필요)</li>
+        <li>Chrome 확인 — Test(Y): 보수 필요, 본사(빈 값): 보수 불필요, 오류 0건</li>
+      </ul>
+      <p><a href="../history_v1.34.md">history_v1.34.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v1.33</span>
+        <span class="ver-title">시설물 검색에 보수 필요 여부 필터(전체 / 보수 필요 / 보수 불필요) 추가</span>
+        <span class="date">2026-09-17</span>
+      </div>
+      <ul>
+        <li>검색창 아래 세그먼트 버튼, 기본값 전체. 보수 필요 = <code>repair_required_yn = 'Y'</code>, 보수 불필요 = Y가 아닌 전부(실데이터 대부분 빈 값)</li>
+        <li>목록과 지도 핀에 함께 적용(검색어는 목록만), 버튼 옆 건수 표시, 필터에서 빠진 시설물의 팝업은 닫음, 재조회해도 필터 유지</li>
+        <li>검색어 지우기 버튼(×)이 항상 보이던 기존 버그 수정</li>
+        <li>Chrome 확인 — 서울 248/1/247, 전국 2,475/2/2,473, 검색어 조합·빈 결과·팝업 닫힘 정상, 오류 0건</li>
+      </ul>
+      <p><a href="../history_v1.33.md">history_v1.33.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v1.32</span>
         <span class="ver-title">작업 로그 페이지의 탭이 15개를 넘던 오류 수정</span>
         <span class="date">2026-09-17</span>

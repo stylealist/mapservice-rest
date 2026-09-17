@@ -384,7 +384,7 @@
       <div class="vgroups" role="tablist" aria-label="버전 묶음">
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
-        <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.32</button>
+        <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -429,7 +429,10 @@
     <div class="vgroup" id="vgroup-2" role="tabpanel" aria-labelledby="gtab-2" hidden>
       <button type="button" class="vchip" role="tab" data-ver="1.30" aria-controls="pane-v1.30" title="웹사이트 탭 아이콘을 메인 로고로 변경하고 v1.28~v1.29 커밋·푸시"><span class="pv">v1.30</span><span class="pt">탭 아이콘 · 커밋·푸시</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.31" aria-controls="pane-v1.31" title="sj-lab-hub 탭 아이콘을 허브 전용 모양으로 신규 제작"><span class="pv">v1.31</span><span class="pt">허브 탭 아이콘</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="1.32" aria-controls="pane-v1.32" title="작업 로그 페이지의 탭이 15개를 넘던 오류 수정"><span class="pv">v1.32<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">로그 탭 15개 묶음</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.32" aria-controls="pane-v1.32" title="작업 로그 페이지의 탭이 15개를 넘던 오류 수정"><span class="pv">v1.32</span><span class="pt">로그 탭 15개 묶음</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.33" aria-controls="pane-v1.33" title="시설물 검색에 보수 필요 여부 필터 추가"><span class="pv">v1.33</span><span class="pt">보수 필요 여부 필터</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.34" aria-controls="pane-v1.34" title="상세 팝업에 보수 불필요도 표시"><span class="pv">v1.34</span><span class="pt">팝업 보수 불필요 표시</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.35" aria-controls="pane-v1.35" title="편의점·약국·병원·관공서·버스·CCTV 레이어 팝업도 헤더 드래그로 이동"><span class="pv">v1.35<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">레이어 팝업 드래그 이동</span></button>
     </div>
   </div>
 </nav>
@@ -3146,6 +3149,224 @@ GET /map/busStop-info                                        (bbox 없으면 기
 </section>
 </div>
 
+<!-- ===================== v1.33 ===================== -->
+<div class="vpane" data-ver="1.33" id="pane-v1.33" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.33</span>
+      <span>2026-09-17</span>
+      <span>sj-lab-mapservice</span>
+    </div>
+    <h1>시설물 검색에<br>보수 필요 여부 필터</h1>
+    <p class="dek">
+      검색창 아래에 전체(기본) · 보수 필요 · 보수 불필요 버튼을 두고, 고른 조건으로 목록과 지도 핀을 함께 거릅니다.
+      버튼 옆에 건수를 보여 어느 쪽에 결과가 있는지 바로 알 수 있습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>기본값</dt><dd>전체</dd></div>
+      <div><dt>적용 대상</dt><dd>목록 + 지도 핀</dd></div>
+      <div><dt>서버 재조회</dt><dd class="ok">없음</dd></div>
+      <div><dt>함께 고친 버그</dt><dd>지우기 버튼 상시 노출</dd></div>
+      <div><dt>오류</dt><dd class="ok">0건</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">검색에서 기본값은 전체이고 보수필요, 보수불필요 선택해서 볼 수 있도록 해줘</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">판정 기준</p>
+    <h2>보수 불필요 = Y가 아닌 전부</h2>
+    <p class="lede">API로 실데이터를 집계해 보니 <code>N</code>은 없고 대부분 빈 값이었습니다. <code>N</code>만 고르면 0건이 됩니다.</p>
+    <div class="cmd">범위     Y(보수 필요)   빈 값
+전국     2              2,473
+서울     1                247</div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">동작</p>
+    <h2>목록과 지도가 같은 판정을 공유</h2>
+    <ul class="notes">
+      <li><code>matchesFacilityRepairFilter()</code> 하나로 <b>목록과 지도 핀</b>을 함께 거릅니다 — 빠진 핀은 그리지 않아 클릭 대상에서도 빠짐</li>
+      <li>검색어는 기존대로 <b>목록에만</b> 적용, 버튼 옆 건수는 검색어까지 반영한 기준</li>
+      <li>열려 있던 팝업의 시설물이 필터에서 빠지면 팝업을 닫음</li>
+      <li>행정구역을 바꿔 재조회해도 선택한 필터 유지</li>
+      <li><b>함께 고친 버그</b> — 검색어가 없어도 지우기 버튼(×)이 항상 보이던 문제(<code>.hidden</code> CSS 규칙 누락)</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>Chrome 1400×950</h2>
+    <div class="cmd">단계                    목록   지도핀   버튼(전체/필요/불필요)
+첫 화면(서울, 전체)      248    248      248 / 1 / 247
+보수 필요                  1      1
+→ 선택 후 보수 불필요    247    247      팝업 자동 닫힘
++ 검색어 "주차"           54    247      54 / 0 / 54
+보수 필요 + "주차"         0      1      "검색 결과가 없습니다"
+시·도 전체 재조회          2      2      2,475 / 2 / 2,473 (필터 유지)</div>
+    <div class="grid2">
+      <div class="cell">
+        <h3>기능 <span class="badge pass">확인</span></h3>
+        <p>모든 단계에서 목록·지도 핀·건수가 기대값과 일치했고, 콘솔·페이지 오류 0건입니다.</p>
+      </div>
+      <div class="cell caution">
+        <h3>검증 중 수정 <span class="badge skip">반영</span></h3>
+        <p>전국 조회 시 "보수 불필요 2,473"이 같은 너비 칸(92px)을 넘쳐, 칸을 글자 길이에 맞춰 나누도록 바꿨습니다(76 / 83 / 117px, 넘침 없음).</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.34 ===================== -->
+<div class="vpane" data-ver="1.34" id="pane-v1.34" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.34</span>
+      <span>2026-09-17</span>
+      <span>sj-lab-mapservice</span>
+    </div>
+    <h1>상세 팝업에<br>"보수 불필요"도 표시</h1>
+    <p class="dek">
+      팝업 헤더에는 보수 필요일 때만 배지가 붙고, 본문 행은 빈 값이면 <code>-</code>, 값이 있어도 정비요청/양호라 필터와 용어가 달랐습니다.
+      목록 필터와 같은 기준으로 둘 다 항상 보수 필요 / 보수 불필요를 보여줍니다.
+    </p>
+    <dl class="facts">
+      <div><dt>판정</dt><dd>Y = 필요, 그 밖 = 불필요</dd></div>
+      <div><dt>헤더 배지</dt><dd>주황 · 초록</dd></div>
+      <div><dt>본문 행</dt><dd class="ok">- → 보수 불필요</dd></div>
+      <div><dt>바뀐 파일</dt><dd>코드 2 · 문서 1</dd></div>
+      <div><dt>오류</dt><dd class="ok">0건</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">상세 팝업에 보수 필요는 나오는데 보수 불필요는 안나오고 있어 나오도록 해줘</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">수정</p>
+    <h2>헤더와 본문을 필터와 같은 기준으로</h2>
+    <ul class="notes">
+      <li><b>헤더</b> — <code>Y</code>가 아니면 <code>보수 불필요</code> 배지(초록, <code>badge-no-repair</code>) 추가</li>
+      <li><b>본문 행 용어</b> — <code>FACILITY_VALUE_MAPS.repair</code>를 Y=보수 필요, N=보수 불필요로 (앱 원문은 정비요청/양호)</li>
+      <li><b>빈 값</b> — 설정에 <code>emptyValue</code> 옵션을 추가해 <code>repair_required_yn</code>이 비면 <code>-</code> 대신 보수 불필요로 해석</li>
+      <li>목록 필터 <code>matchesFacilityRepairFilter()</code>와 같은 기준이라, 한쪽만 바꾸지 않도록 <code>docs/map-architecture.md</code>에 명시</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>Chrome 1400×950</h2>
+    <div class="cmd">시설물   repair_required_yn   헤더 배지                  본문 "보수 필요 여부"
+Test     Y                    시설물 · 보수 필요(주황)    보수 필요
+본사     (빈 값)              시설물 · 보수 불필요(초록)  보수 불필요   (이전: -)</div>
+    <p class="promptnote">콘솔·페이지 오류 0건. 목록 항목 오른쪽 배지는 기존대로 유지(요청 범위 밖).</p>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v1.35 ===================== -->
+<div class="vpane" data-ver="1.35" id="pane-v1.35" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.35</span>
+      <span>2026-09-17</span>
+      <span>sj-lab-mapservice</span>
+    </div>
+    <h1>레이어 상세 팝업도<br>헤더를 끌어 이동</h1>
+    <p class="dek">
+      헤더 드래그 이동은 시설물 팝업에만 있었습니다. 공용 모듈로 빼서 편의점·약국·병원·관공서·버스·CCTV 팝업과
+      WMS 팝업까지 같은 방식으로 옮길 수 있게 했습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>적용 팝업</dt><dd>WFS 6종 · WMS · 시설물</dd></div>
+      <div><dt>이동 방식</dt><dd>offset 변경 (지점 추종)</dd></div>
+      <div><dt>신규 모듈</dt><dd>map-popup-drag.js</dd></div>
+      <div><dt>검증</dt><dd class="ok">8종 모두 통과</dd></div>
+      <div><dt>페이지 오류</dt><dd class="ok">0건</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">편의점, 약국, 병원, 관공서, 버스, cctv 등 레이어의 상세 팝업도 드래그 앤 드랍으로 상세창을 이동 시킬 수 있도록 해줘</pre>
+    <pre class="prompt">커밋하고 푸시해줘</pre>
+    <p class="promptnote">v1.33~v1.35 변경을 <code>sj-lab-mapservice</code> 커밋 <code>8fb60bb</code>로 묶고(세 작업이 같은 파일에 걸쳐 있음), <code>mapservice-rest</code>의 이력·공유 페이지와 함께 <code>origin/main</code>에 푸시했습니다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">변경</p>
+    <h2>한 함수를 세 팝업이 함께 사용</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">공용 모듈</span><span class="fv"><code>map-popup-drag.js</code> — <code>bindOverlayHeaderDrag(overlay, header, { ignoreSelector })</code></span></div>
+      <div class="frow"><span class="fk">WFS 6종</span><span class="fv"><code>showWfsPopup()</code>에서 오버레이 생성 직후 연결 (편의점·약국·병원·관공서·버스·CCTV 공통)</span></div>
+      <div class="frow"><span class="fk">WMS</span><span class="fv"><code>showWmsPopup()</code>에도 연결 (구조가 같아 함께 적용)</span></div>
+      <div class="frow"><span class="fk">시설물</span><span class="fv">전용 <code>bindFacilityPopupDrag()</code> 삭제 → 공용 함수 사용, 동작 동일</span></div>
+    </div>
+    <ul class="notes" style="margin-top:1.5rem">
+      <li>오버레이 <b>좌표는 고정, offset만 변경</b> — 옮긴 뒤 지도를 움직여도 팝업이 그 지점을 따라감</li>
+      <li>닫기 버튼은 <code>ignoreSelector</code>로 제외해 드래그로 오인되지 않음</li>
+      <li>WFS·WMS 팝업은 클릭마다 새로 만들어지므로, 옮긴 위치는 다음 팝업에 이어지지 않음</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>Chrome 1400×950 — 헤더 (−140, +70) 끌기 → 지도 100px 이동 → 닫기</h2>
+    <div class="cmd">팝업        여는 방법                 커서   드래그      지도 이동 후   닫기
+편의점      showWfsPopup 직접 호출※   move   −140, +70   −100, 0        닫힘
+약국        지도 아이콘 클릭          move   −140, +70   −100, 0        닫힘
+병원        지도 아이콘 클릭          move   −140, +70   −100, 0        닫힘
+관공서      지도 아이콘 클릭          move   −140, +70   −100, 0        닫힘
+버스정류장  지도 아이콘 클릭          move   −140, +70   −100, 0        닫힘
+CCTV        showWfsPopup 직접 호출※   move   −140, +70   −100, 0        닫힘
+WMS         showWmsPopup 직접 호출    move   −140, +70   −100, 0        닫힘
+시설물      목록 클릭                 move   −140, +70   −100, 0        닫힘</div>
+    <div class="grid2">
+      <div class="cell">
+        <h3>결과 <span class="badge pass">8종 통과</span></h3>
+        <p>모든 팝업이 끈 만큼 정확히 움직였고, 지도를 옮기면 지점을 따라갔으며, 닫기 버튼은 드래그 없이 바로 닫혔습니다. 페이지 오류 0건.</p>
+      </div>
+      <div class="cell caution">
+        <h3>참고 <span class="badge skip">무관</span></h3>
+        <p>※ 편의점·CCTV는 스크립트의 클릭 좌표가 아이콘을 빗맞아, 클릭 때 호출되는 같은 함수를 실제 피처로 직접 불러 확인했습니다. 콘솔 오류 2건은 CCTV 외부 스트리밍 서버의 401입니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -3154,7 +3375,7 @@ GET /map/busStop-info                                        (bbox 없으면 기
       <li><em>API Gateway</em><span class="url">http://localhost:8100/map/admin-area/sido</span></li>
       <li><em>Eureka</em><span class="url">http://localhost:8761</span></li>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.32.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·
