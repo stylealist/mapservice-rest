@@ -28,8 +28,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **변경 기록(history)**: 파일을 실제로 변경한 작업마다 `history/history_v<major>.<minor>.md`를 새로 만들 것(조회·질문만 한 턴은 기록하지 않음). 내용은 사용자가 입력한 프롬프트 원문, 변경된 결과물(파일별 요약), 접속 URL 링크를 포함할 것. 직전 버전에서 minor를 1 올리고, 구조가 바뀌는 큰 작업이면 major를 올릴 것.
 - **공유 웹사이트**: history 문서를 추가·수정하면 같은 작업에서 두 곳을 함께 갱신할 것.
   1. `history/web/artifact.html` — 팀에 링크로 공유하는 발행 페이지의 원본. 버전 패널을 추가한 뒤 **같은 URL로 다시 발행**해야 링크가 유지됨(발행 주소: `https://claude.ai/artifact/HhEYu2UmxSko5h8uef7hB9`). 발행은 외부 서비스에 내용을 올리는 행위이므로 민감 정보를 싣지 말 것.
+  - 작업로그는 탭으로 관리되면 한탭에 15개의 로그가 포함되도록 한다.(예시 : v1.0 ~ v.1.14, v1.15 ~ v.1.29 이런식으로 진행)
+    - 페이지 스크립트(`chipsPerGroup = 15`)가 로드 시 버전 칩을 순서대로 15개씩 다시 묶고 탭 이름(`v첫 – v끝`)도 만든다. 새 버전은 마지막 묶음 끝에 칩만 추가하면 되며, 마크업의 묶음도 가능하면 15개 단위로 맞춰 둘 것(스크립트가 꺼진 환경 대비).
   2. `history/web/index.html` — 오프라인용 요약 페이지. 외부 CDN·빌드 도구 없이 단일 HTML로 유지할 것.
-  - 새 history 문서의 접속 URL 표 맨 위에 발행 페이지 주소를 넣을 것.
+  - 새 history 문서의 접속 URL 표 맨 위에 발행 페이지 주소를 넣을 것
 - **AI에이전트 오케스트레이션**: 오케스트레이션을 진행 할 때 최종 검증은 반드시 Claude로 진행해줘
 
 ## 명령어

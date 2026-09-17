@@ -383,7 +383,8 @@
       <span class="vswitch-label">sj-lab 작업 로그</span>
       <div class="vgroups" role="tablist" aria-label="버전 묶음">
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
-        <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.31</button>
+        <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
+        <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.32</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -424,8 +425,11 @@
       <button type="button" class="vchip" role="tab" data-ver="1.27" aria-controls="pane-v1.27" title="로컬에서도 첨부(사진·오디오·영상)가 재생되도록 계정 주입 자동화"><span class="pv">v1.27</span><span class="pt">로컬 첨부 재생 정상화</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.28" aria-controls="pane-v1.28" title="시설물을 선택하면 보이는 지도 영역의 가운데로 이동"><span class="pv">v1.28</span><span class="pt">선택 시설물 가운데 이동</span></button>
       <button type="button" class="vchip" role="tab" data-ver="1.29" aria-controls="pane-v1.29" title="상세 팝업을 지도 이동이 끝난 뒤 최종 위치에서 한 번에 표시"><span class="pv">v1.29</span><span class="pt">팝업 흔들림 제거</span></button>
+    </div>
+    <div class="vgroup" id="vgroup-2" role="tabpanel" aria-labelledby="gtab-2" hidden>
       <button type="button" class="vchip" role="tab" data-ver="1.30" aria-controls="pane-v1.30" title="웹사이트 탭 아이콘을 메인 로고로 변경하고 v1.28~v1.29 커밋·푸시"><span class="pv">v1.30</span><span class="pt">탭 아이콘 · 커밋·푸시</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="1.31" aria-controls="pane-v1.31" title="sj-lab-hub 탭 아이콘을 허브 전용 모양으로 신규 제작"><span class="pv">v1.31<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">허브 탭 아이콘</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.31" aria-controls="pane-v1.31" title="sj-lab-hub 탭 아이콘을 허브 전용 모양으로 신규 제작"><span class="pv">v1.31</span><span class="pt">허브 탭 아이콘</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="1.32" aria-controls="pane-v1.32" title="작업 로그 페이지의 탭이 15개를 넘던 오류 수정"><span class="pv">v1.32<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">로그 탭 15개 묶음</span></button>
     </div>
   </div>
 </nav>
@@ -3081,6 +3085,67 @@ GET /map/busStop-info                                        (bbox 없으면 기
 </section>
 </div>
 
+<!-- ===================== v1.32 ===================== -->
+<div class="vpane" data-ver="1.32" id="pane-v1.32" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v1.32</span>
+      <span>2026-09-17</span>
+      <span>mapservice-rest</span>
+    </div>
+    <h1>작업 로그 탭이<br>15개를 넘던 오류 수정</h1>
+    <p class="dek">
+      새 버전을 두 번째 탭 끝에 계속 붙이면서 한 탭에 17개가 들어가 있었습니다.
+      탭을 나누고, 앞으로는 페이지가 스스로 15개씩 묶도록 했습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>탭 구성</dt><dd>15 · 15 · 3</dd></div>
+      <div><dt>묶음</dt><dd class="ok">자동 (15개)</dd></div>
+      <div><dt>깨진 마크업</dt><dd class="ok">자동 복구</dd></div>
+      <div><dt>바뀐 파일</dt><dd>페이지 2 · 문서 1</dd></div>
+      <div><dt>오류</dt><dd class="ok">0건</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">로그페이지가 한페이지에 15개 넘게 나오는 오류가 있어</pre>
+    <pre class="prompt">커밋하고 푸시해줘</pre>
+    <p class="promptnote">수정 후 <code>mapservice-rest</code>를 커밋하고 <code>origin/main</code>에 푸시했습니다. <code>CLAUDE.md</code>의 "한 탭에 15개" 규칙(사용자 추가)도 함께 커밋됐습니다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">원인과 수정</p>
+    <h2>사람이 지키던 규칙을 페이지가 지키도록</h2>
+    <ul class="notes">
+      <li><b>원인</b> — 묶음이 마크업에 고정돼 있었고, v1.28부터 새 칩을 두 번째 탭 끝에 붙이며 탭 이름만 <code>v1.15 – v1.31</code>로 늘렸습니다</li>
+      <li>마크업을 <code>v1.0 – v1.14</code> / <code>v1.15 – v1.29</code> / <code>v1.30 – v1.32</code> 세 탭으로 분리</li>
+      <li><code>regroupChips()</code> — 로드 시 칩을 순서대로 <code>chipsPerGroup</code>(15)개씩 다시 묶고 탭 이름(<code>v첫 – v끝</code>)도 생성</li>
+      <li>새 버전은 <b>마지막 묶음 끝에 칩만 추가</b>하면 16번째부터 새 탭이 자동으로 생깁니다</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>Chrome 1280×800, 현재 파일과 깨진 사본 비교</h2>
+    <div class="cmd">확인          현재 파일                          묶음 마크업을 모두 없앤 사본
+탭별 개수     15 / 15 / 2                        15 / 15 / 2
+처음 화면     v1.31 · 32/32, 세 번째 탭           동일
+이전 3번      v1.28 · 29/32, 두 번째 탭으로 이동  동일
+오류          0건                                0건</div>
+    <p class="promptnote">검증은 v1.32 칩을 넣기 전에 했습니다. 추가 후 세 번째 탭은 v1.30 – v1.32(3개)입니다.</p>
+  </div>
+</section>
+</div>
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -3089,7 +3154,7 @@ GET /map/busStop-info                                        (bbox 없으면 기
       <li><em>API Gateway</em><span class="url">http://localhost:8100/map/admin-area/sido</span></li>
       <li><em>Eureka</em><span class="url">http://localhost:8761</span></li>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.31.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.32.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·
@@ -3100,6 +3165,46 @@ GET /map/busStop-info                                        (bbox 없으면 기
 
 <script>
   (function () {
+    // 탭 하나에 담는 버전 수 (예: v1.0 – v1.14, v1.15 – v1.29, v1.30 – v1.44)
+    var chipsPerGroup = 15;
+
+    // 마크업의 묶음이 어긋나도(한 탭에 15개 초과 등) 칩 순서대로 15개씩 다시 묶는다.
+    // 새 버전은 마지막 묶음 끝에 칩만 추가하면 탭이 자동으로 나뉜다.
+    (function regroupChips() {
+      var inner = document.querySelector('.vswitch-inner');
+      var tabList = document.querySelector('.vgroups');
+      var allChips = Array.prototype.slice.call(document.querySelectorAll('.vchip'));
+      if (!inner || !tabList || allChips.length === 0) return;
+
+      Array.prototype.slice.call(document.querySelectorAll('.vgroup')).forEach(function (g) { g.remove(); });
+      tabList.innerHTML = '';
+
+      for (var start = 0, groupIndex = 0; start < allChips.length; start += chipsPerGroup, groupIndex++) {
+        var groupChips = allChips.slice(start, start + chipsPerGroup);
+        var firstVer = groupChips[0].getAttribute('data-ver');
+        var lastVer = groupChips[groupChips.length - 1].getAttribute('data-ver');
+
+        var tab = document.createElement('button');
+        tab.type = 'button';
+        tab.setAttribute('role', 'tab');
+        tab.id = 'gtab-' + groupIndex;
+        tab.setAttribute('aria-controls', 'vgroup-' + groupIndex);
+        tab.setAttribute('aria-selected', 'false');
+        tab.tabIndex = -1;
+        tab.textContent = groupChips.length > 1 ? 'v' + firstVer + ' – v' + lastVer : 'v' + firstVer;
+        tabList.appendChild(tab);
+
+        var group = document.createElement('div');
+        group.className = 'vgroup';
+        group.id = 'vgroup-' + groupIndex;
+        group.setAttribute('role', 'tabpanel');
+        group.setAttribute('aria-labelledby', tab.id);
+        group.hidden = true;
+        groupChips.forEach(function (c) { group.appendChild(c); });
+        inner.appendChild(group);
+      }
+    })();
+
     var chips = Array.prototype.slice.call(document.querySelectorAll('.vchip'));
     var panes = Array.prototype.slice.call(document.querySelectorAll('.vpane'));
     var groupTabs = Array.prototype.slice.call(document.querySelectorAll('.vgroups button'));

@@ -112,6 +112,21 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v1.32</span>
+        <span class="ver-title">작업 로그 페이지의 탭이 15개를 넘던 오류 수정</span>
+        <span class="date">2026-09-17</span>
+      </div>
+      <ul>
+        <li>원인 — 새 버전 칩을 두 번째 탭 끝에 계속 붙여 <code>v1.15 – v1.31</code> 한 탭에 17개</li>
+        <li>발행 페이지를 <code>v1.0 – v1.14</code> / <code>v1.15 – v1.29</code> / <code>v1.30 – v1.32</code>로 분리하고, <code>regroupChips()</code>가 로드 시 15개씩 자동으로 다시 묶도록 함</li>
+        <li>Chrome 확인 — 탭별 15/15/2(추가 전), 이전·다음 이동 시 탭 따라감, 묶음 마크업을 없앤 사본도 동일하게 복구, 오류 0건</li>
+        <li><code>mapservice-rest</code> 커밋 후 <code>origin/main</code> 푸시</li>
+      </ul>
+      <p><a href="../history_v1.32.md">history_v1.32.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v1.31</span>
         <span class="ver-title">sj-lab-hub 탭 아이콘(favicon)을 허브 전용 모양으로 신규 제작</span>
         <span class="date">2026-09-17</span>
