@@ -112,6 +112,21 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v2.1</span>
+        <span class="ver-title">상세 팝업의 내업 영역을 하단 고정으로 변경</span>
+        <span class="date">2026-09-18</span>
+      </div>
+      <ul>
+        <li>원인 — 내업 섹션이 상세 본문(스크롤 높이 1,317px) 맨 아래라 끝까지 내리기 전엔 기능이 있는지도 몰랐음</li>
+        <li>팝업을 세로 플렉스로: 헤더·배지줄 고정 → 본문 스크롤 → 내업 영역 하단 고정(<code>#facilityOfficeFooter</code>, <code>min(300px,45vh)</code> 자체 스크롤)</li>
+        <li>높이 상한을 본문이 아닌 팝업 전체(<code>min(600px,100vh-170px)</code>)에 적용, 보수 필요 시설물일 때만 영역 표시</li>
+        <li>Chrome 재확인 — 1600×900·1280×800 모두 연 직후 보이고 본문 스크롤 후에도 고정, 저장 201·삭제 204·드래그·닫기 회귀 없음, 오류 0건</li>
+      </ul>
+      <p><a href="../history_v2.1.md">history_v2.1.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v2.0</span>
         <span class="ver-title">시설물 내업(사무실 처리) 기능 신설 — DB · 백엔드 쓰기 API · 프론트엔드</span>
         <span class="date">2026-09-18</span>

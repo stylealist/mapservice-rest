@@ -385,7 +385,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.1</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -436,7 +436,8 @@
       <button type="button" class="vchip" role="tab" data-ver="1.35" aria-controls="pane-v1.35" title="편의점·약국·병원·관공서·버스·CCTV 레이어 팝업도 헤더 드래그로 이동"><span class="pv">v1.35</span><span class="pt">레이어 팝업 드래그 이동</span></button>
     </div>
     <div class="vgroup" id="vgroup-3" role="tabpanel" aria-labelledby="gtab-3" hidden>
-      <button type="button" class="vchip" role="tab" data-ver="2.0" aria-controls="pane-v2.0" title="시설물 내업(사무실 처리) 기능 신설 — DB·백엔드 쓰기 API·프론트엔드"><span class="pv">v2.0<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">내업 처리 기능 신설</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.0" aria-controls="pane-v2.0" title="시설물 내업(사무실 처리) 기능 신설 — DB·백엔드 쓰기 API·프론트엔드"><span class="pv">v2.0</span><span class="pt">내업 처리 기능 신설</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.1" aria-controls="pane-v2.1" title="상세 팝업의 내업 영역을 하단 고정으로 변경"><span class="pv">v2.1<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">내업 영역 하단 고정</span></button>
     </div>
   </div>
 </nav>
@@ -3462,6 +3463,80 @@ qfield.facility_icon        → map.facility_icon   (아이콘 7건 복구, 이�
 </section>
 </div>
 
+<!-- ===================== v2.1 ===================== -->
+<div class="vpane" data-ver="2.1" id="pane-v2.1" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.1</span>
+      <span>2026-09-18</span>
+      <span>sj-lab-mapservice</span>
+    </div>
+    <h1>내업 영역을<br>팝업 하단에 고정</h1>
+    <p class="dek">
+      내업 처리 영역이 상세 본문 맨 아래에 있어 끝까지 스크롤하기 전에는 기능이 있는지도 몰랐습니다.
+      헤더가 위에 고정돼 있듯, 내업 영역을 팝업 하단에 고정했습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>연 직후</dt><dd class="ok">스크롤 없이 보임</dd></div>
+      <div><dt>본문 스크롤</dt><dd class="ok">위치 고정</dd></div>
+      <div><dt>보수 불필요</dt><dd>영역 숨김</dd></div>
+      <div><dt>기존 동작</dt><dd class="ok">회귀 없음</dd></div>
+      <div><dt>오류</dt><dd class="ok">0건</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">/orchestration 내업을 처리하는 부분이 팝업 아래에 위치해서 끝까지 내리기전까지는 있는지를 몰라 하단 영역은 헤더처럼 고정으로 보이도록 해줘</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">수정</p>
+    <h2>팝업을 세로 플렉스로 나눔</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">헤더</span><span class="fv">고정 (드래그 이동 그대로)</span></div>
+      <div class="frow"><span class="fk">배지줄</span><span class="fv">고정</span></div>
+      <div class="frow"><span class="fk">본문</span><span class="fv"><code>flex:1; min-height:0</code> — 남는 공간에서 스크롤</span></div>
+      <div class="frow"><span class="fk">내업 영역</span><span class="fv"><b>하단 고정</b> — 팝업 직계 자식(<code>#facilityOfficeFooter</code>), <code>min(300px, 45vh)</code> 안에서 자체 스크롤</span></div>
+    </div>
+    <ul class="notes" style="margin-top:1.5rem">
+      <li>높이 상한을 본문이 아니라 <b>팝업 전체</b>(<code>min(600px, 100vh - 170px)</code>)에 적용</li>
+      <li>팝업을 열 때마다 이 영역을 비우고, <b>보수 필요 시설물일 때만</b> 채움</li>
+      <li>작성 폼을 열면 이 영역의 <code>scrollTop</code>만 조정 — 팝업 전체가 밀리지 않음</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>코디네이터가 실제 Chrome으로 재확인</h2>
+    <div class="cmd">확인                              1600x900        1280x800
+팝업 높이                          600 (151~751)   600 (101~701)
+연 직후 내업 영역                  658~750 보임    608~700 보임
+본문 끝까지 스크롤(901) 후         같은 자리       같은 자리
++ 내업 작성 버튼                   y=669 화면 안   y=619 화면 안
+보수 불필요 시설물                 숨김(높이 0)    숨김</div>
+    <div class="grid2">
+      <div class="cell">
+        <h3>회귀 없음 <span class="badge pass">확인</span></h3>
+        <p>폼 열기(영역 300px, 내부 스크롤 755px) → 저장 201 → 배지·건수 반영 → 삭제 204 복구, 헤더 드래그 −120px, 닫기 동작, 표시 지연 로직 정상. 오류 0건.</p>
+      </div>
+      <div class="cell caution">
+        <h3>범위 밖 <span class="badge skip">기존 문제</span></h3>
+        <p>창 너비 1280에서 팝업이 오른쪽 끝에 붙으면 닫기 버튼이 지도 줌 컨트롤에 가려 클릭되지 않습니다(ESC로는 닫힘). 이번 변경 전에도 동일하게 재현됩니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -3470,7 +3545,7 @@ qfield.facility_icon        → map.facility_icon   (아이콘 7건 복구, 이�
       <li><em>API Gateway</em><span class="url">http://localhost:8100/map/admin-area/sido</span></li>
       <li><em>Eureka</em><span class="url">http://localhost:8761</span></li>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.1.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·
