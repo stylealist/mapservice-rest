@@ -385,7 +385,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.2</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.3</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -438,7 +438,8 @@
     <div class="vgroup" id="vgroup-3" role="tabpanel" aria-labelledby="gtab-3" hidden>
       <button type="button" class="vchip" role="tab" data-ver="2.0" aria-controls="pane-v2.0" title="시설물 내업(사무실 처리) 기능 신설 — DB·백엔드 쓰기 API·프론트엔드"><span class="pv">v2.0</span><span class="pt">내업 처리 기능 신설</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.1" aria-controls="pane-v2.1" title="상세 팝업의 내업 영역을 하단 고정으로 변경"><span class="pv">v2.1</span><span class="pt">내업 영역 하단 고정</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.2" aria-controls="pane-v2.2" title="시설물 내업 사진 첨부 API 및 멀티 저장소 에이전트 가이드 정비"><span class="pv">v2.2<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">내업 사진 API · 가이드</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.2" aria-controls="pane-v2.2" title="시설물 내업 사진 첨부 API 및 멀티 저장소 에이전트 가이드 정비"><span class="pv">v2.2</span><span class="pt">내업 사진 API · 가이드</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.3" aria-controls="pane-v2.3" title="내업 처리 보고서 PDF 다운로드 (외업 사진 포함)"><span class="pv">v2.3<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">보고서 PDF 다운로드</span></button>
     </div>
   </div>
 </nav>
@@ -3601,6 +3602,90 @@ qfield.facility_icon        → map.facility_icon   (아이콘 7건 복구, 이�
 </section>
 </div>
 
+<!-- ===================== v2.3 ===================== -->
+<div class="vpane" data-ver="2.3" id="pane-v2.3" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.3</span>
+      <span>2026-09-18</span>
+      <span>mapservice-rest · sj-lab-mapservice</span>
+    </div>
+    <h1>내업 처리 보고서를<br>PDF로 내려받기</h1>
+    <p class="dek">
+      내업 상태가 완료·보류인 기록에 대해 시설물 정보와 처리 내용, 외업 현장 사진과 처리 전·후 사진을 담은
+      보고서 PDF를 서버에서 만들어 내려받습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>대상</dt><dd>완료 · 보류 기록</dd></div>
+      <div><dt>생성</dt><dd>서버(OpenPDF)</dd></div>
+      <div><dt>사진</dt><dd>외업 + 처리 전·후</dd></div>
+      <div><dt>한글</dt><dd class="ok">폰트 임베드</dd></div>
+      <div><dt>오류</dt><dd class="ok">0건</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">/orchestration 내업 처리 상태가 완료, 보류 일 경우 시설물 + 내업 내용에 대한 보고서를 pdf로 만들어서 다운로드 할 수 있는 기능 추가해줘</pre>
+    <pre class="prompt">시설물 외업에서 찍었던 사진도pdf 시설물 기본정보에 추가해주고 commit push 진행해줘</pre>
+    <p class="promptnote">PDF 작업을 맡긴 워커 창이 보고 없이 닫혀 있어, 남아 있던 코드를 코디네이터가 이어받아 마무리·검증했습니다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">이어받아 고친 것</p>
+    <h2>남아 있던 코드의 문제 네 가지</h2>
+    <ul class="notes">
+      <li><b>PDF 생성이 500</b> — 보고서 쿼리가 없는 컬럼 <code>f.inv_dt</code>를 참조. 실제 뷰 컬럼 <code>inspected_at</code>으로 수정</li>
+      <li><b>한글이 깨질 위험</b> — OS 폰트만 찾고 없으면 임베드 없이 생성. 운영 이미지는 alpine 이라 한글 폰트가 없었음 → 경로 확대 + <code>REPORT_FONT_PATH</code> + <code>Dockerfile</code>에 나눔폰트 설치</li>
+      <li>점검 상태가 코드값(<code>MINOR_DAMAGE</code>)으로 출력 → 앱과 같은 한글 표기로 매핑</li>
+      <li><b>외업 사진 미포함</b> — 사진 경로를 읽어 기존 첨부 중계 서비스로 원본을 받아 <b>시설물 기본 정보 아래</b>에 삽입(실패해도 보고서는 생성)</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">결과</p>
+    <h2>보고서 구성과 동작</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">API</span><span class="fv"><code>GET /map/qfield/facilities/{totalId}/report/pdf?workId=</code> — 완료·보류가 아니면 400, 없는 기록 404</span></div>
+      <div class="frow"><span class="fk">구성</span><span class="fv">제목·상태 → 시설물 기본 정보 → <b>외업 현장 사진</b> → 내업 처리 상세 → 처리 전·후 사진 → 확인란 → 페이지 번호</span></div>
+      <div class="frow"><span class="fk">화면</span><span class="fv">완료·보류 기록 카드에만 <code>보고서</code> 버튼, fetch→Blob 다운로드(진행 표시·오류 메시지)</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>백엔드 직접 호출 + 실제 Chrome</h2>
+    <div class="cmd">보고서 다운로드     200 application/pdf · 766KB · %PDF · 2페이지 · 폰트 임베드
+사진                외업 현장 사진 + 처리 전·후 사진 모두 포함
+보류 상태           200
+진행중 상태         400 "완료(DONE) 또는 보류(HOLD)인 시설물만..."
+없는 기록           404
+브라우저 버튼       완료 → 보고서·수정·삭제 / 진행중 → 보고서 사라짐
+다운로드 파일       내업보고서_FACIL_T18_10_2026-09-18.pdf · 764KB · %PDF</div>
+    <div class="grid2">
+      <div class="cell">
+        <h3>정리 <span class="badge pass">완료</span></h3>
+        <p>검증에 쓴 내업 기록·사진은 모두 삭제해 활성 0건입니다. 콘솔·페이지 오류 0건.</p>
+      </div>
+      <div class="cell caution">
+        <h3>배포 시 <span class="badge skip">확인</span></h3>
+        <p>이미지에 나눔폰트 설치가 있어야 한글이 정상입니다. 외업 사진을 넣으려면 QFieldCloud 계정 환경변수가 필요합니다(없으면 사진만 빠짐).</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -3609,7 +3694,7 @@ qfield.facility_icon        → map.facility_icon   (아이콘 7건 복구, 이�
       <li><em>API Gateway</em><span class="url">http://localhost:8100/map/admin-area/sido</span></li>
       <li><em>Eureka</em><span class="url">http://localhost:8761</span></li>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.2.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.3.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·

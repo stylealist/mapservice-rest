@@ -112,6 +112,21 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v2.3</span>
+        <span class="ver-title">내업 처리 보고서 PDF 다운로드 (외업 사진 포함)</span>
+        <span class="date">2026-09-18</span>
+      </div>
+      <ul>
+        <li>완료·보류 내업 기록의 보고서를 서버(OpenPDF)에서 생성 — <code>GET /map/qfield/facilities/{totalId}/report/pdf?workId=</code>, 그 외 상태는 400</li>
+        <li>구성: 시설물 기본 정보 → <b>외업 현장 사진</b>(첨부 중계로 QFieldCloud 원본) → 내업 처리 상세 → 처리 전·후 사진 → 확인란</li>
+        <li>이어받아 고친 것 — 없는 컬럼(<code>inv_dt</code>) 참조로 500, alpine 이미지에 한글 폰트 없음(경로 확대 + <code>Dockerfile</code> 나눔폰트), 점검 상태 코드값 노출</li>
+        <li>완료·보류 기록 카드에만 <code>보고서</code> 버튼, fetch→Blob 다운로드. Chrome 확인 — 764KB PDF 다운로드, 진행중 전환 시 버튼 사라짐, 오류 0건</li>
+      </ul>
+      <p><a href="../history_v2.3.md">history_v2.3.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v2.2</span>
         <span class="ver-title">시설물 내업 사진 첨부 API 및 멀티 저장소 에이전트 가이드 정비</span>
         <span class="date">2026-09-18</span>
