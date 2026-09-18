@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapservice.mapper.QfieldReportMapper">
+
+    <!-- 특정 시설물과 해당 내업 처리 상세 정보 조회 -->
+    <select id="getFacilityReportData" resultType="map">
+        SELECT
+            f.total_id,
+            COALESCE(f.fclt_nm, '-') AS fclt_nm,
+            COALESCE(f.inst_nm, '-') AS inst_nm,
+            COALESCE(f.daddr, '-') AS daddr,
+            COALESCE(f.lotno_addr, '-') AS lotno_addr,
+            <!-- 현장조사 앱(infra-manage-app)의 ValueMap 과 같은 한글 표기. 프론트 FACILITY_VALUE_MAPS 와 맞춘다 -->
+            COALESCE(
+                CASE upper(f.facility_condition)
+                    WHEN 'NORMAL' THEN '정상'
+                    WHEN 'MINOR_DAMAGE' THEN '경미한 파손'
+                    WHEN 'BROKEN' THEN '파손 / 고장'
+                    WHEN 'DESTROYED' THEN '철거됨'
+                    ELSE f.facility_condition
+                END, '-') AS facility_condition,
+            f.repair_required_yn,
+            <!-- 뷰의 점검일시 컬럼명은 inspected_at 이다(inv_dt 아님) -->
+            COALESCE(to_char(f.inspected_at, 'YYYY-MM-DD HH24:MI'), '-') AS inv_dt,
+            COALESCE(adm.sido_nm, '') AS sido_nm,
+            COALESCE(adm.sgg_nm, '') AS sgg_nm,
+            COALESCE(adm.emd_nm, '') AS emd_nm,
+            w.work_id,
+            w.work_status,
+            COALESCE(w.work_content, '-') AS work_content,
+            COALESCE(w.dept_nm, '-') AS dept_nm,
+            COALESCE(w.manager_nm, '-') AS manager_nm,
+            COALESCE(w.manager_tel, '-') AS manager_tel,
+            COALESCE(to_char(w.plan_date, 'YYYY-MM-DD'), '-') AS plan_date,
+            COALESCE(to_char(w.complete_date, 'YYYY-MM-DD'), '-') AS complete_date,
+            w.cost,
+            COALESCE(w.vendor_nm, '-') AS vendor_nm,
+            COALESCE(w.contract_no, '-') AS contract_no,
+            COALESCE(w.remark, '-') AS remark,
+            <!-- 외업(QField 앱) 사진 — DB 에는 QFieldCloud 안의 상대 경로만 있다. 원본은 QfieldMediaService 가 중계해 받아온다 -->
+            f.photo_1, f.photo_2, f.photo_3, f.photo_4, f.photo_5,
+            w.before_photo,
+            w.after_photo,
+            to_char(w.reg_date, 'YYYY-MM-DD HH24:MI:SS') AS reg_date
+        FROM qfield.facility_total_view f
+        LEFT JOIN LATERAL (
+            SELECT e.emd_cd, e.emd_nm, sgg.sgg_cd, sgg.sgg_nm, sido.sido_cd, sido.sido_nm
+            FROM public.g_emd e
+            LEFT JOIN public.g_sgg sgg ON substring(e.emd_cd, 1, 5) = sgg.sgg_cd
+            LEFT JOIN public.g_sido sido ON substring(e.emd_cd, 1, 2) = sido.sido_cd
+            WHERE ST_Intersects(e.geom, ST_Transform(f.geom, 4326))
+            LIMIT 1
+        ) adm ON true
+        JOIN map.facility_office_work w ON w.total_id = f.total_id AND w.use_yn = 'y'
+        WHERE f.total_id = #{totalId}
+          AND f.use_yn = 'y'
+        <if test="workId != null">
+          AND w.work_id = #{workId}
+        </if>
+        ORDER BY w.work_id DESC
+        LIMIT 1
+    </select>
+
+    <!-- 내업 기록에 등록된 사진 목록 (바이너리 content 포함) -->
+    <select id="getPhotosWithContent" resultType="map">
+        SELECT
+            photo_id,
+            work_id,
+            kind,
+            file_name,
+            mime_type,
+            file_size,
+            content,
+            to_char(reg_date, 'YYYY-MM-DD HH24:MI:SS') AS reg_date
+        FROM map.facility_office_work_photo
+        WHERE work_id = #{workId}
+          AND use_yn = 'y'
+        ORDER BY CASE WHEN kind = 'BEFORE' THEN 0 ELSE 1 END, photo_id ASC
+    </select>
+
+    <!-- 조건별 시설물 내업 현황 목록 보고서 데이터 조회 -->
+    <select id="getFacilityReportList" resultType="map">
+        SELECT
+            f.total_id,
+            COALESCE(f.fclt_nm, '-') AS fclt_nm,
+            COALESCE(f.inst_nm, '-') AS inst_nm,
+            COALESCE(f.daddr, '-') AS daddr,
+            COALESCE(
+                CASE upper(f.facility_condition)
+                    WHEN 'NORMAL' THEN '정상'
+                    WHEN 'MINOR_DAMAGE' THEN '경미한 파손'
+                    WHEN 'BROKEN' THEN '파손 / 고장'
+                    WHEN 'DESTROYED' THEN '철거됨'
+                    ELSE f.facility_condition
+                END, '-') AS facility_condition,
+            f.repair_required_yn,
+            COALESCE(adm.sido_nm, '') AS sido_nm,
+            COALESCE(adm.sgg_nm, '') AS sgg_nm,
+            COALESCE(adm.emd_nm, '') AS emd_nm,
+            latest.work_id,
+            latest.work_status,
+            COALESCE(latest.work_content, '-') AS work_content,
+            COALESCE(latest.dept_nm, '-') AS dept_nm,
+            COALESCE(latest.manager_nm, '-') AS manager_nm,
+            COALESCE(latest.manager_tel, '-') AS manager_tel,
+            COALESCE(to_char(latest.complete_date, 'YYYY-MM-DD'), '-') AS complete_date,
+            latest.cost,
+            COALESCE(latest.vendor_nm, '-') AS vendor_nm,
+            COALESCE(latest.contract_no, '-') AS contract_no
+        FROM qfield.facility_total_view f
+        LEFT JOIN LATERAL (
+            SELECT e.emd_cd, e.emd_nm, sgg.sgg_nm, sido.sido_nm
+            FROM public.g_emd e
+            LEFT JOIN public.g_sgg sgg ON substring(e.emd_cd, 1, 5) = sgg.sgg_cd
+            LEFT JOIN public.g_sido sido ON substring(e.emd_cd, 1, 2) = sido.sido_cd
+            WHERE ST_Intersects(e.geom, ST_Transform(f.geom, 4326))
+            LIMIT 1
+        ) adm ON true
+        JOIN LATERAL (
+            SELECT work_id, work_status, work_content, dept_nm, manager_nm, manager_tel, complete_date, cost, vendor_nm, contract_no
+            FROM map.facility_office_work w
+            WHERE w.total_id = f.total_id AND w.use_yn = 'y'
+            ORDER BY w.work_id DESC
+            LIMIT 1
+        ) latest ON true
+        WHERE f.use_yn = 'y'
+          AND f.repair_required_yn = 'Y'
+          AND latest.work_status IN
+          <foreach collection="statuses" item="st" open="(" separator="," close=")">
+            #{st}
+          </foreach>
+          <if test="code != null and code != ''">
+            AND adm.emd_cd LIKE #{code} || '%'
+          </if>
+          <if test="keyword != null and keyword != ''">
+            AND (f.fclt_nm ILIKE '%' || #{keyword} || '%' OR f.daddr ILIKE '%' || #{keyword} || '%')
+          </if>
+        ORDER BY latest.complete_date DESC NULLS LAST, f.fclt_nm ASC
+    </select>
+
+</mapper>
