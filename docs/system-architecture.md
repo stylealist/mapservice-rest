@@ -66,6 +66,10 @@
 | `POST /map/qfield/facilities/{totalId}/office-works` | `QfieldOfficeWorkController` | `map.facility_office_work` | 프론트 내업 화면 |
 | `PUT /map/qfield/office-works/{workId}` | `QfieldOfficeWorkController` | `map.facility_office_work` | 프론트 내업 화면 |
 | `DELETE /map/qfield/office-works/{workId}` | `QfieldOfficeWorkController` | `map.facility_office_work` (소프트 삭제) | 프론트 내업 화면 |
+| `POST /map/qfield/office-works/{workId}/photos` (multipart `file`, `kind`) | `QfieldOfficeWorkPhotoController` | `map.facility_office_work_photo` (바이너리) | 프론트 내업 화면 |
+| `GET /map/qfield/office-works/{workId}/photos` | `QfieldOfficeWorkPhotoController` | `map.facility_office_work_photo` | 프론트 내업 화면 |
+| `GET /map/qfield/office-works/{workId}/photos/{photoId}` | `QfieldOfficeWorkPhotoController` | `map.facility_office_work_photo.content` | 프론트 내업 화면 (`<img src>`) |
+| `DELETE /map/qfield/office-works/{workId}/photos/{photoId}` | `QfieldOfficeWorkPhotoController` | `map.facility_office_work_photo` (소프트 삭제) | 프론트 내업 화면 |
 | `GET /map/admin-area/sido` | `QfieldFacilityController` | `public.g_sido` | `map-facility.js` |
 | `GET /map/admin-area/sgg?sidoCd=` | `QfieldFacilityController` | `public.g_sgg` | `map-facility.js` |
 | `GET /map/admin-area/emd?sggCd=` | `QfieldFacilityController` | `public.g_emd` | `map-facility.js` |
@@ -82,7 +86,14 @@
   - POST(201)·PUT(200, 전체 갱신·`update_at` 갱신)은 같은 형식의 항목 1건을 돌려줍니다. `work_status`는 필수이며 `RECEIVED`/`IN_PROGRESS`/`DONE`/`HOLD`만(DB CHECK 제약도 있음), 날짜 형식·길이·비용(정수 15자리) 오류는 400. DELETE는 소프트 삭제(`use_yn='n'`) 후 204, 없는(또는 이미 삭제된) `workId`는 404.
   - `work_status=DONE`이면 `complete_date`가 필수입니다(없으면 400, 프론트와 같은 규칙).
   - **배포 순서 경고**: 내업 기능을 배포하기 전에 대상 DB에 `db/map_facility_office_work.sql`을 먼저 실행할 것. 실행하지 않아도 시설물 목록은 폴백으로 동작하지만(보수 필요 시설물은 `PENDING`, 그 외 `null`, 키는 유지) 내업 기록은 저장·조회되지 않습니다(내업 API는 500). 백엔드는 테이블 유무를 캐시하고 없으면 60초마다 재확인하므로, 스크립트 실행 후 재기동 없이 반영됩니다.
-  - 내업 응답은 모두 `Cache-Control: no-store`. 단 시설물 목록은 기존대로 60초 캐시이므로, 내업 저장 직후 목록의 `office_work_status`를 바로 반영하려면 프론트가 캐시를 우회해 다시 불러와야 합니다.
+  - **처리 전·후 사진 업로드(`map.facility_office_work_photo`)**: 사진 파일은 DB에 바이너리(`bytea`)로 저장합니다(생성 스크립트 `db/map_facility_office_work_photo.sql`, 2026-09-18 개발 DB 실행). `work_id`는 `map.facility_office_work`의 **물리 FK**(ON DELETE CASCADE 없음 — 내업 기록은 소프트 삭제). 기존 `before_photo`/`after_photo` 텍스트 컬럼은 호환용으로 그대로 두고, 새 업로드는 이 테이블을 씁니다.
+    - `POST .../office-works/{workId}/photos`: `multipart/form-data`로 `file`(필수)·`kind`(`BEFORE`/`AFTER`, 대소문자 무관). 구분별 **최대 5장**(넘으면 409), 장당 **10MB**(넘으면 413. `spring.servlet.multipart.max-file-size`와 `QfieldOfficeWorkPhotoService.maxFileSize`를 함께 맞출 것), 확장자 `jpg/jpeg/png/webp`·`Content-Type` `image/jpeg|png|webp`가 아니면 400. **파일 시그니처(magic number)로 실제 JPEG/PNG/WebP인지 확인**하고 판별된 타입을 저장합니다(헤더만 맞춘 가짜 이미지는 400). 내업 기록(`use_yn='y'`)이 없으면 404. 성공 201 + `{photo_id, work_id, kind, file_name, mime_type, file_size, reg_date}`(content 없음).
+    - `GET .../photos`: `{"workId": n, "items": [{photo_id, kind, file_name, mime_type, file_size, reg_date}]}` — `use_yn='y'`만, BEFORE 먼저 → `photo_id` 순. 내업 기록이 없거나 삭제됐으면 404.
+    - `GET .../photos/{photoId}`: 이미지 바이너리. 저장된 `mime_type`, `Content-Length`, `Content-Disposition: inline`(UTF-8 파일명), `Cache-Control: private, max-age=3600`. 사진은 바뀌지 않으므로(교체 = 삭제 후 재등록) 캐시해도 됩니다. 없거나 삭제된 사진(또는 삭제된 내업 기록의 사진)은 404.
+    - `DELETE .../photos/{photoId}`: 소프트 삭제(`use_yn='n'`) 후 204, 없으면 404.
+    - 게이트웨이는 본문을 읽는 필터가 없어 multipart를 그대로 넘기고, 운영 ingress(`sj-lab-webserver`)의 `proxy-body-size`는 500M라 10MB 업로드가 통과합니다. 게이트웨이 CORS `exposedHeaders`에 `Content-Disposition`이 없으므로 파일명은 목록 응답의 `file_name`을 쓰세요.
+    - 내업 기록 조회(`GET .../office-works`) 응답에는 사진 개수를 넣지 않았습니다(사진 테이블이 없는 DB에서 기존 API까지 실패하지 않도록). 개수는 사진 목록 API로 확인합니다.
+  - 내업 응답은 모두 `Cache-Control: no-store`(사진 바이너리 조회만 예외). 단 시설물 목록은 기존대로 60초 캐시이므로, 내업 저장 직후 목록의 `office_work_status`를 바로 반영하려면 프론트가 캐시를 우회해 다시 불러와야 합니다.
 - **WFS 레이어의 화면 영역 조회(`bbox`·`limit`)**: 전국 데이터를 통째로 내려주면 버스정류장 85MB·병원 61MB(합계 약 200MB)라 최초 표출이 수십 초 걸렸습니다. 그래서 두 가지 모드를 둡니다.
   - `bbox=minX,minY,maxX,maxY`(**EPSG:3857**, 지도 뷰와 같은 좌표계)를 주면 그 영역 안의 피처만 조립합니다. `limit`은 개수 상한(기본 3000, 최대 20000)이며, 상한을 넘으면 bbox 를 `limit`개 격자로 나눠 **칸마다 하나씩 뽑는 방식으로 화면 전체에 고르게 퍼진 표본**을 내려줍니다(한쪽에 몰리지 않음). bbox 형식이 틀리면 400.
   - `bbox` 없이 부르면 **기존대로 전국 전체**를 내려줍니다(뷰 그대로). 이전 버전 프론트가 붙어도 동작하게 하려고 남겨 둔 경로입니다.

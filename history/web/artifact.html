@@ -385,7 +385,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.1</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.2</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -437,7 +437,8 @@
     </div>
     <div class="vgroup" id="vgroup-3" role="tabpanel" aria-labelledby="gtab-3" hidden>
       <button type="button" class="vchip" role="tab" data-ver="2.0" aria-controls="pane-v2.0" title="시설물 내업(사무실 처리) 기능 신설 — DB·백엔드 쓰기 API·프론트엔드"><span class="pv">v2.0</span><span class="pt">내업 처리 기능 신설</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.1" aria-controls="pane-v2.1" title="상세 팝업의 내업 영역을 하단 고정으로 변경"><span class="pv">v2.1<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">내업 영역 하단 고정</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.1" aria-controls="pane-v2.1" title="상세 팝업의 내업 영역을 하단 고정으로 변경"><span class="pv">v2.1</span><span class="pt">내업 영역 하단 고정</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.2" aria-controls="pane-v2.2" title="시설물 내업 사진 첨부 API 및 멀티 저장소 에이전트 가이드 정비"><span class="pv">v2.2<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">내업 사진 API · 가이드</span></button>
     </div>
   </div>
 </nav>
@@ -3537,6 +3538,69 @@ qfield.facility_icon        → map.facility_icon   (아이콘 7건 복구, 이�
 </section>
 </div>
 
+<!-- ===================== v2.2 ===================== -->
+<div class="vpane" data-ver="2.2" id="pane-v2.2" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.2</span>
+      <span>2026-09-18</span>
+      <span>mapservice-rest / sj-lab-apigateway / 전체 저장소</span>
+    </div>
+    <h1>내업 사진 첨부 API 신설 및<br>멀티 에이전트 가이드 정비</h1>
+    <p class="dek">
+      시설물 내업 기록에 현장 전·후 사진을 첨부할 수 있는 API를 백엔드에 신설하고,
+      게이트웨이 설정 및 10개 저장소의 멀티 에이전트(Antigravity/Orca) 가이드를 공통 정비했습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>테이블</dt><dd class="ok">map.facility_office_work_photo</dd></div>
+      <div><dt>용량 제한</dt><dd class="ok">장당 10MB / 구분별 5장</dd></div>
+      <div><dt>타입 검증</dt><dd class="ok">매직넘버 확인</dd></div>
+      <div><dt>게이트웨이</dt><dd class="ok">CORS Dedupe 정비</dd></div>
+      <div><dt>에이전트</dt><dd class="ok">10개 저장소 AGENTS.md</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">/orchestration 지금 연결된 모든 프로젝트에 있는내용들 commit push 진행해줘</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">백엔드 및 게이트웨이</p>
+    <h2>사진 바이너리 저장 및 API 계층</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">DB DDL</span><span class="fv"><code>db/map_facility_office_work_photo.sql</code> — <code>map.facility_office_work_photo</code> bytea 저장</span></div>
+      <div class="frow"><span class="fk">API</span><span class="fv">사진 등록(POST 201), 메타데이터 목록(GET 200), 바이너리 스트리밍(GET 200), 소프트 삭제(DELETE 204)</span></div>
+      <div class="frow"><span class="fk">예외/설정</span><span class="fv">413 JSON 핸들러, tomcat max-swallow-size 20MB, multipart 한도 10MB/12MB</span></div>
+      <div class="frow"><span class="fk">게이트웨이</span><span class="fv">Eclipse Temurin 17 기반, loadbalancer 축약, CORS DedupeResponseHeader 필터 위치 정상화</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">공통 환경</p>
+    <h2>멀티 에이전트 오케스트레이션 정비</h2>
+    <div class="grid2">
+      <div class="cell">
+        <h3>10개 저장소 AGENTS.md <span class="badge pass">반영</span></h3>
+        <p>각 저장소의 루트 CLAUDE.md 및 서브 문서를 준수하도록 Antigravity 및 멀티 에이전트 표준 가이드(AGENTS.md) 배포.</p>
+      </div>
+      <div class="cell">
+        <h3>에이전트 스킬 연계 <span class="badge pass">공유</span></h3>
+        <p>.agents/skills 디렉토리에 orca-cli 및 orchestration 스킬을 배치하여 멀티 에이전트 협업 환경 구축.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -3545,7 +3609,7 @@ qfield.facility_icon        → map.facility_icon   (아이콘 7건 복구, 이�
       <li><em>API Gateway</em><span class="url">http://localhost:8100/map/admin-area/sido</span></li>
       <li><em>Eureka</em><span class="url">http://localhost:8761</span></li>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.1.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.2.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·

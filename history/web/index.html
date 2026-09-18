@@ -112,6 +112,21 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v2.2</span>
+        <span class="ver-title">시설물 내업 사진 첨부 API 및 멀티 저장소 에이전트 가이드 정비</span>
+        <span class="date">2026-09-18</span>
+      </div>
+      <ul>
+        <li>내업 기록 전·후 사진 첨부(<code>map.facility_office_work_photo</code>) 업로드/조회/삭제 API 신설 (바이너리 bytea 저장, 장당 10MB 한도, 매직넘버 검증)</li>
+        <li>예외 처리 및 업로드 설정: 413 JSON 예외 핸들러, tomcat max-swallow-size 및 multipart 크기 상향</li>
+        <li>게이트웨이 설정 정비: Temurin 17 베이스 이미지 지정, loadbalancer 중복 설정 정리 및 CORS dedupe 헤더 필터 위치 정상화</li>
+        <li>전체 10개 프로젝트: Antigravity/멀티 에이전트 작업 가이드(<code>AGENTS.md</code>) 및 에이전트 공용 스킬(<code>.agents/</code>) 연계 정비</li>
+      </ul>
+      <p><a href="../history_v2.2.md">history_v2.2.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v2.1</span>
         <span class="ver-title">상세 팝업의 내업 영역을 하단 고정으로 변경</span>
         <span class="date">2026-09-18</span>

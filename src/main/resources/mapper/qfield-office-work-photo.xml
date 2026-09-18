@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+  시설물 내업 기록의 처리 전·후 사진 — map.facility_office_work_photo
+  테이블 생성 스크립트: db/map_facility_office_work_photo.sql
+  work_id 는 map.facility_office_work 의 물리 FK. 내업 기록이 소프트 삭제(use_yn='n')되면
+  그 사진도 목록·조회 대상에서 빠진다(아래 문장은 모두 내업 기록 use_yn='y' 를 함께 확인).
+  content(bytea)는 이미지 조회(getPhotoContent)에서만 읽고, 목록·등록 응답에는 넣지 않는다.
+-->
+<mapper namespace="com.example.mapservice.mapper.QfieldOfficeWorkPhotoMapper">
+
+    <!-- 응답 항목 형식(content 제외): 일시는 YYYY-MM-DD HH24:MI:SS 문자열 -->
+    <sql id="photoJson">
+        json_build_object(
+            'photo_id', p.photo_id,
+            'work_id', p.work_id,
+            'kind', p.kind,
+            'file_name', p.file_name,
+            'mime_type', p.mime_type,
+            'file_size', p.file_size,
+            'reg_date', to_char(p.reg_date, 'YYYY-MM-DD HH24:MI:SS')
+        )
+    </sql>
+
+    <!-- 업로드 전 내업 기록을 잠가 같은 구분의 장수 확인과 등록 사이에 다른 업로드가 끼지 않게 한다 -->
+    <select id="lockOfficeWork" resultType="Long" flushCache="true" useCache="false">
+        SELECT work_id
+        FROM map.facility_office_work
+        WHERE work_id = #{workId}
+          AND use_yn = 'y'
+        FOR UPDATE
+    </select>
+
+    <select id="getOfficeWorkId" resultType="Long">
+        SELECT work_id
+        FROM map.facility_office_work
+        WHERE work_id = #{workId}
+          AND use_yn = 'y'
+    </select>
+
+    <select id="countPhotos" resultType="int" flushCache="true" useCache="false">
+        SELECT count(*)
+        FROM map.facility_office_work_photo
+        WHERE work_id = #{workId}
+          AND kind = #{kind}
+          AND use_yn = 'y'
+    </select>
+
+    <!-- INSERT ... RETURNING 결과를 JSON 으로 돌려주기 위해 select 로 둔다 -->
+    <select id="insertPhoto" resultType="String" flushCache="true" useCache="false">
+        WITH p AS (
+            INSERT INTO map.facility_office_work_photo (
+                work_id, kind, file_name, mime_type, file_size, content
+            ) VALUES (
+                #{workId},
+                #{kind},
+                #{fileName},
+                #{mimeType},
+                #{fileSize},
+                #{content, jdbcType=BINARY}
+            )
+            RETURNING photo_id, work_id, kind, file_name, mime_type, file_size, reg_date
+        )
+        SELECT <include refid="photoJson"/>::text
+        FROM p
+    </select>
+
+    <!-- 처리 전(BEFORE) 먼저, 같은 구분 안에서는 올린 순서(photo_id) -->
+    <select id="getPhotos" resultType="String">
+        SELECT json_build_object(
+            'workId', #{workId},
+            'items', COALESCE(json_agg(
+                json_build_object(
+                    'photo_id', p.photo_id,
+                    'kind', p.kind,
+                    'file_name', p.file_name,
+                    'mime_type', p.mime_type,
+                    'file_size', p.file_size,
+                    'reg_date', to_char(p.reg_date, 'YYYY-MM-DD HH24:MI:SS')
+                )
+                ORDER BY CASE p.kind WHEN 'BEFORE' THEN 0 ELSE 1 END, p.photo_id
+            ), '[]'::json)
+        )::text
+        FROM map.facility_office_work_photo p
+        WHERE p.work_id = #{workId}
+          AND p.use_yn = 'y'
+    </select>
+
+    <select id="getPhotoContent" resultType="map">
+        SELECT p.file_name, p.mime_type, p.content
+        FROM map.facility_office_work_photo p
+        JOIN map.facility_office_work w
+          ON w.work_id = p.work_id
+         AND w.use_yn = 'y'
+        WHERE p.photo_id = #{photoId}
+          AND p.work_id = #{workId}
+          AND p.use_yn = 'y'
+    </select>
+
+    <!-- 소프트 삭제 -->
+    <update id="deletePhoto">
+        UPDATE map.facility_office_work_photo p
+        SET use_yn = 'n'
+        FROM map.facility_office_work w
+        WHERE p.photo_id = #{photoId}
+          AND p.work_id = #{workId}
+          AND p.use_yn = 'y'
+          AND w.work_id = p.work_id
+          AND w.use_yn = 'y'
+    </update>
+
+</mapper>

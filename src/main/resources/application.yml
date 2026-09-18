@@ -13,6 +13,9 @@ server:
     enabled: true
     mime-types: application/json,application/geo+json,text/plain,text/xml
     min-response-size: 2KB
+  # 한도를 넘은 업로드에도 413 응답을 돌려줄 수 있도록 남은 본문을 끝까지 읽어 버린다(기본 2MB 면 연결이 끊김)
+  tomcat:
+    max-swallow-size: 20MB
 #  port: ${random.int(10000,51000)}
 
 spring:
@@ -23,6 +26,12 @@ spring:
     username: stylealist
     password: "!@xogml159"
     driver-class-name: org.postgresql.Driver  # URL로 자동판별되지만 명시해도 OK
+  # 내업 사진 업로드(POST /qfield/office-works/{workId}/photos) — 장당 10MB, 요청 전체 12MB.
+  # 장당 한도는 QfieldOfficeWorkPhotoService.maxFileSize 와 맞출 것. 넘으면 413.
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 12MB
 
 mybatis:
   mapper-locations: classpath*:mapper/**/*.xml
