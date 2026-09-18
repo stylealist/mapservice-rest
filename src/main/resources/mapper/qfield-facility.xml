@@ -20,7 +20,9 @@
                         'daddr', sub.daddr,
                         'facility_condition', sub.facility_condition,
                         'repair_required_yn', sub.repair_required_yn,
-                        'emd_cd', sub.emd_cd
+                        'emd_cd', sub.emd_cd,
+                        'office_work_status', sub.office_work_status,
+                        'office_work_complete_date', sub.office_work_complete_date
                     )
                 )
             ), '[]'::json)
@@ -34,6 +36,72 @@
                 f.facility_condition,
                 f.repair_required_yn,
                 e.emd_cd,
+                <!-- 내업 상태는 보수 필요 시설물만: 최신 기록의 work_status, 기록이 없으면 PENDING(미완료). 그 외 시설물은 null -->
+                CASE WHEN f.repair_required_yn = 'Y' THEN COALESCE(w.work_status, 'PENDING') END AS office_work_status,
+                CASE WHEN f.repair_required_yn = 'Y' THEN to_char(w.complete_date, 'YYYY-MM-DD') END AS office_work_complete_date,
+                ST_AsGeoJSON(f.geom) AS geom_json
+            FROM qfield.facility_total_view f
+            LEFT JOIN LATERAL (
+                SELECT emd_cd
+                FROM public.g_emd e
+                WHERE ST_Intersects(e.geom, ST_Transform(f.geom, 4326))
+                LIMIT 1
+            ) e ON true
+            <!-- 최신 내업 기록(map.facility_office_work) 한 건. 결과 건수는 바뀌지 않는다 -->
+            LEFT JOIN LATERAL (
+                SELECT w.work_status, w.complete_date
+                FROM map.facility_office_work w
+                WHERE w.total_id = f.total_id
+                  AND w.use_yn = 'y'
+                ORDER BY w.work_id DESC
+                LIMIT 1
+            ) w ON true
+            WHERE f.use_yn = 'y'
+            <if test="code != null and code != ''">
+              AND e.emd_cd LIKE #{code} || '%'
+            </if>
+            ORDER BY f.fclt_nm, f.total_id
+        ) sub
+    </select>
+
+    <!--
+      getFacilities 의 폴백 — 내업 테이블(map.facility_office_work)이 없는 DB 용.
+      응답 형태는 같고 기록을 알 수 없으므로 보수 필요 시설물은 PENDING, 나머지는 null, 완료일은 null 로 채운다(키는 프론트가 참조하므로 빼지 말 것).
+      getFacilities 의 조회 조건·properties 를 바꾸면 여기도 같이 고칠 것.
+    -->
+    <select id="getFacilitiesWithoutOfficeWork" resultType="String">
+        SELECT json_build_object(
+            'type', 'FeatureCollection',
+            'features', COALESCE(json_agg(
+                json_build_object(
+                    'type', 'Feature',
+                    'id', sub.total_id,
+                    'geometry', sub.geom_json::json,
+                    'properties', json_build_object(
+                        'total_id', sub.total_id,
+                        'fclt_nm', sub.fclt_nm,
+                        'inst_nm', sub.inst_nm,
+                        'daddr', sub.daddr,
+                        'facility_condition', sub.facility_condition,
+                        'repair_required_yn', sub.repair_required_yn,
+                        'emd_cd', sub.emd_cd,
+                        'office_work_status', sub.office_work_status,
+                        'office_work_complete_date', sub.office_work_complete_date
+                    )
+                )
+            ), '[]'::json)
+        )::text
+        FROM (
+            SELECT
+                f.total_id,
+                f.fclt_nm,
+                f.inst_nm,
+                f.daddr,
+                f.facility_condition,
+                f.repair_required_yn,
+                e.emd_cd,
+                CASE WHEN f.repair_required_yn = 'Y' THEN 'PENDING' END AS office_work_status,
+                NULL::text AS office_work_complete_date,
                 ST_AsGeoJSON(f.geom) AS geom_json
             FROM qfield.facility_total_view f
             LEFT JOIN LATERAL (
@@ -48,6 +116,11 @@
             </if>
             ORDER BY f.fclt_nm, f.total_id
         ) sub
+    </select>
+
+    <!-- 내업 테이블 존재 여부 (시설물 목록 폴백 판단용) -->
+    <select id="existsOfficeWorkTable" resultType="boolean">
+        SELECT to_regclass('map.facility_office_work') IS NOT NULL
     </select>
 
     <select id="getFacilityDetail" resultType="String">
@@ -170,9 +243,9 @@
     </select>
 
     <!--
-      시설물 아이콘 설정 조회 (qfield.facility_icon).
+      시설물 아이콘 설정 조회 (map.facility_icon).
       프론트엔드가 이 설정으로 종류별 아이콘을 그리므로, 아이콘을 추가·변경할 때
-      코드 배포 없이 이 테이블 행만 고치면 된다. 테이블 생성 스크립트: db/qfield_facility_icon.sql
+      코드 배포 없이 이 테이블 행만 고치면 된다. 테이블 생성 스크립트: db/map_facility_icon.sql
     -->
     <select id="getFacilityIcons" resultType="String">
         SELECT COALESCE(json_agg(
@@ -186,7 +259,7 @@
                 'isDefault', is_default
             ) ORDER BY sort_order, icon_type
         ), '[]'::json)::text
-        FROM qfield.facility_icon
+        FROM map.facility_icon
         WHERE use_yn = 'y'
     </select>
 

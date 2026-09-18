@@ -32,7 +32,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
     - 페이지 스크립트(`chipsPerGroup = 15`)가 로드 시 버전 칩을 순서대로 15개씩 다시 묶고 탭 이름(`v첫 – v끝`)도 만든다. 새 버전은 마지막 묶음 끝에 칩만 추가하면 되며, 마크업의 묶음도 가능하면 15개 단위로 맞춰 둘 것(스크립트가 꺼진 환경 대비).
   2. `history/web/index.html` — 오프라인용 요약 페이지. 외부 CDN·빌드 도구 없이 단일 HTML로 유지할 것.
   - 새 history 문서의 접속 URL 표 맨 위에 발행 페이지 주소를 넣을 것
-- **AI에이전트 오케스트레이션**: 오케스트레이션을 진행 할 때 최종 검증은 반드시 Claude로 진행해줘
+- **AI에이전트 오케스트레이션**: 오케스트레이션을 진행 할 때 최종 검증은 반드시 Claude로 진행할것
+  1. Claude을 메인으로 하지만 일일 남은 토큰에 따라서 antigravity도 활용할것
+  2. 복잡하지않은 개발은 antigravity를 적극적으로 활용할것
 
 ## 명령어
 
@@ -56,6 +58,7 @@ Eureka에 등록되는(`@EnableDiscoveryClient`) Spring Boot 3.3.2 / Java 17 마
 **요청 흐름**:
 - 기존 WFS 레이어: `WfsController`(REST 엔드포인트) → `WfsService` / `WfsServiceImpl` → `WfsMapper`(자바 쪽 SQL이 없는 MyBatis `@Mapper` 인터페이스) → `src/main/resources/mapper/wfs-geojson.xml` → PostgreSQL/PostGIS.
 - QField 시설물 및 행정구역 레이어: `QfieldFacilityController` → `QfieldFacilityService` / `QfieldFacilityServiceImpl` → `QfieldFacilityMapper` → `src/main/resources/mapper/qfield-facility.xml` → PostgreSQL/PostGIS.
+- 시설물 내업(사무실 처리) 기록: `QfieldOfficeWorkController` → `QfieldOfficeWorkService` / `QfieldOfficeWorkServiceImpl` → `QfieldOfficeWorkMapper` → `src/main/resources/mapper/qfield-office-work.xml` → `map.facility_office_work`. 이 저장소의 유일한 **쓰기** API로, `INSERT/UPDATE ... RETURNING`을 CTE로 감싼 `<select>`가 JSON 한 건을 돌려줍니다. 입력 검증은 서비스가 하고 실패 시 `ValidationException` → 400.
 
 핵심 포인트:
 - 기존 레이어(편의점, 버스정류장, CCTV, 약국, 병원, 관공서): DB 뷰(예: `map.v_bus_stop_info_geojson`)에서 이미 완성된 `geojson` 텍스트 컬럼을 그대로 select할 뿐이며, GeoJSON 조립은 DB에서 이루어집니다. 새 레이어 추가 시 DB 뷰를 생성할 수 있다면 `geojson` 컬럼을 가진 뷰를 추가한 뒤 동일 패턴으로 4개 계층(`WfsMapper`, `wfs-geojson.xml`, `WfsService`/`WfsServiceImpl`, `WfsController`)에 메서드를 추가합니다.
@@ -64,7 +67,11 @@ Eureka에 등록되는(`@EnableDiscoveryClient`) Spring Boot 3.3.2 / Java 17 마
 - 시설물 공간 쿼리 및 행정구역 필터: `qfield.facility_total_view`의 EPSG:3857 점 좌표와 `public.g_emd`의 EPSG:4326 경계를 조인할 때, `LEFT JOIN LATERAL`과 `ST_Intersects(e.geom, ST_Transform(f.geom, 4326))` (LIMIT 1)로 `g_emd`의 GIST 인덱스를 활용합니다. 행정구역 코드는 접두어 계층 구조(sido 2자리, sgg 5자리, emd 8자리)이므로 `emd_cd LIKE code || '%'` 단일 조건으로 고속 필터링합니다 (g_sido 폴리곤 직접 조인이나 ST_MakeValid는 지양).
 - 행정구역 BBOX 조회: 폴리곤 전체 좌표를 변환하지 않고 `ST_Transform(ST_Envelope(geom), 3857)`로 BBOX만 변환하여 `[minX, minY, maxX, maxY]`를 계산합니다.
 - 첨부 파일 중계: 시설물 사진·음성·영상은 DB에 QField 프로젝트 내 상대 경로만 있고 원본은 인증이 필요한 QFieldCloud에 있습니다. `QfieldMediaService`가 토큰 로그인 → 프로젝트 식별 → 파일 다운로드를 거쳐 전달하며, **요청 경로가 그 시설물의 첨부인지 DB로 검증한 뒤에만** 응답합니다(아니면 403). 계정은 `QFIELD_USERNAME`/`QFIELD_PASSWORD` 환경변수로만 주입하고 `application.yml`에 적지 마세요. 로컬은 `scripts/local-stack.ps1`이 `.claude/settings.local.json`의 `env`에서 읽어 넣고, 운영은 `qfield-credentials` Secret에서 받습니다. 값이 없으면 **이 엔드포인트만 503**이 되므로, 첨부만 안 나온다면 계정 주입부터 확인하세요.
-- 설정 테이블: 지도 시설물 아이콘은 `qfield.facility_icon`에서 관리하며 `GET /map/qfield/facility-icons`(`getFacilityIcons`)로 내려줍니다. 생성 스크립트는 `db/qfield_facility_icon.sql`이고 **DDL 실행은 담당자가 직접** 합니다. 테이블이 없거나 조회가 실패하면 서비스가 예외를 삼키고 `null`을 반환해 컨트롤러가 빈 배열(`[]`)을 내려주며, 프론트는 내장 기본 아이콘으로 동작합니다 — 이 경로는 의도된 것이므로 예외를 다시 던지도록 바꾸지 마세요.
+- 설정 테이블: 지도 시설물 아이콘은 `map.facility_icon`에서 관리하며 `GET /map/qfield/facility-icons`(`getFacilityIcons`)로 내려줍니다. 생성 스크립트는 `db/map_facility_icon.sql`이고 **DDL 실행은 담당자가 직접** 합니다. 테이블이 없거나 조회가 실패하면 서비스가 예외를 삼키고 `null`을 반환해 컨트롤러가 빈 배열(`[]`)을 내려주며, 프론트는 내장 기본 아이콘으로 동작합니다 — 이 경로는 의도된 것이므로 예외를 다시 던지도록 바꾸지 마세요.
+- 내업 기록 테이블: `map.facility_office_work`(생성 스크립트 `db/map_facility_office_work.sql`)의 `total_id`는 뷰 `qfield.facility_total_view`를 가리키는 **논리적 FK**라 DB 제약이 없습니다. 존재 검증은 서비스(`getFacilityRepairYn`)가 하므로 빼지 마세요. 내업 기록은 웹사이트(내업 작성 화면 → API)로만 쌓이고, **보수 필요(`repair_required_yn='Y'`) 시설물에만 작성**할 수 있습니다(아니면 400). 시설물 목록은 이 테이블을 `LEFT JOIN LATERAL`로 붙여 `office_work_status`를 내려주는데, 보수 필요 시설물이면 최신 기록의 `work_status`(`RECEIVED`/`IN_PROGRESS`/`DONE`/`HOLD`), 기록이 없으면 `PENDING`(미완료), 보수 필요가 아니면 `null`입니다(`office_work_complete_date`도 보수 필요일 때만). 테이블이 없으면 같은 규칙에서 "기록 없음"으로 채운 폴백 쿼리(`getFacilitiesWithoutOfficeWork`)를 탑니다.
+- **테이블 스키마 주의**: 앱이 쓰는 테이블(`facility_office_work`, `facility_icon`)은 반드시 `map` 스키마에 둘 것. `qfield` 스키마는 `sj-qfieldsync`가 관리하며, QField 프로젝트 이름 패턴이 아닌 테이블을 "삭제된 프로젝트 테이블"로 보고 `facility_deleted_archive`로 옮긴 뒤 DROP 합니다(2026-09-16 `qfield.facility_icon`, 2026-09-18 `qfield.facility_office_work`가 실제로 삭제됨). 존재 여부는 `QfieldFacilityServiceImpl`이 `to_regclass`로 확인해 캐시하고(없으면 60초마다 재확인, 있다고 캐시한 뒤 조회가 `42P01`로 실패하면 즉시 폴백), 상태가 바뀔 때만 로그 한 줄을 남깁니다. `getFacilities`의 조건·properties를 바꾸면 폴백 select도 같이 고치세요. 첫 쿼리 실패 뒤 폴백이 같은 트랜잭션에 묶여 abort 되지 않도록 `getFacilities`는 `Propagation.NOT_SUPPORTED`입니다.
+- **배포 순서 경고(내업)**: 내업 기능을 배포하기 전에 대상 DB에 `db/map_facility_office_work.sql`을 먼저 실행할 것. 실행하지 않아도 시설물 목록은 폴백으로 동작하지만(보수 필요 시설물은 `PENDING`, 그 외 `null`) 내업 기록은 저장·조회되지 않습니다(내업 API는 500).
+- 내업 검증 규칙: `work_status`가 `DONE`이면 `complete_date` 필수(400). 프론트와 같은 규칙이므로 한쪽만 바꾸지 마세요.
 - 예외 및 검증: `QfieldFacilityController`는 파라미터 유효성 검증 실패 시 HTTP 400, 시설물 미존재 시 HTTP 404를 명확히 반환하며, 500 오류를 삼키지 않고 정확한 응답 코드를 제공합니다.
 
 매퍼 XML은 `application.yml`의 `mybatis.mapper-locations: classpath*:mapper/**/*.xml` 설정으로 자동 스캔되며, `MapServiceRestApplication`에 `@MapperScan("com.example.mapservice.mapper")`가 선언되어 있습니다.

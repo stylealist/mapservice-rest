@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+  시설물 내업(사무실 처리) 기록 — map.facility_office_work
+  테이블 생성 스크립트: db/map_facility_office_work.sql
+  total_id 는 qfield.facility_total_view 의 논리적 FK(뷰라서 물리 FK 불가)이므로
+  등록 전 getFacilityRepairYn 으로 시설물 존재와 보수 필요 여부를 확인한다.
+  qfield 스키마는 sj-qfieldsync 가 관리하며 프로젝트 테이블이 아닌 테이블을 DROP 하므로 이 테이블은 map 스키마에 둔다.
+-->
+<mapper namespace="com.example.mapservice.mapper.QfieldOfficeWorkMapper">
+
+    <!-- 응답 항목 형식: 키는 DB 컬럼명 그대로, 날짜는 YYYY-MM-DD, 일시는 YYYY-MM-DD HH24:MI:SS 문자열 -->
+    <sql id="officeWorkJson">
+        json_build_object(
+            'work_id', w.work_id,
+            'total_id', w.total_id,
+            'work_status', w.work_status,
+            'work_content', w.work_content,
+            'dept_nm', w.dept_nm,
+            'manager_nm', w.manager_nm,
+            'manager_tel', w.manager_tel,
+            'plan_date', to_char(w.plan_date, 'YYYY-MM-DD'),
+            'complete_date', to_char(w.complete_date, 'YYYY-MM-DD'),
+            'cost', w.cost,
+            'vendor_nm', w.vendor_nm,
+            'contract_no', w.contract_no,
+            'before_photo', w.before_photo,
+            'after_photo', w.after_photo,
+            'remark', w.remark,
+            'reg_date', to_char(w.reg_date, 'YYYY-MM-DD HH24:MI:SS'),
+            'update_at', to_char(w.update_at, 'YYYY-MM-DD HH24:MI:SS')
+        )
+    </sql>
+
+    <!-- 시설물의 보수 필요 여부. 시설물이 없으면 행이 없어 null (컨트롤러가 404) -->
+    <select id="getFacilityRepairYn" resultType="String">
+        SELECT COALESCE(repair_required_yn, 'N')
+        FROM qfield.facility_total_view
+        WHERE total_id = #{totalId}
+          AND use_yn = 'y'
+        LIMIT 1
+    </select>
+
+    <select id="getOfficeWorks" resultType="String">
+        SELECT json_build_object(
+            'totalId', #{totalId},
+            'items', COALESCE(json_agg(<include refid="officeWorkJson"/> ORDER BY w.work_id DESC), '[]'::json)
+        )::text
+        FROM map.facility_office_work w
+        WHERE w.total_id = #{totalId}
+          AND w.use_yn = 'y'
+    </select>
+
+    <!-- INSERT ... RETURNING 결과를 JSON 으로 돌려주기 위해 select 로 둔다 -->
+    <select id="insertOfficeWork" resultType="String" flushCache="true" useCache="false">
+        WITH w AS (
+            INSERT INTO map.facility_office_work (
+                total_id, work_status, work_content, dept_nm, manager_nm, manager_tel,
+                plan_date, complete_date, cost, vendor_nm, contract_no,
+                before_photo, after_photo, remark
+            ) VALUES (
+                #{totalId},
+                #{work.work_status, jdbcType=VARCHAR},
+                #{work.work_content, jdbcType=VARCHAR},
+                #{work.dept_nm, jdbcType=VARCHAR},
+                #{work.manager_nm, jdbcType=VARCHAR},
+                #{work.manager_tel, jdbcType=VARCHAR},
+                #{work.plan_date, jdbcType=DATE},
+                #{work.complete_date, jdbcType=DATE},
+                #{work.cost, jdbcType=NUMERIC},
+                #{work.vendor_nm, jdbcType=VARCHAR},
+                #{work.contract_no, jdbcType=VARCHAR},
+                #{work.before_photo, jdbcType=VARCHAR},
+                #{work.after_photo, jdbcType=VARCHAR},
+                #{work.remark, jdbcType=VARCHAR}
+            )
+            RETURNING *
+        )
+        SELECT <include refid="officeWorkJson"/>::text
+        FROM w
+    </select>
+
+    <!-- 전체 갱신. 삭제된(use_yn='n') 기록은 대상이 아니다 -->
+    <select id="updateOfficeWork" resultType="String" flushCache="true" useCache="false">
+        WITH w AS (
+            UPDATE map.facility_office_work
+            SET work_status   = #{work.work_status, jdbcType=VARCHAR},
+                work_content  = #{work.work_content, jdbcType=VARCHAR},
+                dept_nm       = #{work.dept_nm, jdbcType=VARCHAR},
+                manager_nm    = #{work.manager_nm, jdbcType=VARCHAR},
+                manager_tel   = #{work.manager_tel, jdbcType=VARCHAR},
+                plan_date     = #{work.plan_date, jdbcType=DATE},
+                complete_date = #{work.complete_date, jdbcType=DATE},
+                cost          = #{work.cost, jdbcType=NUMERIC},
+                vendor_nm     = #{work.vendor_nm, jdbcType=VARCHAR},
+                contract_no   = #{work.contract_no, jdbcType=VARCHAR},
+                before_photo  = #{work.before_photo, jdbcType=VARCHAR},
+                after_photo   = #{work.after_photo, jdbcType=VARCHAR},
+                remark        = #{work.remark, jdbcType=VARCHAR},
+                update_at     = now()
+            WHERE work_id = #{workId}
+              AND use_yn = 'y'
+            RETURNING *
+        )
+        SELECT <include refid="officeWorkJson"/>::text
+        FROM w
+    </select>
+
+    <!-- 소프트 삭제 -->
+    <update id="deleteOfficeWork">
+        UPDATE map.facility_office_work
+        SET use_yn = 'n',
+            update_at = now()
+        WHERE work_id = #{workId}
+          AND use_yn = 'y'
+    </update>
+
+</mapper>

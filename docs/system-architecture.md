@@ -1,4 +1,4 @@
-﻿# sj-lab 시스템 전체 구조 (DB → 프론트엔드)
+# sj-lab 시스템 전체 구조 (DB → 프론트엔드)
 
 이 저장소(`mapservice-rest`)에서 띄운 총괄 세션이 DB부터 프론트엔드까지 한 번에 보고 작업하기 위한 지도입니다. 로컬 경로·포트·CORS는 `docs/dev-environment.md`, MCP·DB 접속은 `docs/mcp.md`를 봅니다. 각 저장소 코드 규칙의 원본은 그 저장소의 `CLAUDE.md`이며, 여기에는 저장소를 넘나들 때 필요한 사실만 요약합니다.
 
@@ -44,7 +44,7 @@
 
 **시설물 데이터의 출처 (QField 계열)**: 현장조사 앱 `infra-manage-app`(QField 포크)으로 입력한 데이터가 QFieldCloud(**https://qfield.sj-lab.co.kr**)에 올라가고, `sj-qfieldsync` 워커가 30초 주기로 변경된 프로젝트만 감지해 GPKG를 내려받아 PostGIS `qfield` 스키마로 적재합니다. 프로젝트 테이블이 추가·삭제되면 같은 워커가 **`qfield.facility_total_view`(통합 뷰)를 재생성**합니다 — 즉 이 뷰의 정의 주체는 `sj-qfieldsync`입니다. 시설물 컬럼이 바뀌면 그 저장소부터 확인하세요.
 
-**설정 테이블 `qfield.facility_icon`**: 지도 시설물 아이콘(종류 판별 키워드·라벨·SVG 글리프·색상)을 담습니다. 생성·초기데이터 스크립트는 `db/qfield_facility_icon.sql`이며, **DDL 실행은 에이전트가 하지 않고 DB 권한이 있는 담당자가 직접 합니다**(프로젝트 규칙). 테이블이 없으면 API가 빈 배열을 돌려주고 프론트는 내장 기본 아이콘으로 동작하므로, 스크립트 실행 전에도 지도는 정상입니다. 아이콘을 추가·변경할 때는 프론트 코드가 아니라 이 테이블 행을 고칩니다.
+**설정 테이블 `map.facility_icon`**: 지도 시설물 아이콘(종류 판별 키워드·라벨·SVG 글리프·색상)을 담습니다. 생성·초기데이터 스크립트는 `db/map_facility_icon.sql`이며, **DDL 실행은 에이전트가 하지 않고 DB 권한이 있는 담당자가 직접 합니다**(프로젝트 규칙). 테이블이 없으면 API가 빈 배열을 돌려주고 프론트는 내장 기본 아이콘으로 동작하므로, 스크립트 실행 전에도 지도는 정상입니다. 아이콘을 추가·변경할 때는 프론트 코드가 아니라 이 테이블 행을 고칩니다.
 
 ## API 계약 (DB ↔ 백엔드 ↔ 프론트)
 
@@ -61,7 +61,11 @@
 | `GET /map/qfield/facilities?sidoCd=&sggCd=&emdCd=` | `QfieldFacilityController` | `qfield.facility_total_view` + `public.g_emd` | `js/modules/map/map-facility.js` |
 | `GET /map/qfield/facilities/{totalId}` | `QfieldFacilityController` | `qfield.facility_total_view`, `public.g_emd/g_sgg/g_sido` | `map-facility.js` |
 | `GET /map/qfield/facilities/{totalId}/media?path=` | `QfieldFacilityController` → `QfieldMediaService` | `qfield.facility_total_view` + QFieldCloud 원본 파일 | `map-facility.js` (`buildFacilityMediaUrl`) |
-| `GET /map/qfield/facility-icons` | `QfieldFacilityController` | `qfield.facility_icon` | `map-facility.js` (`loadFacilityIconConfig`) |
+| `GET /map/qfield/facility-icons` | `QfieldFacilityController` | `map.facility_icon` | `map-facility.js` (`loadFacilityIconConfig`) |
+| `GET /map/qfield/facilities/{totalId}/office-works` | `QfieldOfficeWorkController` | `map.facility_office_work` (+ `facility_total_view` 존재 확인) | 프론트 내업 화면 |
+| `POST /map/qfield/facilities/{totalId}/office-works` | `QfieldOfficeWorkController` | `map.facility_office_work` | 프론트 내업 화면 |
+| `PUT /map/qfield/office-works/{workId}` | `QfieldOfficeWorkController` | `map.facility_office_work` | 프론트 내업 화면 |
+| `DELETE /map/qfield/office-works/{workId}` | `QfieldOfficeWorkController` | `map.facility_office_work` (소프트 삭제) | 프론트 내업 화면 |
 | `GET /map/admin-area/sido` | `QfieldFacilityController` | `public.g_sido` | `map-facility.js` |
 | `GET /map/admin-area/sgg?sidoCd=` | `QfieldFacilityController` | `public.g_sgg` | `map-facility.js` |
 | `GET /map/admin-area/emd?sggCd=` | `QfieldFacilityController` | `public.g_emd` | `map-facility.js` |
@@ -71,7 +75,14 @@
   - **요청된 경로가 그 시설물의 첨부인지 DB로 확인한 뒤에만 전달**합니다(아니면 403). 임의 파일 접근 차단용이므로 이 검증을 빼지 마세요.
   - QFieldCloud가 돌려주는 `Content-Type`은 `application.force-download`라 브라우저가 재생하지 못합니다. 백엔드가 **확장자로 실제 타입을 정해** 내려줍니다.
   - 계정은 `QFIELD_USERNAME`/`QFIELD_PASSWORD` 환경변수로만 주입합니다(미설정 시 이 엔드포인트만 503, 나머지 기능은 정상).
-- 시설물 목록(`/map/qfield/facilities`)의 `properties`는 `total_id`, `fclt_nm`, `inst_nm`, `daddr`, `facility_condition`, `repair_required_yn`, `emd_cd`입니다. `inst_nm`·`daddr`는 같은 이름(예: "강당")이 반복될 때 목록에서 구분하기 위한 보조 정보이므로 빼지 마세요.
+- 시설물 목록(`/map/qfield/facilities`)의 `properties`는 `total_id`, `fclt_nm`, `inst_nm`, `daddr`, `facility_condition`, `repair_required_yn`, `emd_cd`, `office_work_status`, `office_work_complete_date`입니다. 뒤의 두 키는 **보수 필요(`repair_required_yn='Y'`) 시설물에만** 값이 있습니다. `office_work_status`는 최신 내업 기록(`work_id` 최대, `use_yn='y'`)의 `work_status`(`RECEIVED` 접수 / `IN_PROGRESS` 처리중 / `DONE` 완료 / `HOLD` 보류), 기록이 없으면 `PENDING`(미완료)이고, 보수 필요가 아니면 `null`입니다. `office_work_complete_date`는 그 최신 기록의 완료일(`YYYY-MM-DD`) 또는 `null`입니다(`LEFT JOIN LATERAL ... LIMIT 1`이라 건수는 그대로). `inst_nm`·`daddr`는 같은 이름(예: "강당")이 반복될 때 목록에서 구분하기 위한 보조 정보이므로 빼지 마세요.
+- **시설물 내업 기록(`map.facility_office_work`)**: 외업에서 보수 요청(`repair_required_yn='Y'`)된 시설물을 내업에서 처리한 기록입니다. 기록은 웹사이트 내업 작성 화면에서 API로만 쌓습니다(DB에 직접 넣지 않음). 생성 스크립트 `db/map_facility_office_work.sql`(2026-09-18 개발 DB 실행). `total_id`는 `facility_total_view`의 **논리적 FK**(뷰라 물리 FK 불가)이므로 등록·조회 전에 백엔드가 시설물 존재를 확인합니다(없으면 404). **보수 필요가 아닌 시설물에 POST 하면 400**입니다.
+  - **스키마 주의**: 이 테이블과 `map.facility_icon`은 `map` 스키마에 둡니다. `qfield` 스키마의 비(非)프로젝트 테이블은 `sj-qfieldsync`의 `cleanup_deleted_projects`가 "삭제된 프로젝트 테이블"로 보고 아카이브 후 DROP 하기 때문입니다(두 테이블 모두 처음엔 `qfield`에 만들었다가 실제로 삭제됨).
+  - 조회 응답: `{"totalId": "...", "items": [...]}` — `use_yn='y'`만, `work_id` 내림차순. 항목 키는 DB 컬럼명 그대로(`work_id`, `total_id`, `work_status`, `work_content`, `dept_nm`, `manager_nm`, `manager_tel`, `plan_date`, `complete_date`, `cost`, `vendor_nm`, `contract_no`, `before_photo`, `after_photo`, `remark`, `reg_date`, `update_at`). 날짜는 `YYYY-MM-DD`, 일시는 `YYYY-MM-DD HH:MM:SS` 문자열.
+  - POST(201)·PUT(200, 전체 갱신·`update_at` 갱신)은 같은 형식의 항목 1건을 돌려줍니다. `work_status`는 필수이며 `RECEIVED`/`IN_PROGRESS`/`DONE`/`HOLD`만(DB CHECK 제약도 있음), 날짜 형식·길이·비용(정수 15자리) 오류는 400. DELETE는 소프트 삭제(`use_yn='n'`) 후 204, 없는(또는 이미 삭제된) `workId`는 404.
+  - `work_status=DONE`이면 `complete_date`가 필수입니다(없으면 400, 프론트와 같은 규칙).
+  - **배포 순서 경고**: 내업 기능을 배포하기 전에 대상 DB에 `db/map_facility_office_work.sql`을 먼저 실행할 것. 실행하지 않아도 시설물 목록은 폴백으로 동작하지만(보수 필요 시설물은 `PENDING`, 그 외 `null`, 키는 유지) 내업 기록은 저장·조회되지 않습니다(내업 API는 500). 백엔드는 테이블 유무를 캐시하고 없으면 60초마다 재확인하므로, 스크립트 실행 후 재기동 없이 반영됩니다.
+  - 내업 응답은 모두 `Cache-Control: no-store`. 단 시설물 목록은 기존대로 60초 캐시이므로, 내업 저장 직후 목록의 `office_work_status`를 바로 반영하려면 프론트가 캐시를 우회해 다시 불러와야 합니다.
 - **WFS 레이어의 화면 영역 조회(`bbox`·`limit`)**: 전국 데이터를 통째로 내려주면 버스정류장 85MB·병원 61MB(합계 약 200MB)라 최초 표출이 수십 초 걸렸습니다. 그래서 두 가지 모드를 둡니다.
   - `bbox=minX,minY,maxX,maxY`(**EPSG:3857**, 지도 뷰와 같은 좌표계)를 주면 그 영역 안의 피처만 조립합니다. `limit`은 개수 상한(기본 3000, 최대 20000)이며, 상한을 넘으면 bbox 를 `limit`개 격자로 나눠 **칸마다 하나씩 뽑는 방식으로 화면 전체에 고르게 퍼진 표본**을 내려줍니다(한쪽에 몰리지 않음). bbox 형식이 틀리면 400.
   - `bbox` 없이 부르면 **기존대로 전국 전체**를 내려줍니다(뷰 그대로). 이전 버전 프론트가 붙어도 동작하게 하려고 남겨 둔 경로입니다.

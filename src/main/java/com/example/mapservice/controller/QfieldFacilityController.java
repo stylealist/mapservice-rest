@@ -111,7 +111,7 @@ public class QfieldFacilityController {
 
     /**
      * 시설물 지도 아이콘 설정 조회.
-     * 설정 테이블(qfield.facility_icon)이 아직 없거나 조회에 실패하면 빈 배열을 돌려주고,
+     * 설정 테이블(map.facility_icon)이 아직 없거나 조회에 실패하면 빈 배열을 돌려주고,
      * 프론트엔드는 내장 기본 아이콘으로 표시한다.
      */
     @GetMapping("/qfield/facility-icons")
