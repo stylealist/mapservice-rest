@@ -1,9 +1,9 @@
 # Base image
 FROM eclipse-temurin:17-jdk-alpine
 
-# 한글 폰트 — 내업 보고서 PDF 에 임베드한다.
-# alpine 에는 한글 폰트가 없어 설치하지 않으면 PDF 글자가 깨진다(설치 경로: /usr/share/fonts/nanum).
-RUN apk add --no-cache font-nanum
+# 한글 폰트는 이미지에 설치하지 않는다.
+# alpine 저장소에 font-nanum 패키지가 없어 빌드가 실패했고(2026-09-18 Jenkins),
+# 지금은 나눔고딕을 JAR 안(src/main/resources/fonts/NanumGothic.ttf)에 넣어 PDF 에 임베드한다.
 
 # 작업 디렉토리 설정
 WORKDIR /app

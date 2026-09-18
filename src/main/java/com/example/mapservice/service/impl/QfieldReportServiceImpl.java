@@ -79,12 +79,14 @@ public class QfieldReportServiceImpl implements QfieldReportService {
      * REPORT_FONT_PATH 환경변수로 덮어쓸 수 있다.
      */
     private static final String[] KOREAN_FONT_PATHS = {
-            "/usr/share/fonts/nanum/NanumGothic.ttf",            // alpine: apk add font-nanum
+            "/usr/share/fonts/nanum/NanumGothic.ttf",            // alpine(패키지가 있는 경우)
             "/usr/share/fonts/truetype/nanum/NanumGothic.ttf",   // debian/ubuntu: fonts-nanum
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",   // 한글은 안 되지만 최후 수단
             "C:/Windows/Fonts/malgun.ttf",                       // 로컬 개발(윈도우)
             "C:/Windows/Fonts/NanumGothic.ttf"
     };
+
+    /** JAR 에 포함해 배포하는 기본 한글 폰트 (src/main/resources/fonts) */
+    private static final String BUNDLED_FONT_RESOURCE = "fonts/NanumGothic.ttf";
 
     // 폰트는 요청마다 새로 읽을 필요가 없다
     private volatile BaseFont cachedBaseFont;
@@ -99,7 +101,25 @@ public class QfieldReportServiceImpl implements QfieldReportService {
             String found = null;
             if (override != null && !override.isBlank() && new File(override).exists()) {
                 found = override;
-            } else {
+            }
+
+            // 환경변수 지정이 없으면 JAR 에 포함한 폰트를 쓴다.
+            // 운영 이미지(alpine)에는 한글 폰트가 없고 apk 패키지(font-nanum)도 없어서,
+            // 폰트를 리소스로 넣어야 배포 환경과 무관하게 한글이 정상 출력된다.
+            if (found == null) {
+                try (java.io.InputStream in = getClass().getClassLoader().getResourceAsStream(BUNDLED_FONT_RESOURCE)) {
+                    if (in != null) {
+                        byte[] fontBytes = in.readAllBytes();
+                        BaseFont bundled = BaseFont.createFont(BUNDLED_FONT_RESOURCE, BaseFont.IDENTITY_H,
+                                BaseFont.EMBEDDED, BaseFont.CACHED, fontBytes, null);
+                        log.info("보고서 PDF 한글 폰트: classpath:{} (임베드, {}바이트)", BUNDLED_FONT_RESOURCE, fontBytes.length);
+                        cachedBaseFont = bundled;
+                        return bundled;
+                    }
+                } catch (Exception e) {
+                    log.warn("JAR 에 포함된 한글 폰트를 읽지 못해 OS 폰트를 찾습니다: {}", e.getMessage());
+                }
+
                 for (String path : KOREAN_FONT_PATHS) {
                     if (new File(path).exists()) {
                         found = path;
