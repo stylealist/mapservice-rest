@@ -435,7 +435,7 @@ public class QfieldReportServiceImpl implements QfieldReportService {
             return cell;
         }
 
-        for (int i = 0; i < Math.min(photoList.size(), 2); i++) {
+        for (int i = 0; i < photoList.size(); i++) {
             Map<String, Object> photo = photoList.get(i);
             byte[] bytes = (byte[]) photo.get("content");
             if (bytes != null && bytes.length > 0) {

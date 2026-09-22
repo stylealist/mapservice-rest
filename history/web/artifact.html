@@ -385,7 +385,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.3</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.4</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -439,7 +439,8 @@
       <button type="button" class="vchip" role="tab" data-ver="2.0" aria-controls="pane-v2.0" title="시설물 내업(사무실 처리) 기능 신설 — DB·백엔드 쓰기 API·프론트엔드"><span class="pv">v2.0</span><span class="pt">내업 처리 기능 신설</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.1" aria-controls="pane-v2.1" title="상세 팝업의 내업 영역을 하단 고정으로 변경"><span class="pv">v2.1</span><span class="pt">내업 영역 하단 고정</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.2" aria-controls="pane-v2.2" title="시설물 내업 사진 첨부 API 및 멀티 저장소 에이전트 가이드 정비"><span class="pv">v2.2</span><span class="pt">내업 사진 API · 가이드</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.3" aria-controls="pane-v2.3" title="내업 처리 보고서 PDF 다운로드 (외업 사진 포함)"><span class="pv">v2.3<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">보고서 PDF 다운로드</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.3" aria-controls="pane-v2.3" title="내업 처리 보고서 PDF 다운로드 (외업 사진 포함)"><span class="pv">v2.3</span><span class="pt">보고서 PDF 다운로드</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.4" aria-controls="pane-v2.4" title="내업 보고서 PDF 처리 전·후 사진 2장 제한 수정"><span class="pv">v2.4<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">보고서 사진 2장 제한 수정</span></button>
     </div>
   </div>
 </nav>
@@ -3686,6 +3687,75 @@ qfield.facility_icon        → map.facility_icon   (아이콘 7건 복구, 이�
 </section>
 </div>
 
+<!-- ===================== v2.4 ===================== -->
+<div class="vpane" data-ver="2.4" id="pane-v2.4" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.4</span>
+      <span>2026-09-22</span>
+      <span>mapservice-rest</span>
+    </div>
+    <h1>보고서 처리 전·후 사진<br>2장 제한 수정</h1>
+    <p class="dek">
+      내업 처리 보고서 PDF의 처리 전·후(BEFORE/AFTER) 사진이 구분당 최대 5장까지 업로드되는데도
+      2장까지만 출력되던 문제를 고쳤습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>대상</dt><dd>처리 전·후 사진 섹션</dd></div>
+      <div><dt>이전</dt><dd>구분당 2장까지만 출력</dd></div>
+      <div><dt>이후</dt><dd class="ok">등록된 전부(최대 5장)</dd></div>
+      <div><dt>검증</dt><dd class="ok">JDK 17 컴파일 통과</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">/orchestration 내업처리내역에서 pdf 보고서에 처리전, 처리후 사진이 최대 2개까지만 나오는 오류가 있어 2개 초과여도 보고서에 모두 나오도록 수정 해줘</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">원인</p>
+    <h2>사진 셀을 그리는 헬퍼에 개수 제한이 하드코딩</h2>
+    <ul class="notes">
+      <li><code>QfieldReportServiceImpl.createPhotoCell()</code>이 <code>Math.min(photoList.size(), 2)</code>로 반복 횟수를 2로 고정</li>
+      <li>DB 조회(<code>getPhotosWithContent</code>)는 이미 <code>LIMIT</code> 없이 전체 사진을 가져오고 있어 조회 쪽 문제는 아니었음</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">결과</p>
+    <h2>변경 내용</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">파일</span><span class="fv"><code>QfieldReportServiceImpl.java</code> — <code>createPhotoCell()</code>의 상한 제거, <code>photoList.size()</code> 전체 반복</span></div>
+      <div class="frow"><span class="fk">화면</span><span class="fv">BEFORE/AFTER 각 칸에 등록된 사진 전부(최대 5장)가 세로로 이어져 출력</span></div>
+      <div class="frow"><span class="fk">참고</span><span class="fv">외업 현장 사진 섹션(<code>loadFieldPhotos</code>)은 애초에 제한이 없어 이번 수정 대상이 아님</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>컴파일 확인</h2>
+    <div class="cmd">JDK 17 mvnw.cmd compile     정상 완료(오류 없음)</div>
+    <div class="grid2">
+      <div class="cell caution">
+        <h3>남은 확인 <span class="badge skip">권장</span></h3>
+        <p>로컬 스택이 기동되어 있지 않아 실제 PDF 출력(6장 업로드 후 렌더링)까지는 검증하지 못했습니다. 배포 전 실제 보고서 다운로드로 확인을 권장합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -3694,7 +3764,7 @@ qfield.facility_icon        → map.facility_icon   (아이콘 7건 복구, 이�
       <li><em>API Gateway</em><span class="url">http://localhost:8100/map/admin-area/sido</span></li>
       <li><em>Eureka</em><span class="url">http://localhost:8761</span></li>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.3.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.4.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·

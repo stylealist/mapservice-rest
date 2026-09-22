@@ -84,7 +84,7 @@
 <div class="wrap">
   <header>
     <h1>sj-lab 변경 이력</h1>
-    <p class="sub">총괄 허브 <code>mapservice-rest</code> 기준 · 최종 갱신 2026-09-16</p>
+    <p class="sub">총괄 허브 <code>mapservice-rest</code> 기준 · 최종 갱신 2026-09-22</p>
   </header>
 
   <section>
@@ -109,6 +109,20 @@
 
   <section>
     <h2>버전 이력</h2>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v2.4</span>
+        <span class="ver-title">내업 보고서 PDF 처리 전·후 사진 2장 제한 수정</span>
+        <span class="date">2026-09-22</span>
+      </div>
+      <ul>
+        <li>처리 전·후(BEFORE/AFTER) 사진이 구분당 최대 5장까지 업로드 가능한데도 보고서 PDF에는 2장까지만 출력되던 문제</li>
+        <li>원인 — <code>QfieldReportServiceImpl.createPhotoCell()</code>에서 <code>Math.min(photoList.size(), 2)</code>로 출력 개수가 하드코딩됨(DB 조회는 이미 전체를 가져오고 있었음)</li>
+        <li>제한을 제거해 등록된 사진 전부(최대 5장)가 한 칸에 이어서 출력되도록 수정, JDK 17 컴파일 확인</li>
+      </ul>
+      <p><a href="../history_v2.4.md">history_v2.4.md 원문 보기</a></p>
+    </div>
 
     <div class="card">
       <div class="ver-head">
