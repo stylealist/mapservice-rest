@@ -112,6 +112,22 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v2.9</span>
+        <span class="ver-title">로그인 게이트 후속 — 로그아웃·접속자 표시·체험용 계정·Secret 정리</span>
+        <span class="date">2026-09-22</span>
+      </div>
+      <ul>
+        <li>hub·mapservice 로그인 게이트 운영 재적용(authserver 동작·허용 오리진 확인 후), 로컬 허브 → 지도(4000) 이동 분기 추가</li>
+        <li><b>로그아웃이 안 되던 문제</b> — 로그인 페이지가 살아있는 세션 쿠키로 곧바로 재발급. <code>logout=1</code>로 보내 쿠키부터 지우도록 수정</li>
+        <li>mapservice 로그아웃 버튼을 네비 탭에서 분리, 두 사이트 모두 "👤 아이디님" 표시. 옛 CSS 캐시로 깨져 보인 문제는 <code>?v=</code> 캐시 무효화로 해결</li>
+        <li>체험용 계정 버튼 — 처음엔 비밀번호가 페이지 JS에 노출돼, 서버 처리(<code>POST /auth/login/demo</code> + Secret <code>auth-demo-credentials</code>)로 바꾸고 QFieldCloud 비밀번호 교체</li>
+        <li><code>docs/k8s-secrets.md</code> 신설 — Secret·Jenkins Credential 이름·용도·확인 명령어(값 없음)</li>
+      </ul>
+      <p><a href="../history_v2.9.md">history_v2.9.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v2.8</span>
         <span class="ver-title">sj-lab-authserver 운영 배포 완료</span>
         <span class="date">2026-09-22</span>

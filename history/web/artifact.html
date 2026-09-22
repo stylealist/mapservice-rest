@@ -385,7 +385,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.8</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.9</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -444,7 +444,8 @@
       <button type="button" class="vchip" role="tab" data-ver="2.5" aria-controls="pane-v2.5" title="scheduler 기동 시 CCTV 데이터 1회 자동 수집"><span class="pv">v2.5</span><span class="pt">CCTV 기동 시 자동 수집</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.6" aria-controls="pane-v2.6" title="sj-lab-authserver 신설 (QFieldCloud 계정 기반 로그인 서버)"><span class="pv">v2.6</span><span class="pt">로그인 서버 신설</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.7" aria-controls="pane-v2.7" title="sj-lab-hub·sj-lab-mapservice 로그인 게이트 + SSO"><span class="pv">v2.7</span><span class="pt">로그인 게이트 · SSO</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.8" aria-controls="pane-v2.8" title="sj-lab-authserver 운영 배포 완료"><span class="pv">v2.8<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">authserver 운영 배포</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.8" aria-controls="pane-v2.8" title="sj-lab-authserver 운영 배포 완료"><span class="pv">v2.8</span><span class="pt">authserver 운영 배포</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.9" aria-controls="pane-v2.9" title="로그인 게이트 후속 — 로그아웃·접속자 표시·체험용 계정·Secret 정리"><span class="pv">v2.9<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">로그아웃 · 체험 계정</span></button>
     </div>
   </div>
 </nav>
@@ -4104,6 +4105,67 @@ GET https://api.sj-lab.co.kr/auth/session (쿠키 없음)    401 (예상된 정�
 </section>
 </div>
 
+<!-- ===================== v2.9 ===================== -->
+<div class="vpane" data-ver="2.9" id="pane-v2.9" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.9</span>
+      <span>2026-09-22</span>
+      <span>authserver · hub · mapservice · k8s-manifests</span>
+    </div>
+    <h1>로그인 게이트 후속<br>로그아웃·접속자 표시·체험용 계정</h1>
+    <p class="dek">
+      운영에 로그인 게이트를 다시 붙인 뒤 나온 문제들을 정리하고, 포트폴리오 방문자용 체험 계정과
+      운영 Secret 정리 문서를 추가했습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>게이트</dt><dd class="ok">운영 재적용</dd></div>
+      <div><dt>로그아웃</dt><dd class="ok">세션 쿠키까지 삭제</dd></div>
+      <div><dt>체험 계정</dt><dd class="ok">서버 처리 · Secret</dd></div>
+      <div><dt>Secret 문서</dt><dd>docs/k8s-secrets.md</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">문제와 조치</p>
+    <h2>재적용 후 나온 것들</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>문제</th><th>원인</th><th>조치</th></tr></thead>
+        <tbody>
+          <tr><td>로그아웃이 안 됨</td><td>로그인 페이지가 살아있는 세션 쿠키로 곧바로 새 토큰을 발급해 되돌려 보냄</td><td>로그아웃 시 <code>logout=1</code>로 보내 <code>POST /auth/logout</code>으로 쿠키부터 삭제</td></tr>
+          <tr><td>로컬 허브 → 지도 이동 불가</td><td>로컬은 hub(3000)·mapservice(4000)가 다른 포트</td><td>로컬만 <code>http://localhost:4000</code>으로 분기, 운영은 상대경로 유지</td></tr>
+          <tr><td>로그아웃 버튼이 탭에 붙음</td><td>버튼이 <code>.nav-btn</code>이라 페이지 전환 핸들러에도 걸려 있었음</td><td>헤더 오른쪽 별도 영역으로 분리, "👤 아이디님" 표시</td></tr>
+          <tr><td>헤더가 깨져 보임</td><td>서버가 <code>Cache-Control</code> 없이 내려줘 브라우저가 옛 CSS 사용</td><td>바뀐 CSS/JS에 <code>?v=</code> 캐시 무효화, 규칙화</td></tr>
+          <tr><td>데모 비밀번호 노출</td><td>처음엔 버튼이 페이지 JS의 아이디·비밀번호로 제출</td><td><code>POST /auth/login/demo</code> + Secret <code>auth-demo-credentials</code>, QFieldCloud 비밀번호 교체</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>로컬 확인</h2>
+    <div class="cmd">헤더 캡처(헤드리스 Chrome)      hub·mapservice "👤 아이디님 [로그아웃]" 정상
+데모 로그인 — 환경변수 없음     503 (일반 로그인은 200)
+데모 로그인 — 환경변수 있음     200
+데모 새 비밀번호 / 옛 비밀번호  200 / 401
+helm lint · template            통과</div>
+    <div class="grid2">
+      <div class="cell caution">
+        <h3>남은 작업 <span class="badge skip">확인 필요</span></h3>
+        <p>운영에서 로그아웃·체험 버튼 브라우저 확인, hub <code>bundle.js</code> 캐시(배포 방식 확인 후 <code>contenthash</code>), single-logout 미구현, scheduler CCTV 변경 미커밋.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -4114,7 +4176,7 @@ GET https://api.sj-lab.co.kr/auth/session (쿠키 없음)    401 (예상된 정�
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.8.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.9.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·

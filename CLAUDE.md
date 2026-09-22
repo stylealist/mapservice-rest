@@ -9,6 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - @docs/system-architecture.md — DB → 백엔드 → Eureka → 게이트웨이 → 프론트 전체 구조, API 계약 표, 저장소를 넘나드는 변경 체크리스트, 총괄 세션에서 다른 저장소를 다룰 때의 규칙
 - @docs/dev-environment.md — 로컬 저장소 경로, 포트·라우팅(8100=게이트웨이, 4000=프론트, 8761=Eureka), CORS, 워커 운영 시 주의
 - @docs/mcp.md — GitHub/DB MCP 설정과 비밀값 관리 규칙
+- `docs/k8s-secrets.md` — 운영 k8s Secret·Jenkins Credential 이름·용도·없을 때 증상, 확인·생성·변경 명령어(값은 적지 않음). 차트의 `secretKeyRef`/`pullSecret`을 바꾸면 이 문서도 같이 고칠 것
 - `docs/analysis/sjlab-dev-db-check.md`, `docs/analysis/db-analysis.md` — 개발 DB 연결·권한·스키마 점검 및 인덱스·뷰·데이터 품질 분석
 
 공통 규칙:
