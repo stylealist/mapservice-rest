@@ -7,7 +7,9 @@
     powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 status
     powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 stop
 
-  기동 순서: Eureka(8761) → mapservice-rest(랜덤 포트) → API Gateway(8100) → 프론트 정적 서버(4000)
+  기동 순서: Eureka(8761) → mapservice-rest(랜덤 포트) → sj-lab-authserver(랜덤 포트, 로그인) → API Gateway(8100) → 프론트 정적 서버(4000)
+  - hub·mapservice 는 로그인 게이트가 있어 authserver 없이는 접속 자체가 안 된다(로그인 페이지 503).
+  - 체험용 계정(AUTH_DEMO_*)·첨부 중계 계정(QFIELD_*)은 .claude\settings.local.json 의 env 에서 읽는다.
   - 이 스크립트가 띄운 프로세스만 .local-stack\pids.json 에 기록하고, stop 은 그 프로세스만 종료한다.
   - 포트가 이미 사용 중이면(예: IntelliJ로 실행 중) 그 구성요소는 건너뛴다.
   - sj-lab-discoveryServer 는 target/ 이 git에 추적되므로 원본이 아닌 .local-stack\build 복사본에서 빌드한다.
@@ -73,10 +75,9 @@ function invokeMavenPackage([string]$projectDir, [string]$jdkHome) {
   }
 }
 
-function loadQfieldCredentials {
+function loadLocalSecrets([string[]]$keys) {
   <#
-    시설물 첨부(사진·음성·영상) 중계용 QFieldCloud 계정을 백엔드 프로세스에 넘긴다.
-    값이 없으면 미디어 엔드포인트만 503(NOT_CONFIGURED)이 되고 나머지 기능은 정상이다.
+    로컬 비밀값을 자식 프로세스(백엔드·authserver)가 물려받도록 현재 프로세스 환경변수에 채운다.
 
     읽는 순서:
       1. 이미 설정된 환경변수 (셸에서 직접 넣은 경우 그대로 존중)
@@ -84,7 +85,6 @@ function loadQfieldCredentials {
 
     저장소 파일(application.yml 등)에는 절대 적지 않는다 — 이 저장소는 public 이다.
   #>
-  $keys = @('QFIELD_USERNAME', 'QFIELD_PASSWORD', 'QFIELD_BASE_URL')
   if (-not ($keys | Where-Object { -not [Environment]::GetEnvironmentVariable($_) })) { return }
 
   $settingsPath = Join-Path $hubRoot '.claude\settings.local.json'
@@ -100,12 +100,28 @@ function loadQfieldCredentials {
       Write-Host "  주의: settings.local.json 을 읽지 못했습니다($($_.Exception.Message))"
     }
   }
+}
 
+function loadQfieldCredentials {
+  # 시설물 첨부(사진·음성·영상) 중계용 QFieldCloud 계정. 없으면 미디어 엔드포인트만 503.
+  loadLocalSecrets @('QFIELD_USERNAME', 'QFIELD_PASSWORD', 'QFIELD_BASE_URL')
   if ($env:QFIELD_USERNAME -and $env:QFIELD_PASSWORD) {
     Write-Host "  QField 계정 적용: $($env:QFIELD_USERNAME) (첨부 재생 가능)"
   } else {
     Write-Host '  주의: QField 계정이 없어 첨부(사진·음성·영상) 재생은 503 입니다.'
     Write-Host '        .claude\settings.local.json 의 env 에 QFIELD_USERNAME/QFIELD_PASSWORD 를 넣으세요.'
+  }
+}
+
+function loadDemoCredentials {
+  # 로그인 페이지 "체험용 계정으로 로그인"용. 없으면 그 버튼만 503, 일반 로그인은 정상.
+  # (JWT 서명 키는 local 프로파일에서 로컬 전용 기본값을 쓰므로 따로 넣을 필요 없음)
+  loadLocalSecrets @('AUTH_DEMO_USERNAME', 'AUTH_DEMO_PASSWORD')
+  if ($env:AUTH_DEMO_USERNAME -and $env:AUTH_DEMO_PASSWORD) {
+    Write-Host "  체험용 계정 적용: $($env:AUTH_DEMO_USERNAME)"
+  } else {
+    Write-Host '  주의: 체험용 계정이 없어 로그인 페이지의 체험용 버튼은 503 입니다.'
+    Write-Host '        .claude\settings.local.json 의 env 에 AUTH_DEMO_USERNAME/AUTH_DEMO_PASSWORD 를 넣으세요.'
   }
 }
 
@@ -123,6 +139,7 @@ function startJava([string]$name, [string]$jar, [string]$jdkHome, [string[]]$ext
 function startStack {
   $jdkHome = findJdk17
   $gatewayDir = Join-Path $workspaceRoot 'sj-lab-apigateway'
+  $authserverDir = Join-Path $workspaceRoot 'sj-lab-authserver'
   $discoverySrc = Join-Path $workspaceRoot 'sj-lab-discoveryServer'
   $discoveryBuild = Join-Path $stateDir 'build\sj-lab-discoveryServer'
 
@@ -132,6 +149,12 @@ function startStack {
   $running = readPids
   $backendAlive = $running -and $running.'mapservice-rest' -and (Get-Process -Id $running.'mapservice-rest' -ErrorAction SilentlyContinue)
   $needBackend = -not $backendAlive
+  # authserver 는 랜덤 포트라 포트로 판단할 수 없다 — 이 스크립트가 띄운 것이 살아 있거나,
+  # 다른 방법(IntelliJ, java -jar)으로 이미 떠 있으면 건너뛴다.
+  $authAlive = $running -and $running.'authserver' -and (Get-Process -Id $running.'authserver' -ErrorAction SilentlyContinue)
+  $authExternal = [bool](Get-CimInstance Win32_Process -Filter "Name = 'java.exe'" -ErrorAction SilentlyContinue |
+    Where-Object { $_.CommandLine -like '*sj-lab-authserver*' -or $_.CommandLine -like '*AuthServerApplication*' })
+  $needAuthserver = -not $authAlive -and -not $authExternal
 
   if (-not $NoBuild) {
     Write-Host '[1/2] 빌드 (JDK 17)'
@@ -141,6 +164,7 @@ function startStack {
       invokeMavenPackage $discoveryBuild $jdkHome
     }
     if ($needBackend) { invokeMavenPackage $hubRoot $jdkHome }
+    if ($needAuthserver) { invokeMavenPackage $authserverDir $jdkHome }
     if ($needGateway) { invokeMavenPackage $gatewayDir $jdkHome }
   }
 
@@ -155,6 +179,12 @@ function startStack {
     startJava 'mapservice-rest' (Join-Path $hubRoot 'target\sj-lab-mapservice-rest.jar') $jdkHome @() | Out-Null
     waitUntil { Select-String -Path (Join-Path $stateDir 'mapservice-rest.log') -Pattern 'Started MapServiceRestApplication' -Quiet } 180 'mapservice-rest'
   } else { Write-Host '  건너뜀: mapservice-rest 이미 실행 중' }
+
+  if ($needAuthserver) {
+    loadDemoCredentials
+    startJava 'authserver' (Join-Path $authserverDir 'target\sj-lab-authserver.jar') $jdkHome @() | Out-Null
+    waitUntil { Select-String -Path (Join-Path $stateDir 'authserver.log') -Pattern 'Started AuthServerApplication' -Quiet } 180 'sj-lab-authserver'
+  } else { Write-Host '  건너뜀: sj-lab-authserver 이미 실행 중' }
 
   if ($needGateway) {
     startJava 'apigateway' (Join-Path $gatewayDir 'target\sj-lab-apigateway.jar') $jdkHome @() | Out-Null
@@ -174,7 +204,10 @@ function startStack {
     waitUntil {
       try { (Invoke-WebRequest -UseBasicParsing -Uri 'http://localhost:8100/map/admin-area/sido' -TimeoutSec 10).StatusCode -eq 200 } catch { $false }
     } 120 '게이트웨이 → mapservice-rest 라우팅'
-    Write-Host '준비 완료: http://localhost:4000'
+    waitUntil {
+      try { (Invoke-WebRequest -UseBasicParsing -Uri 'http://localhost:8100/auth/login.html' -TimeoutSec 10).StatusCode -eq 200 } catch { $false }
+    } 120 '게이트웨이 → sj-lab-authserver 라우팅(로그인 페이지)'
+    Write-Host '준비 완료: http://localhost:4000 (로그인 페이지 http://localhost:8100/auth/login.html)'
   } catch { Write-Warning $_.Exception.Message }
   showStatus
 }
@@ -194,7 +227,7 @@ function stopStack {
 
 function showStatus {
   $pids = readPids
-  foreach ($name in 'eureka', 'mapservice-rest', 'apigateway', 'frontend') {
+  foreach ($name in 'eureka', 'mapservice-rest', 'authserver', 'apigateway', 'frontend') {
     $processId = if ($pids) { $pids.$name } else { $null }
     $alive = $processId -and (Get-Process -Id $processId -ErrorAction SilentlyContinue)
     $state = if ($alive) { "실행 중 (pid $processId)" } elseif ($processId) { '종료됨' } else { '이 스크립트로 띄우지 않음' }

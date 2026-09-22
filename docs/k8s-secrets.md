@@ -19,6 +19,17 @@
 - `auth-demo-credentials`: 포트폴리오 방문자용 QFieldCloud 체험 계정입니다. 이 계정은 QFieldCloud **어떤 프로젝트에도 멤버로 넣지 말 것**(우리 로그인은 계정 존재만 확인). 비밀번호를 코드·문서에 적지 말 것(2026-09-22 처음엔 로그인 페이지 JS에 넣었다가 서버 처리로 바꾸고 비밀번호를 교체함).
 - `qfield-credentials`: 첨부 중계용 운영 QFieldCloud 계정입니다. 체험 계정과 섞지 말 것.
 
+## 로컬 개발에서는
+
+k8s Secret이 없으므로 다음처럼 대신합니다(값은 git 제외 파일 `.claude/settings.local.json`의 `env`에만 둠).
+
+| 운영 Secret | 로컬 |
+|---|---|
+| `auth-jwt-secret` | 필요 없음 — `local` 프로파일에서 로컬 전용 기본값 사용(운영 프로파일에선 이 기본값을 거부) |
+| `auth-demo-credentials` | `AUTH_DEMO_USERNAME`/`AUTH_DEMO_PASSWORD` → `scripts\local-stack.ps1`이 authserver 기동 시 주입 |
+| `qfield-credentials` | `QFIELD_USERNAME`/`QFIELD_PASSWORD` → `scripts\local-stack.ps1`이 mapservice-rest 기동 시 주입 |
+| `ncp-registry-secret` | 필요 없음(로컬은 jar 직접 실행) |
+
 ## Jenkins Credentials
 
 k8s Secret이 아니라 Jenkins(`Manage Jenkins` → `Credentials`)에 등록된 값입니다. 서비스별 파이프라인이 공통으로 씁니다.
