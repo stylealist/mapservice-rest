@@ -34,7 +34,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - 새 history 문서의 접속 URL 표 맨 위에 발행 페이지 주소를 넣을 것
 - **AI에이전트 오케스트레이션**: 오케스트레이션을 진행 할 때 최종 검증은 반드시 Claude로 진행할것
   1. Claude을 메인으로 하지만 일일 남은 토큰에 따라서 antigravity도 활용할것
-  2. 복잡하지않은 개발은 antigravity를 적극적으로 활용할것
+  2. 프론트엔드 개발은 antigravity를 적극적으로 활용할것  
 
 ## 명령어
 
@@ -85,6 +85,9 @@ Eureka에 등록되는(`@EnableDiscoveryClient`) Spring Boot 3.3.2 / Java 17 마
 **i18n**: `messages*.properties` + `MessageSource`는 `HelloWorldController#helloWorldInternationalized`에서만 사용되며, 다른 곳에는 쓰이지 않습니다.
 
 **예외 처리**: `CustomizedResponseEntityExceptionHandler`가 전역 `@ControllerAdvice`로 존재하지만, `WfsController`의 각 메서드는 예외를 전파하지 않고 자체적으로 catch해서 `e.printStackTrace()`만 호출하고 빈 문자열을 반환합니다. 즉 WFS 엔드포인트가 500이 아니라 HTTP 200 + 빈 바디를 반환할 수 있으니 디버깅 시 유의하세요.
+
+## 반드시 지킬것
+- 프롬프트에 /orchestration 를 쓰지 않아도 기본값으로 /orchestration로 실행되도록 할것
 
 ## 변경 시 참고사항
 
