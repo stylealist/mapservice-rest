@@ -3910,6 +3910,25 @@ Eureka 등록                          SJ-LAB-AUTHSERVER(1) 확인</div>
     </div>
   </div>
 </section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">보안 리뷰</p>
+    <h2>로그인 서버 관점으로 다시 점검</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>발견</th><th>심각도</th><th>조치</th></tr></thead>
+        <tbody>
+          <tr><td>JWT 시크릿 기본값 무방비 — <code>AUTH_JWT_SECRET</code> 없이 배포해도 조용히 기동, 공개 저장소의 기본 키로 서명 가능</td><td><b>배포 전 필수 수정</b></td><td><code>JwtService</code>에 <code>@PostConstruct</code> 검증 추가 — 32바이트 미만이거나, <code>local</code> 프로파일이 아닌데 기본값이면 기동 자체를 막음</td></tr>
+          <tr><td>로그인 요청 JSON 수동 조립 — 비밀번호에 제어문자가 있으면 깨진 JSON</td><td>낮음(기능 버그)</td><td>Jackson <code>writeValueAsString()</code>으로 직렬화하도록 교체</td></tr>
+          <tr><td>비밀번호 로그 유출 / 계정 존재 여부 유추 가능성</td><td>-</td><td>확인만, 문제 없음(로그엔 상태코드만, 400/401을 같은 401 메시지로 통합)</td></tr>
+          <tr><td><code>/auth/login</code> 레이트 리미팅 없음</td><td>남은 과제</td><td>외부 노출 전 추가 필요 — <code>CLAUDE.md</code>에 명시만 하고 이번엔 구현하지 않음</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="promptnote">수정 후 <code>local</code> 프로파일이 아니면 기본 시크릿을 거부하므로 스모크 테스트에도 <code>@ActiveProfiles("local")</code>을 추가했습니다. 재기동 후 게이트웨이 로드밸런서 캐시가 잠시 죽은 인스턴스를 가리켜 첫 재검증은 500이었지만, 문서에 이미 있는 "재기동 직후 Eureka 캐시 지연" 함정 그대로였고 몇 초 뒤 재시도로 로그인·<code>/auth/me</code>·잘못된 비밀번호 401을 모두 재확인했습니다.</p>
+  </div>
+</section>
 </div>
 
 <footer>

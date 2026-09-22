@@ -122,6 +122,7 @@
         <li>게이트웨이에 <code>/auth/**</code> → <code>lb://SJ-LAB-AUTHSERVER</code> 라우트 추가. 디스커버리 서버는 코드 변경 없이 자동 등록 확인</li>
         <li>실제 QFieldCloud 계정으로 게이트웨이 경유 엔드투엔드 검증 — 로그인 200·JWT 발급, <code>/auth/me</code> 200, 잘못된 비밀번호 401</li>
         <li>다른 서비스에 토큰 검증 강제는 의도적으로 이번 범위 밖(프론트 로그인 화면 없음). 새 저장소는 푸시 완료, 기존 저장소(게이트웨이·이 저장소)는 배포 파이프라인 영향으로 push 보류</li>
+        <li><b>보안 리뷰 반영</b> — JWT 시크릿을 <code>AUTH_JWT_SECRET</code> 없이 배포해도 조용히 기동되던 문제를 기동 시 검증(local 프로파일 아니면 기본 시크릿 거부)으로 막음, 로그인 요청 JSON을 수동 조립 대신 Jackson 직렬화로 교체(제어문자 버그 수정). 레이트 리미팅 부재는 남은 과제로 기록</li>
       </ul>
       <p><a href="../history_v2.6.md">history_v2.6.md 원문 보기</a></p>
     </div>
