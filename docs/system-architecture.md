@@ -77,7 +77,11 @@
 | `GET /map/admin-area/sgg?sidoCd=` | `QfieldFacilityController` | `public.g_sgg` | `map-facility.js` |
 | `GET /map/admin-area/emd?sggCd=` | `QfieldFacilityController` | `public.g_emd` | `map-facility.js` |
 
-**로그인(`sj-lab-authserver`, 게이트웨이 `/auth/**`)**: 별도 회원 DB 없이 QFieldCloud 계정을 그대로 쓴다. `POST /auth/login {username,password}` → QFieldCloud `POST /api/v1/auth/login/`에 위임 검증(위 중계 흐름과 같은 계약) → 성공 시 이 서버가 서명한 sj-lab 전용 JWT 발급(`{accessToken, tokenType, expiresIn, username}`). `GET /auth/me`(`Authorization: Bearer`)로 토큰 유효성 확인. **2026-09-22 기준 발급만 구현됨 — 게이트웨이나 다른 서비스(mapservice-rest 등)는 아직 이 토큰 검증을 강제하지 않는다**(프론트에 로그인 화면도 없음). 자세한 범위·남은 작업은 그 저장소 `CLAUDE.md`.
+**로그인 및 SSO(`sj-lab-authserver`, 게이트웨이 `/auth/**`)**: 별도 회원 DB 없이 QFieldCloud 계정을 그대로 쓴다. `POST /auth/login {username,password}` → QFieldCloud `POST /api/v1/auth/login/`에 위임 검증(위 중계 흐름과 같은 계약) → 성공 시 이 서버가 서명한 sj-lab 전용 JWT 발급(`{accessToken, tokenType, expiresIn, username}`). `GET /auth/me`(`Authorization: Bearer`)로 토큰 유효성 확인.
+
+- **SSO(2026-09-22 추가)**: `sj-lab-hub`·`sj-lab-mapservice`는 각자 로그인 화면을 만들지 않고, authserver가 서빙하는 공유 로그인 페이지(`GET /auth/login.html?redirect_uri=...`)로 리다이렉트하는 방식으로 로그인한다. 로그인 성공 시 `redirect_uri`로 되돌아가며 URL 해시(`#auth_token=...`)에 토큰을 실어 전달하고, 각 사이트는 그 토큰을 **자기 자신의 `localStorage`**에 저장한다(사이트 간 쿠키 공유는 쓰지 않음). authserver 자신의 오리진에는 세션 쿠키(`sj_session`)가 있어, 로그인 페이지를 다시 방문하면(`GET /auth/session`) 폼 없이 새 토큰을 조용히 재발급받는다 — 이 쿠키가 "한 번 로그인하면 다른 사이트도 로그인 상태"의 실질적인 메커니즘이다.
+- **이번 범위는 hub·mapservice 전체를 로그인 후에만 볼 수 있게 하는 프론트 화면 게이트까지다.** 백엔드 API(mapservice-rest, scheduler)는 여전히 이 토큰 검증을 강제하지 않는다 — 직접 호출하면 토큰 없이도 그대로 동작한다. 진짜 single-logout(한 사이트 로그아웃 시 다른 사이트도 즉시 로그아웃)도 구현하지 않았다.
+- 자세한 흐름·남은 작업은 `sj-lab-authserver`의 `CLAUDE.md`("SSO" 절) 참고.
 
 - **시설물 첨부 파일(사진·음성·영상)**: `photo_1`~`photo_5`, `audio_memo`, `video` 컬럼에는 URL이 아니라 **QField 프로젝트 안의 상대 경로**가 들어 있습니다(예: `DCIM/JPEG_20260916071830596.jpg`, `audio/AUDIO_...m4a`, `video/VIDEO_...mp4`). 원본 파일은 QFieldCloud(**https://qfield.sj-lab.co.kr**)에 있고 **API가 인증을 요구**하며(`/api/v1/` → 401), `sj-qfieldsync`는 처리 후 내려받은 폴더를 삭제하고(`shutil.rmtree`) 차트 볼륨도 `emptyDir`라 파일이 남지 않습니다. 그래서 **백엔드가 대신 받아 전달하는 중계 엔드포인트**(`/map/qfield/facilities/{totalId}/media?path=...`)를 통해 재생합니다 — 프론트는 상대 경로를 이 URL로 조립하기만 합니다.
   - 중계 흐름: `POST /api/v1/auth/login/`(토큰, 6시간 캐시) → `GET /api/v1/projects/`(`source_table`의 접두어로 프로젝트 식별, 캐시) → `GET /api/v1/files/{projectId}/{경로}/`.

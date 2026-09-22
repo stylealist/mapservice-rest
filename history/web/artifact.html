@@ -385,7 +385,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.6</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.7</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -442,7 +442,8 @@
       <button type="button" class="vchip" role="tab" data-ver="2.3" aria-controls="pane-v2.3" title="내업 처리 보고서 PDF 다운로드 (외업 사진 포함)"><span class="pv">v2.3</span><span class="pt">보고서 PDF 다운로드</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.4" aria-controls="pane-v2.4" title="내업 보고서 PDF 처리 전·후 사진 2장 제한 수정"><span class="pv">v2.4</span><span class="pt">보고서 사진 2장 제한 수정</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.5" aria-controls="pane-v2.5" title="scheduler 기동 시 CCTV 데이터 1회 자동 수집"><span class="pv">v2.5</span><span class="pt">CCTV 기동 시 자동 수집</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.6" aria-controls="pane-v2.6" title="sj-lab-authserver 신설 (QFieldCloud 계정 기반 로그인 서버)"><span class="pv">v2.6<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">로그인 서버 신설</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.6" aria-controls="pane-v2.6" title="sj-lab-authserver 신설 (QFieldCloud 계정 기반 로그인 서버)"><span class="pv">v2.6</span><span class="pt">로그인 서버 신설</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.7" aria-controls="pane-v2.7" title="sj-lab-hub·sj-lab-mapservice 로그인 게이트 + SSO"><span class="pv">v2.7<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">로그인 게이트 · SSO</span></button>
     </div>
   </div>
 </nav>
@@ -3931,6 +3932,120 @@ Eureka 등록                          SJ-LAB-AUTHSERVER(1) 확인</div>
 </section>
 </div>
 
+<!-- ===================== v2.7 ===================== -->
+<div class="vpane" data-ver="2.7" id="pane-v2.7" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.7</span>
+      <span>2026-09-22</span>
+      <span>sj-lab-authserver · sj-lab-hub · sj-lab-mapservice</span>
+    </div>
+    <h1>hub·mapservice 로그인 게이트<br>+ SSO</h1>
+    <p class="dek">
+      한 곳에서 로그인하면 다른 sj-lab 사이트도 로그인 상태로 쓸 수 있도록,
+      리다이렉트 기반 중앙 로그인 페이지 방식의 SSO를 붙였습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>적용 범위</dt><dd>사이트 전체 게이트</dd></div>
+      <div><dt>백엔드 API</dt><dd>강제 없음(범위 밖)</dd></div>
+      <div><dt>SSO 방식</dt><dd>중앙 로그인 페이지 + 해시 전달</dd></div>
+      <div><dt>브라우저 실측</dt><dd class="pending">도구 없어 미검증</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">일단 sj-lab-hub, sj-lab-mapservice 접속했을 때 로그인하고 진행되도록 해주고 sso 기능을 넣어서 한곳에서 로그인하면 다른 웹사이트에서도 로그인상태로 이용가능하도록 해줘</pre>
+    <p class="promptnote">되돌리기 어려운 결정 두 가지를 먼저 확인했습니다 — 적용 범위(사이트 전체 게이트 vs 특정 기능만), 백엔드 API도 지금 강제할지(아니오, 프론트만 — v2.6에서 이미 미뤄둔 결정 유지).</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">설계</p>
+    <h2>왜 리다이렉트 + URL 해시인가</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">1 · 게이트</span><span class="fv">hub/mapservice 접속 시 localStorage에 유효한 토큰 없으면 <code>/auth/login.html?redirect_uri=...</code>로 즉시 리다이렉트</span></div>
+      <div class="frow"><span class="fk">2 · 로그인</span><span class="fv">로그인 페이지가 자기 오리진의 세션 쿠키를 <code>GET /auth/session</code>으로 먼저 확인 — 있으면 폼 없이 새 토큰 발급, 없으면 폼 → <code>POST /auth/login</code></span></div>
+      <div class="frow"><span class="fk">3 · 복귀</span><span class="fv"><code>redirect_uri#auth_token=...</code>로 되돌아가며 URL 해시에 토큰 전달</span></div>
+      <div class="frow"><span class="fk">4 · 저장</span><span class="fv">원래 사이트의 게이트 스크립트가 해시에서 토큰을 꺼내 <b>자기 localStorage</b>에 저장, 해시는 지움</span></div>
+    </div>
+    <p class="promptnote">
+      hub(3000)·mapservice(4000)·authserver(8100)는 로컬에서 서로 다른 오리진이라 쿠키를 직접 공유할 수 없습니다.
+      로그인 페이지 자신의 세션 쿠키는 <b>같은 오리진으로의 최상위 탐색에서만</b> 쓰이므로 <code>SameSite=Lax</code>로 충분하고,
+      <code>SameSite=None</code>+<code>Secure</code>가 요구하는 HTTPS 제약(로컬 http에서 못 씀) 없이 동작합니다.
+    </p>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">구현</p>
+    <h2>세 저장소</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>저장소</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td><code>sj-lab-authserver</code></td><td><code>static/login.html</code>(공유 로그인 페이지, redirect_uri 허용 오리진 검증) 신설. <code>login()</code>이 세션 쿠키도 내려줌, <code>GET /session</code>(쿠키로 조용한 재발급), <code>POST /logout</code> 추가</td></tr>
+          <tr><td><code>sj-lab-hub</code></td><td><code>public/index.html</code> head 맨 위에 게이트를 <b>인라인 스크립트</b>로(별도 파일은 프로덕션 빌드에 자동 복사 안 됨), 로그아웃 버튼</td></tr>
+          <tr><td><code>sj-lab-mapservice</code></td><td><code>js/auth-gate.js</code> 신규(무빌드라 별도 파일로 충분), <code>index.html</code> head 맨 위 스크립트 태그, 헤더 로그아웃 버튼</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">겪은 문제</p>
+    <h2>Spring Security 기본 로그아웃 필터와 충돌</h2>
+    <p class="lede">
+      <code>SecurityConfig</code>에서 <code>authorizeHttpRequests(...).permitAll()</code>만 해뒀더니,
+      <code>POST /logout</code> 요청이 우리 <code>AuthController#logout()</code>에 도달하기 전에
+      Spring Security가 자동 등록한 로그아웃 필터가 먼저 가로채 <code>/login?logout</code>으로 302 리다이렉트했습니다.
+      클라이언트 쪽에서는(리다이렉트를 따라간 GET이 POST 전용 <code>/login</code>에 걸려) 405로 보여 원인을 한 번에 알기 어려웠습니다.
+    </p>
+    <div class="cmd">수정: .logout(AbstractHttpConfigurer::disable) 명시적으로 추가</div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>백엔드·스크립트는 확인, 브라우저 전체 흐름은 미확인</h2>
+    <div class="cmd">POST /auth/login (쿠키 캡처)        세션 쿠키 sj_session HttpOnly 저장 확인
+GET  /auth/session (쿠키만)         200, 새 토큰 발급
+POST /auth/logout → GET /session    로그아웃 후 401로 전환 확인
+GET  /auth/login.html               200 text/html
+node --check (3개 스크립트)          모두 통과
+npm run build (hub)                 성공, 게이트 스크립트 포함 확인
+npm start (hub) / 로컬 스택(mapservice)  curl로 200 + 스크립트 포함 확인</div>
+    <div class="grid2">
+      <div class="cell caution">
+        <h3>미검증 <span class="badge skip">브라우저 자동화 도구 없음</span></h3>
+        <p>실제 브라우저에서 "로그인 안 된 상태로 접속 → 리다이렉트 → 로그인 폼 입력 → 원래 사이트로 복귀 → 다른 사이트는 재로그인 없이 통과"까지 이어지는 전체 흐름은 이 세션 도구로 확인하지 못했습니다. 사람이 직접 브라우저로 확인이 필요합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">남은 작업</p>
+    <h2>의도적으로 이번 범위에서 제외</h2>
+    <ul class="notes">
+      <li>백엔드 API(mapservice-rest, scheduler) 강제 적용 — 이번에도 범위 밖</li>
+      <li>진짜 single-logout — 한 사이트 로그아웃해도 다른 사이트는 토큰이 자연 만료(12시간)될 때까지 로그인 상태로 남음</li>
+      <li>사람이 실제 브라우저로 전체 SSO 흐름 확인</li>
+    </ul>
+  </div>
+</section>
+</div>
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -3939,8 +4054,9 @@ Eureka 등록                          SJ-LAB-AUTHSERVER(1) 확인</div>
       <li><em>API Gateway</em><span class="url">http://localhost:8100/map/admin-area/sido</span></li>
       <li><em>Eureka</em><span class="url">http://localhost:8761</span></li>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
+      <li><em>공유 로그인 페이지</em><span class="url">http://localhost:8100/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.6.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.7.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·
