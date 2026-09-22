@@ -385,7 +385,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.4</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.6</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -440,7 +440,9 @@
       <button type="button" class="vchip" role="tab" data-ver="2.1" aria-controls="pane-v2.1" title="상세 팝업의 내업 영역을 하단 고정으로 변경"><span class="pv">v2.1</span><span class="pt">내업 영역 하단 고정</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.2" aria-controls="pane-v2.2" title="시설물 내업 사진 첨부 API 및 멀티 저장소 에이전트 가이드 정비"><span class="pv">v2.2</span><span class="pt">내업 사진 API · 가이드</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.3" aria-controls="pane-v2.3" title="내업 처리 보고서 PDF 다운로드 (외업 사진 포함)"><span class="pv">v2.3</span><span class="pt">보고서 PDF 다운로드</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.4" aria-controls="pane-v2.4" title="내업 보고서 PDF 처리 전·후 사진 2장 제한 수정"><span class="pv">v2.4<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">보고서 사진 2장 제한 수정</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.4" aria-controls="pane-v2.4" title="내업 보고서 PDF 처리 전·후 사진 2장 제한 수정"><span class="pv">v2.4</span><span class="pt">보고서 사진 2장 제한 수정</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.5" aria-controls="pane-v2.5" title="scheduler 기동 시 CCTV 데이터 1회 자동 수집"><span class="pv">v2.5</span><span class="pt">CCTV 기동 시 자동 수집</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.6" aria-controls="pane-v2.6" title="sj-lab-authserver 신설 (QFieldCloud 계정 기반 로그인 서버)"><span class="pv">v2.6<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">로그인 서버 신설</span></button>
     </div>
   </div>
 </nav>
@@ -3756,6 +3758,160 @@ qfield.facility_icon        → map.facility_icon   (아이콘 7건 복구, 이�
 </section>
 </div>
 
+<!-- ===================== v2.5 ===================== -->
+<div class="vpane" data-ver="2.5" id="pane-v2.5" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.5</span>
+      <span>2026-09-22</span>
+      <span>sj-lab-scheduler · mapservice-rest</span>
+    </div>
+    <h1>scheduler 기동 시<br>CCTV 데이터 1회 자동 수집</h1>
+    <p class="dek">
+      CCTV 스트리밍 URL은 주기적으로 갱신돼야 재생됩니다. 기존에는 매일 06:00 cron으로만 수집해,
+      그 시각 이후 서버를 새로 띄우면 다음 날 06:00까지 CCTV 레이어가 오래된 상태로 남았습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>대상</dt><dd>ItsDataSchedulerController.cctvInfo</dd></div>
+      <div><dt>트리거</dt><dd>ApplicationReadyEvent</dd></div>
+      <div><dt>실행</dt><dd>별도 스레드(비차단)</dd></div>
+      <div><dt>트랜잭션</dt><dd class="ok">프록시 빈 경유로 유지</dd></div>
+      <div><dt>기존 cron</dt><dd class="ok">06:00 그대로 유지</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">/orchestration cctv레이어는 주기적으로 1번씩 돌려줘야 영상이 나와 그래서 서버를 기동할떄 scheduler 서버를 기동할떄 cctv레이어는 한번 받도록 해줘</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">구현</p>
+    <h2>기동 직후 1회, 기존 cron은 그대로</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">신규 파일</span><span class="fv"><code>sj-lab-scheduler</code> <code>config/CctvStartupRunner.java</code> — <code>@EventListener(ApplicationReadyEvent.class)</code>로 기동 완료 직후 <code>cctvInfo()</code> 호출</span></div>
+      <div class="frow"><span class="fk">비차단</span><span class="fv">별도 스레드에서 실행해 서버 기동 자체를 막지 않음</span></div>
+      <div class="frow"><span class="fk">트랜잭션</span><span class="fv"><code>ItsDataSchedulerController</code>는 클래스 전체에 <code>@Transactional</code>이 걸려 있어, self-invocation(<code>this::cctvInfo</code>)이 아니라 <b>주입받은 프록시 빈</b>을 통해 호출해야 cron 트리거 때와 동일하게 적용됨</span></div>
+      <div class="frow"><span class="fk">실패 시</span><span class="fv"><code>cctvInfo()</code> 내부에서 예외를 삼키므로(기존 동작) 수집이 실패해도 서버 기동에는 영향 없음</span></div>
+    </div>
+    <ul class="notes" style="margin-top:1.5rem">
+      <li>기존 매일 06:00 cron과 수동 트리거(<code>/its/cctv-info</code>)는 그대로 유지 — 이번 변경은 기동 시 1회를 추가한 것뿐</li>
+      <li><code>mapservice-rest</code> <code>docs/dev-environment.md</code>의 scheduler 항목에 "CCTV는 기동 시 1회 즉시 수집됨" 비고 추가</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>실제 기동으로 재검증 완료</h2>
+    <div class="cmd">JDK 17 mvnw.cmd compile     정상 완료(오류 없음)
+scheduler 실제 기동(local 프로파일)   Eureka SJ-LAB-SCHEDULER 등록 확인
+CctvStartupRunner 로그                기동 직후 자동 실행 확인
+ITS CCTV affected total               11,195건 적재</div>
+    <div class="grid2">
+      <div class="cell">
+        <h3>사용자 요청으로 실제 검증 <span class="badge pass">완료</span></h3>
+        <p>사용자가 "scheduler 다시 띄워서 cctv수집하도록 해줘"라고 요청해, JDK 17로 빌드한 jar를 <code>local</code> 프로파일로 직접 기동. 로그에서 <code>CctvStartupRunner</code>가 기동 직후 자동 실행되고, <code>ItsDataServiceImpl</code>이 11,195건을 적재하는 것까지 확인했습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v2.6 ===================== -->
+<div class="vpane" data-ver="2.6" id="pane-v2.6" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.6</span>
+      <span>2026-09-22</span>
+      <span>sj-lab-authserver(신규) · sj-lab-apigateway · mapservice-rest</span>
+    </div>
+    <h1>QFieldCloud 계정으로 로그인하는<br>sj-lab 인증 서버 신설</h1>
+    <p class="dek">
+      별도 회원 DB 없이 기존 QFieldCloud 계정으로 로그인하는 서버를 새로 만들고, GitHub 저장소를 발행하고,
+      게이트웨이에 라우팅을 연결했습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>새 저장소</dt><dd>github.com/stylealist/sj-lab-authserver</dd></div>
+      <div><dt>스택</dt><dd>Spring Boot 3.3.2 · Java 17</dd></div>
+      <div><dt>로그인 방식</dt><dd>QFieldCloud 위임 검증 → 자체 JWT</dd></div>
+      <div><dt>적용 범위</dt><dd class="ok">발급만(강제 없음)</dd></div>
+      <div><dt>검증</dt><dd class="ok">게이트웨이 경유 실제 계정</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">실행한 프롬프트</p>
+    <h2>요청</h2>
+    <pre class="prompt">/orchestration 현재 내 springboot 버전에 맞게 spring서버를 하나 생성해서 로그인서버를 만드려고하는데 기본 로그인 계정은 qfieldcloud의 로그인 시스템을 붙여서 사용하고 싶어 로그인 서버 만들어서 github까지 만들어줘 그리고 필요하다면 discovery 서버, apigateway등에도 연결해서 사용해줘</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">진행 전 확인</p>
+    <h2>새 GitHub 저장소·보안 설계는 되돌리기 어려워 3가지를 먼저 확인</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>질문</th><th>결정</th></tr></thead>
+        <tbody>
+          <tr><td>저장소 이름</td><td><code>sj-lab-authserver</code></td></tr>
+          <tr><td>GitHub 공개 범위</td><td>Public</td></tr>
+          <tr><td>적용 범위</td><td><b>로그인 서버 + 게이트웨이 라우팅만 우선 구축</b> — 프론트에 로그인 화면이 없어 전면 강제 시 서비스가 깨짐</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">구현</p>
+    <h2>QFieldCloud 로그인을 그대로 위임 검증</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">로그인</span><span class="fv"><code>POST /auth/login {username,password}</code> → QFieldCloud <code>POST /api/v1/auth/login/</code>에 그대로 위임(<code>mapservice-rest</code>의 <code>QfieldMediaServiceImpl</code>과 같은 API 계약). 성공하면 QFieldCloud 토큰은 버리고 sj-lab 전용 JWT를 새로 발급</span></div>
+      <div class="frow"><span class="fk">검증</span><span class="fv"><code>GET /auth/me</code>(Bearer 헤더)로 발급한 토큰이 유효한지 확인</span></div>
+      <div class="frow"><span class="fk">서명 키</span><span class="fv"><code>AUTH_JWT_SECRET</code> 환경변수로만 주입(HS256, 최소 32바이트) — 저장소가 public이라 실제 값은 코드에 없음</span></div>
+      <div class="frow"><span class="fk">게이트웨이</span><span class="fv"><code>/auth/**</code> → <code>lb://SJ-LAB-AUTHSERVER</code>, 다른 라우트와 동일한 <code>CustomFilter</code>+<code>PreserveHostHeader</code> 패턴</span></div>
+      <div class="frow"><span class="fk">디스커버리</span><span class="fv"><b>코드 변경 없음</b> — Eureka는 등록하는 쪽만 설정하면 되므로, 클라이언트 프로파일만으로 <code>SJ-LAB-AUTHSERVER</code>가 정상 등록됨을 확인</span></div>
+    </div>
+    <p class="promptnote"><code>sj-lab-authserver</code>의 <code>CLAUDE.md</code>에 "현재 범위와 남은 작업"을 명시해, 다음 작업자가 강제 적용 범위를 마음대로 넓히지 않도록 했습니다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>실제 QFieldCloud 계정으로 게이트웨이 경유 확인</h2>
+    <div class="cmd">POST /auth/login (올바른 비밀번호)   200, JWT 발급, username 일치
+GET  /auth/me (발급받은 토큰)        200, 같은 username 반환
+POST /auth/login (잘못된 비밀번호)   401
+mvnw.cmd test (authserver)          컨텍스트 로딩 스모크 테스트 통과
+Eureka 등록                          SJ-LAB-AUTHSERVER(1) 확인</div>
+    <div class="grid2">
+      <div class="cell">
+        <h3>새 저장소 <span class="badge pass">푸시 완료</span></h3>
+        <p>신규 저장소라 배포 파이프라인 영향이 없어 초기 커밋을 바로 푸시했습니다.</p>
+      </div>
+      <div class="cell caution">
+        <h3>기존 저장소 <span class="badge skip">push 보류</span></h3>
+        <p><code>sj-lab-apigateway</code>·<code>mapservice-rest</code>는 로컬 커밋까지만 진행 — 두 저장소 모두 push 시 Jenkins 빌드·k8s 배포가 자동으로 트리거되므로(system-architecture.md "배포 경로") push는 별도로 사용자 확인을 받습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -3764,7 +3920,8 @@ qfield.facility_icon        → map.facility_icon   (아이콘 7건 복구, 이�
       <li><em>API Gateway</em><span class="url">http://localhost:8100/map/admin-area/sido</span></li>
       <li><em>Eureka</em><span class="url">http://localhost:8761</span></li>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.4.md</span></li>
+      <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.6.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·

@@ -12,10 +12,12 @@
      │  /map/**        → lb://MAPSERVICE-REST
      │  /scheduler/**  → lb://SJ-LAB-SCHEDULER
      │  /fast-api-ai/** → lb://FAST-API-AI        (모두 Eureka에서 인스턴스 조회)
+     │  /auth/**       → lb://SJ-LAB-AUTHSERVER
      ▼                                              ▲ 등록/조회
 [백엔드] mapservice-rest   (조회, context-path /map) ─┐
 [배치]   sj-lab-scheduler  (수집, context-path /scheduler) ─┼─ [디스커버리] sj-lab-discoveryServer :8761 (Eureka)
-[AI]     fast-api-ai       (FastAPI :8000, root_path /fast-api-ai) ─┘
+[AI]     fast-api-ai       (FastAPI :8000, root_path /fast-api-ai) ─┤
+[인증]   sj-lab-authserver (로그인, context-path /auth) ─────────────┘
      │ 읽기: mapservice-rest (MyBatis, GeoJSON을 DB에서 조립)
      │ 쓰기: sj-lab-scheduler (공공 API 수집 → INSERT + CREATE OR REPLACE VIEW map.v_*_geojson)
      ▼
@@ -35,6 +37,7 @@
 | 백엔드 | `mapservice-rest` · `C:\developer\workspace\mapservice-rest` | Spring Boot 3.3.2, MyBatis, PostgreSQL 드라이버 | `MAPSERVICE-REST` (`spring.application.name: mapservice-rest`) | 이 저장소 `CLAUDE.md` |
 | 배치 | `sj-lab-scheduler` · `C:\developer\workspace\sj-lab-scheduler` | Spring Boot 3.3.2, MyBatis, `@Scheduled` | `SJ-LAB-SCHEDULER` | 그 저장소 `CLAUDE.md`(도메인별 cron 표 포함) |
 | AI | `fast-api-ai` · `C:\developer\workspace\fast-api-ai` | Python 3.12, FastAPI, py-eureka-client | `FAST-API-AI` (`APP_NAME: fast-api-ai`) | 그 저장소 `CLAUDE.md` |
+| 인증 | `sj-lab-authserver` · `C:\developer\workspace\sj-lab-authserver` | Spring Boot 3.3.2, JWT(jjwt), QFieldCloud 로그인 위임 | `SJ-LAB-AUTHSERVER` | 그 저장소 `CLAUDE.md` |
 | DB | 개발 DB `sjlab` (MCP `sjlabDevDb`, 읽기 전용) | PostgreSQL 17.0 + PostGIS 3.4.3 | - | `docs/analysis/*.md` |
 | 배포 | `sj-lab-k8s-manifests` · `C:\developer\workspace\sj-lab-k8s-manifests` | 서비스별 Helm 차트, ArgoCD GitOps 소스 | - | 그 저장소 `CLAUDE.md` |
 | 현장조사 앱 | `infra-manage-app` · `C:\vscode_develop\infra-manage-app` | QField 포크(C++/QML, CMake+vcpkg). 기본 브랜치 `master` | - | 그 저장소 `CLAUDE.md` |
@@ -73,6 +76,8 @@
 | `GET /map/admin-area/sido` | `QfieldFacilityController` | `public.g_sido` | `map-facility.js` |
 | `GET /map/admin-area/sgg?sidoCd=` | `QfieldFacilityController` | `public.g_sgg` | `map-facility.js` |
 | `GET /map/admin-area/emd?sggCd=` | `QfieldFacilityController` | `public.g_emd` | `map-facility.js` |
+
+**로그인(`sj-lab-authserver`, 게이트웨이 `/auth/**`)**: 별도 회원 DB 없이 QFieldCloud 계정을 그대로 쓴다. `POST /auth/login {username,password}` → QFieldCloud `POST /api/v1/auth/login/`에 위임 검증(위 중계 흐름과 같은 계약) → 성공 시 이 서버가 서명한 sj-lab 전용 JWT 발급(`{accessToken, tokenType, expiresIn, username}`). `GET /auth/me`(`Authorization: Bearer`)로 토큰 유효성 확인. **2026-09-22 기준 발급만 구현됨 — 게이트웨이나 다른 서비스(mapservice-rest 등)는 아직 이 토큰 검증을 강제하지 않는다**(프론트에 로그인 화면도 없음). 자세한 범위·남은 작업은 그 저장소 `CLAUDE.md`.
 
 - **시설물 첨부 파일(사진·음성·영상)**: `photo_1`~`photo_5`, `audio_memo`, `video` 컬럼에는 URL이 아니라 **QField 프로젝트 안의 상대 경로**가 들어 있습니다(예: `DCIM/JPEG_20260916071830596.jpg`, `audio/AUDIO_...m4a`, `video/VIDEO_...mp4`). 원본 파일은 QFieldCloud(**https://qfield.sj-lab.co.kr**)에 있고 **API가 인증을 요구**하며(`/api/v1/` → 401), `sj-qfieldsync`는 처리 후 내려받은 폴더를 삭제하고(`shutil.rmtree`) 차트 볼륨도 `emptyDir`라 파일이 남지 않습니다. 그래서 **백엔드가 대신 받아 전달하는 중계 엔드포인트**(`/map/qfield/facilities/{totalId}/media?path=...`)를 통해 재생합니다 — 프론트는 상대 경로를 이 URL로 조립하기만 합니다.
   - 중계 흐름: `POST /api/v1/auth/login/`(토큰, 6시간 캐시) → `GET /api/v1/projects/`(`source_table`의 접두어로 프로젝트 식별, 캐시) → `GET /api/v1/files/{projectId}/{경로}/`.
@@ -145,7 +150,7 @@ git push → Jenkins(빌드 → 이미지 push: sj-lab-registry.kr.ncr.ntruss.co
 
 ## 총괄 세션에서 다른 저장소를 다룰 때
 
-- `.claude/settings.local.json`의 `permissions.additionalDirectories`에 다섯 저장소(게이트웨이·디스커버리·scheduler·fast-api-ai·프론트)가 등록되어 있어, 이 세션에서 바로 읽고 수정할 수 있습니다(로컬 전용 설정). 폴더 신뢰 등록 위치는 `docs/dev-environment.md` 참고.
+- `.claude/settings.local.json`의 `permissions.additionalDirectories`에 이 저장소를 제외한 10개 저장소(게이트웨이·디스커버리·scheduler·fast-api-ai·authserver·프론트 등)가 등록되어 있어, 이 세션에서 바로 읽고 수정할 수 있습니다(로컬 전용 설정). 폴더 신뢰 등록 위치는 `docs/dev-environment.md` 참고.
 - 다른 저장소의 `CLAUDE.md`는 이 세션에 자동으로 로드되지 않습니다. 그 저장소 파일을 **수정하기 전에 해당 저장소의 `CLAUDE.md`(프론트는 `docs/*.md`까지)를 Read로 먼저 읽을 것.**
 - 저장소마다 git이 따로입니다. 상태 확인·커밋은 `git -C <경로> ...`로 저장소별로 하고, 한 작업이 여러 저장소에 걸치면 저장소마다 커밋합니다.
 - 다른 저장소의 훅·에이전트는 이 세션에서 동작하지 않으므로 직접 지켜야 합니다.
@@ -156,6 +161,7 @@ git push → Jenkins(빌드 → 이미지 push: sj-lab-registry.kr.ncr.ntruss.co
   - `infra-manage-app`: 업스트림 QField 포크라 **커스텀 변경은 최소 지점에 집중**하고 업스트림 구조를 유지할 것. 기본 브랜치가 `master`(다른 저장소는 `main`)이고, CMake+vcpkg 전체 빌드는 수 시간이 걸리므로 빌드 전에 기존 빌드 디렉터리와 대상 플랫폼을 확인할 것.
   - `sj-lab-hub`: 기능 카드는 `src/App.js` 최상단 `features` 배열 하나가 단일 소스. 스타일은 파일 하단의 인라인 `xxxStyle` 객체 컨벤션을 유지하고, 검증은 `npm start`(3000) 또는 `npm run build`로 할 것.
   - `fast-api-ai`: `.py` 수정 후 `python -m py_compile <파일>`로 문법 확인(그 저장소 훅 규칙). `core/config.py`의 `INSTANCE_IP` 고정(127.0.0.1)은 의도된 것이므로 되돌리지 않음.
+  - `sj-lab-authserver`: 2026-09-22 신설. `AUTH_JWT_SECRET`은 반드시 환경변수로만 주입(저장소 public). 지금은 로그인·토큰 발급만 구현돼 있고 다른 서비스 API에 토큰 검증을 강제하지 않는다 — 강제 적용 범위를 넓히기 전에 사용자에게 먼저 확인할 것(그 저장소 `CLAUDE.md`의 "현재 범위와 남은 작업" 참고).
   - 각 저장소의 리뷰 체크리스트는 `<저장소>/.claude/agents/reviewer.md`에 있습니다. 이 세션의 `reviewer` 에이전트는 `mapservice-rest` 전용이므로, 다른 저장소 변경은 그 체크리스트 파일을 읽고 확인합니다.
 - `sj-lab-mapservice`와 `mapservice-rest`는 public 저장소입니다. DB 호스트·비밀번호·토큰을 문서나 코드에 적지 않습니다.
 
