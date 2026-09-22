@@ -112,6 +112,21 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v2.8</span>
+        <span class="ver-title">sj-lab-authserver 운영 배포 완료</span>
+        <span class="date">2026-09-22</span>
+      </div>
+      <ul>
+        <li>Jenkins 파이프라인(사용자가 직접 Jenkins에 작성), <code>sj-lab-k8s-manifests/sj-lab-authserver</code> Helm 차트(이 세션에서 신설), ArgoCD 연결·Secret 생성(사용자가 클러스터에서 직접 진행)으로 운영 배포 완료</li>
+        <li>겪은 문제 3가지 — 이미지 아직 없어 <code>ImagePullBackOff</code>(빌드 전 정상), 첫 빌드 번호가 차트 초기 태그와 우연히 같아 <code>git commit</code>이 실패로 끝남(이미지 푸시는 성공, 다음 빌드부터 해소), <code>auth-jwt-secret</code> Secret 미생성으로 <code>CreateContainerConfigError</code>(의도된 fail-fast) — 전부 해결</li>
+        <li>운영 확인 — <code>https://api.sj-lab.co.kr/auth/login.html</code> 200, <code>/auth/session</code>(쿠키 없음) 401</li>
+        <li>hub·mapservice의 로그인 게이트는 v2.7 장애로 되돌려진 상태 그대로 유지 — authserver가 이제 실제로 떠 있으니 재적용은 사용자 확인 후 별도 진행</li>
+      </ul>
+      <p><a href="../history_v2.8.md">history_v2.8.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v2.7</span>
         <span class="ver-title">sj-lab-hub·sj-lab-mapservice 로그인 게이트 + SSO</span>
         <span class="date">2026-09-22</span>
