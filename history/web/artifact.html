@@ -385,7 +385,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.20</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.21</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -456,7 +456,8 @@
       <button type="button" class="vchip" role="tab" data-ver="2.17" aria-controls="pane-v2.17" title="시설물 핀이 WFS 아이콘에 가리던 문제 해결(declutter)"><span class="pv">v2.17</span><span class="pt">declutter 가림 해결</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.18" aria-controls="pane-v2.18" title="확대해도 풀리지 않는 묶음을 부채꼴로 펼치기"><span class="pv">v2.18</span><span class="pt">묶음 펼치기</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.19" aria-controls="pane-v2.19" title="겹친 시설물 펼치기를 클릭이 아니라 배율로"><span class="pv">v2.19</span><span class="pt">확대하면 자동 펼침</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.20" aria-controls="pane-v2.20" title="겹친 시설물이 확대 시 자연스럽게 흠어지도록"><span class="pv">v2.20<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">배지 숨김 · 자연스럽게</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.20" aria-controls="pane-v2.20" title="겹친 시설물이 확대 시 자연스럽게 흠어지도록"><span class="pv">v2.20</span><span class="pt">배지 숨김 · 자연스럽게</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.21" aria-controls="pane-v2.21" title="확대해도 안 풀리던 묶음 수정"><span class="pv">v2.21<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">안 풀리던 묶음 수정</span></button>
     </div>
   </div>
 </nav>
@@ -4931,6 +4932,65 @@ node --check     통과</div>
 </section>
 </div>
 
+<!-- ===================== v2.21 ===================== -->
+<div class="vpane" data-ver="2.21" id="pane-v2.21" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.21</span>
+      <span>2026-09-23</span>
+      <span>mapservice(프론트)</span>
+    </div>
+    <h1>몇 미터 차이가<br>만든 사각지대</h1>
+    <p class="dek">
+      자동 펼침 조건이 “좌표가 완전히 같을 때”로 좁아서, 몇 미터씩 떨어졌지만 계속 묶이던
+      시설물은 최대 배율에서도 풀리지 않았습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>증상</dt><dd class="pending">끝까지 확대해도 핀 없음</dd></div>
+      <div><dt>원인</dt><dd>조건이 “좌표 동일”</dd></div>
+      <div><dt>조치</dt><dd class="ok">“아직 묶여 있음”</dd></div>
+      <div><dt>확인</dt><dd>5건 묶음 → 핀 5개</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">원인</p>
+    <h2>두 조건 사이의 틈</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">펼침 조건</span><span class="fv">구성원 extent 가 <b>화면 1픽셀 미만</b>일 때만 펼침</span></div>
+      <div class="frow"><span class="fk">묶음 조건</span><span class="fv">구성원이 <b>44px 안</b>에 있으면 계속 묶임</span></div>
+      <div class="frow"><span class="fk">틈</span><span class="fv">그 사이(몇 미터 간격)에 있는 무리는 <b>펼쳐지지도, 풀리지도 않음</b> → 지도에서 선택 불가</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">조치</p>
+    <h2>기준을 바꿨다</h2>
+    <ul class="notes">
+      <li>묶어 보기가 켜져 있으면 <b>화면 안에서 아직 묶여 있는 묶음 전부</b>를 펼친다 — “이 배율까지 들어왔는데도 묶여 있다”는 것은 더 확대해도 소용없다는 뜻</li>
+      <li>배지 클릭도 좌표 비교 대신 <b>픽셀 간격</b>으로 판단 — 묶음 거리보다 좁게 붙어 있으면 <code>max(현재+2, 18)</code> 배율까지 확대</li>
+      <li>더 이상 쓰지 않는 <code>isSameSpotMembers()</code> 제거</li>
+    </ul>
+    <div class="cmd">대상        생명윤리정책전문도서관 일대, 배율 18에서 5건 묶음 잔존
+펼침        핀 5개 생성
+배지        그 묶음의 개수 배지 숨김 1 / 표시 0
+캡처        배지 없이 핀 5개가 흩어져 표시
+node --check  통과</div>
+    <div class="grid2" style="margin-top:1.6rem">
+      <div class="cell caution">
+        <h3>남은 확인 <span class="badge skip">운영</span></h3>
+        <p>로컬 검증은 서울 데이터 기준입니다. 배포 후 제보된 제주 지역(제주교통방송)에서도 육안 확인이 필요합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -4941,7 +5001,7 @@ node --check     통과</div>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.20.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.21.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·
