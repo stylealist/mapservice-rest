@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+  시설물 현장 재점검 요청 — map.facility_reinspection
+  테이블 생성 스크립트: db/map_facility_reinspection.sql
+
+  내업 완료(사무실 처리 끝)와 현장 확인은 다르다. 보수 필요 여부(repair_required_yn)는
+  외업이 채우는 값이라 이 서비스가 고치지 않고, "확인만 남음" 상태를 이 테이블에 따로 남긴다.
+  total_id 는 qfield.facility_total_view 의 논리적 FK(뷰라서 물리 FK 불가)이므로
+  등록 전 getFacilityRepairYn 으로 시설물 존재와 보수 필요 여부를 확인한다.
+  qfield 스키마는 sj-qfieldsync 가 관리하며 프로젝트 테이블이 아닌 테이블을 DROP 하므로 이 테이블도 map 스키마에 둔다.
+
+  시설물 목록(qfield-facility.xml 의 getFacilities)에는 이 테이블을 조인하지 않는다.
+  테이블이 없는 DB 에서 지도 핵심 기능까지 실패하지 않도록, 목록은 그대로 두고
+  getOpenReinspections 로 따로 받아 프론트에서 합친다.
+-->
+<mapper namespace="com.example.mapservice.mapper.QfieldReinspectionMapper">
+
+    <!-- 응답 항목 형식: 키는 DB 컬럼명 그대로, 일시는 YYYY-MM-DD HH24:MI:SS 문자열 -->
+    <sql id="reinspectionJson">
+        json_build_object(
+            'reinspect_id', r.reinspect_id,
+            'total_id', r.total_id,
+            'work_id', r.work_id,
+            'status', r.status,
+            'reason', r.reason,
+            'request_user', r.request_user,
+            'request_date', to_char(r.request_date, 'YYYY-MM-DD HH24:MI:SS'),
+            'confirm_user', r.confirm_user,
+            'confirm_date', to_char(r.confirm_date, 'YYYY-MM-DD HH24:MI:SS'),
+            'confirm_note', r.confirm_note,
+            'update_at', to_char(r.update_at, 'YYYY-MM-DD HH24:MI:SS')
+        )
+    </sql>
+
+    <select id="existsReinspectionTable" resultType="boolean">
+        SELECT to_regclass('map.facility_reinspection') IS NOT NULL
+    </select>
+
+    <!-- 시설물의 보수 필요 여부. 시설물이 없으면 행이 없어 null (컨트롤러가 404) -->
+    <select id="getFacilityRepairYn" resultType="String">
+        SELECT COALESCE(repair_required_yn, 'N')
+        FROM qfield.facility_total_view
+        WHERE total_id = #{totalId}
+          AND use_yn = 'y'
+        LIMIT 1
+    </select>
+
+    <!--
+      행정구역 범위의 열린 요청 목록. 목록 화면의 배지·필터용이라 시설물 전체가 아니라
+      "재점검 대기" 상태인 것만 내려준다(대부분의 경우 수십 건 수준).
+      행정구역 코드는 접두어 계층(sido 2 / sgg 5 / emd 8)이라 g_emd 와 조인해 LIKE 로 거른다.
+    -->
+    <select id="getOpenReinspections" resultType="String">
+        SELECT json_build_object(
+            'items', COALESCE(json_agg(<include refid="reinspectionJson"/> ORDER BY r.reinspect_id DESC), '[]'::json)
+        )::text
+        FROM map.facility_reinspection r
+        <if test="code != null and code != ''">
+        JOIN qfield.facility_total_view f
+          ON f.total_id = r.total_id
+         AND f.use_yn = 'y'
+        LEFT JOIN LATERAL (
+            SELECT emd_cd
+            FROM public.g_emd e
+            WHERE ST_Intersects(e.geom, ST_Transform(f.geom, 4326))
+            LIMIT 1
+        ) e ON true
+        </if>
+        WHERE r.status = 'REQUESTED'
+          AND r.use_yn = 'y'
+        <if test="code != null and code != ''">
+          AND e.emd_cd LIKE #{code} || '%'
+        </if>
+    </select>
+
+    <select id="getReinspections" resultType="String">
+        SELECT json_build_object(
+            'totalId', #{totalId},
+            'items', COALESCE(json_agg(<include refid="reinspectionJson"/> ORDER BY r.reinspect_id DESC), '[]'::json)
+        )::text
+        FROM map.facility_reinspection r
+        WHERE r.total_id = #{totalId}
+          AND r.use_yn = 'y'
+    </select>
+
+    <!-- 열린 요청 중복 확인. DB 에도 부분 UNIQUE 인덱스가 있으나 409 를 명확히 돌려주기 위해 미리 본다 -->
+    <select id="findOpenReinspectId" resultType="java.lang.Long">
+        SELECT r.reinspect_id
+        FROM map.facility_reinspection r
+        WHERE r.total_id = #{totalId}
+          AND r.status = 'REQUESTED'
+          AND r.use_yn = 'y'
+        LIMIT 1
+    </select>
+
+    <!-- INSERT ... RETURNING 결과를 JSON 으로 돌려주기 위해 select 로 둔다 -->
+    <select id="insertReinspection" resultType="String" flushCache="true" useCache="false">
+        WITH r AS (
+            INSERT INTO map.facility_reinspection (
+                total_id, work_id, status, reason, request_user
+            ) VALUES (
+                #{totalId},
+                #{item.work_id, jdbcType=BIGINT},
+                'REQUESTED',
+                #{item.reason, jdbcType=VARCHAR},
+                #{item.request_user, jdbcType=VARCHAR}
+            )
+            RETURNING *
+        )
+        SELECT <include refid="reinspectionJson"/>::text
+        FROM r
+    </select>
+
+    <!--
+      상태 변경. CONFIRMED 로 바뀔 때만 confirm_date 를 채우고(이미 있으면 유지),
+      다시 REQUESTED 로 되돌리면 확인 정보는 지운다.
+    -->
+    <select id="updateReinspection" resultType="String" flushCache="true" useCache="false">
+        WITH r AS (
+            UPDATE map.facility_reinspection
+            SET status       = #{item.status, jdbcType=VARCHAR},
+                reason       = COALESCE(#{item.reason, jdbcType=VARCHAR}, reason),
+                confirm_user = CASE WHEN #{item.status, jdbcType=VARCHAR} = 'REQUESTED'
+                                    THEN NULL ELSE #{item.confirm_user, jdbcType=VARCHAR} END,
+                confirm_note = CASE WHEN #{item.status, jdbcType=VARCHAR} = 'REQUESTED'
+                                    THEN NULL ELSE #{item.confirm_note, jdbcType=VARCHAR} END,
+                confirm_date = CASE
+                                    WHEN #{item.status, jdbcType=VARCHAR} = 'CONFIRMED' THEN COALESCE(confirm_date, now())
+                                    WHEN #{item.status, jdbcType=VARCHAR} = 'REQUESTED' THEN NULL
+                                    ELSE confirm_date
+                               END,
+                update_at    = now()
+            WHERE reinspect_id = #{reinspectId}
+              AND use_yn = 'y'
+            RETURNING *
+        )
+        SELECT <include refid="reinspectionJson"/>::text
+        FROM r
+    </select>
+
+    <!-- 소프트 삭제 -->
+    <update id="deleteReinspection">
+        UPDATE map.facility_reinspection
+        SET use_yn = 'n',
+            update_at = now()
+        WHERE reinspect_id = #{reinspectId}
+          AND use_yn = 'y'
+    </update>
+
+</mapper>

@@ -112,6 +112,99 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v2.20</span>
+        <span class="ver-title">겹친 시설물이 확대 시 자연스럽게 흠어지도록 (연결선 제거·배지 숨김·기준 배율 상향)</span>
+        <span class="date">2026-09-23</span>
+      </div>
+      <ul>
+        <li>점선 연결선을 전부 제거하고, 펼친 묶음은 <b>개수 배지를 숨김</b> — 묶어 보기를 꺼두 원래 자리의 핀을 숨겨 화면에는 흠어진 핀만 남는다</li>
+        <li>기준 배율 <b>16 → 18</b>(최대 19), 펼침 반지름 46px → 42px</li>
+        <li>묶음 배지 클릭은 <code>max(현재+2, 18)</code> 까지 <b>확대만</b> 하고, 그 결과로 동기화가 흠뿌림</li>
+        <li>검증: 배율 16·17 → 0개, <b>18·19 → 3개</b>, 14로 축소 → 0개. 배율 14에서 배지 클릭 → 줌 18 + 핀 3개. 펼친 묶음의 배지 스타일 null(숨김) 확인</li>
+      </ul>
+      <p><a href="../history_v2.20.md">history_v2.20.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v2.19</span>
+        <span class="ver-title">겹친 시설물 펼치기를 클릭이 아니라 배율로</span>
+        <span class="date">2026-09-23</span>
+      </div>
+      <ul>
+        <li>배율 <b>16 이상이면 클릭 없이 저절로</b> 펼쳐지고, 축소하면 다시 접힘</li>
+        <li><code>syncFacilitySpiders()</code> 가 <code>moveend</code> 마다·필터 변경·목록 재조회·묶음 토글 시 펼침 상태를 다시 계산. 구성이 같으면 다시 그리지 않아 깜빡임 없음</li>
+        <li>묶어 보기를 꺼두 <b>좌표가 같아 완전히 겹치는 핀들</b>은 같은 방식으로 펼쳐짐</li>
+        <li>묶음 배지 클릭은 이제 <b>확대만</b> — 좌표가 같은 묶음이면 펼침 배율까지 올려 주고 그 결과로 동기화가 펼침</li>
+        <li>검증: 배율 14·15 → 0개, <b>16·17 → 3핀 3선</b>, 13 으로 축소 → 자동 접힘, 펼쳐진 핀 클릭 시 목록 선택 확인</li>
+      </ul>
+      <p><a href="../history_v2.19.md">history_v2.19.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v2.18</span>
+        <span class="ver-title">확대해도 풀리지 않는 묶음을 부채꼴로 펼치기(spiderfy)</span>
+        <span class="date">2026-09-23</span>
+      </div>
+      <ul>
+        <li>한 건물에 여러 시설물이 있으면 좌표가 <b>완전히 동일</b>(13건 묶음 extent = 0) — 최대 배율까지 확대해도 묶음이 풀리지 않아 지도에서 고를 수 없었음</li>
+        <li>구성원 extent 가 화면 1픽셀보다 작거나 이미 최대 배율이면 확대 대신 <b>중심에서 원형으로 핀을 펼치고 연결선</b>을 그림</li>
+        <li>전용 레이어(시설물 바로 위, 같은 obstacle declutter)에 그리고, 펼친 핀은 원본 피처 참조만 들고 있어 스타일·클릭이 기존 규칙 그대로</li>
+        <li>같은 배지 재클릭·배율 변경·필터 변경·목록 재조회 시 접힘. 검증: 6→0→6 토글, 펼친 핀 클릭 시 목록 선택 확인</li>
+      </ul>
+      <p><a href="../history_v2.18.md">history_v2.18.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v2.17</span>
+        <span class="ver-title">시설물 핀·묶음이 WFS 아이콘에 가리던 문제 해결(declutter)</span>
+        <span class="date">2026-09-23</span>
+      </div>
+      <ul>
+        <li><b>zIndex 문제가 아니었음</b> — OpenLayers 는 declutter 레이어의 심볼을 모든 레이어를 그린 뒤 따로 그리므로(<code>renderDeclutter</code>), WFS(<code>declutter: true</code>) 아이콘이 zIndex 1500 인 시설물 위에 올라왔음</li>
+        <li>시설물 레이어도 <code>declutter: true</code> 로 바꾸고 모든 스타일에 <code>declutterMode: "obstacle"</code> 지정 — 항상 그리되 다른 심볼이 피해 가게 하므로 시설물은 하나도 숨지 않음(건수 일치 규칙 유지)</li>
+        <li>묶음 개수 숫자를 <code>ol.style.Text</code> 로 얹으면 같은 자리의 원(obstacle)과 충돌해 사라지므로, 원+숫자를 한 장으로 그리는 SVG 아이콘으로 교체</li>
+        <li>검증: 편의점 레이어 켜둔 상태에서 묶음·개별 핀 모두 위에 표시, 숫자 정상 복구, 시설물 248 = 목록 248</li>
+      </ul>
+      <p><a href="../history_v2.17.md">history_v2.17.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v2.16</span>
+        <span class="ver-title">시설물 핀·묶음을 항상 최상단 레이어로</span>
+        <span class="date">2026-09-23</span>
+      </div>
+      <ul>
+        <li>시설물 레이어가 <code>zIndex 1010</code> 으로 다른 레이어(최대 1000)와 10 차이밖에 나지 않아, 새 레이어 하나면 핀이 가려질 수 있던 구조</li>
+        <li>기본값을 <code>FACILITY_LAYER_Z_INDEX = 1500</code> 으로 올리고, <code>keepFacilityLayerOnTop()</code> 이 레이어 추가·제거마다 다시 계산해 더 높은 레이어가 생기면 그보다 10 높게 올림</li>
+        <li>클러스터는 같은 레이어의 소스만 바꿈 — 핀이든 개수 배지든 동일하게 최상단</li>
+        <li>검증: 초기 1500 최상단, <code>zIndex 9000</code> 레이어를 일부러 추가하자 자동으로 9010 으로 상승, 제거 후 1500 복귀</li>
+      </ul>
+      <p><a href="../history_v2.16.md">history_v2.16.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v2.15</span>
+        <span class="ver-title">시설물 핀 묶음(클러스터링) 추가</span>
+        <span class="date">2026-09-23</span>
+      </div>
+      <ul>
+        <li>전국 조회 시 2,400여 개의 핀이 겹쳐 개수를 가늘할 수 없던 문제 — 가까운 핀을 묶어 개수 배지로 표시하고, 누르면 그 범위로 확대</li>
+        <li><code>ol.source.Cluster</code> 를 원본 소스 위에 씩워 레이어의 소스·스타일만 교체 — <code>getFeatureById()</code>·목록 연동은 그대로</li>
+        <li>필터는 <code>geometryFunction</code> 에서 판정해 탈락 피처를 묶음에서 제외 — <b>배지 숫자가 목록 건수와 항상 일치</b></li>
+        <li>배지 색은 핀 규칙과 동일(처리할 보수 건 있으면 주황, 전부 내업 완료면 초록, 그 외 파랑), 선택한 시설물이 묶음 안이면 강조 링</li>
+        <li>"핀 묶어 보기" 토글(기본 켬)을 패널에 추가하고 선택은 <code>localStorage</code> 에 기억. 백엔드·API 변경 없음</li>
+        <li>검증(헤드리스 Chrome + CDP): 248건 → 39개 묶음, 묶음 클릭 시 줌 11.54→15.8, 토글 끕 개별 핀 248개, 필터별 묶음 수 = 목록 건수 전부 일치</li>
+      </ul>
+      <p><a href="../history_v2.15.md">history_v2.15.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v2.14</span>
         <span class="ver-title">수정 전 Jenkins 파이프라인 원본 백업</span>
         <span class="date">2026-09-23</span>

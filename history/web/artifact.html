@@ -385,7 +385,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.14</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.20</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -450,7 +450,13 @@
       <button type="button" class="vchip" role="tab" data-ver="2.11" aria-controls="pane-v2.11" title="배포 때 지도가 지워지는 원인 규명과 재발 방지"><span class="pv">v2.11</span><span class="pt">지도 삭제 원인 규명</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.12" aria-controls="pane-v2.12" title="허브·지도 Jenkins 배포 파이프라인 교체본"><span class="pv">v2.12</span><span class="pt">배포 잡 교체본</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.13" aria-controls="pane-v2.13" title="지도 삭제 원인 확정 - cleanRemote 옵션"><span class="pv">v2.13</span><span class="pt">원인 확정 · 교체본 확정</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.14" aria-controls="pane-v2.14" title="수정 전 Jenkins 파이프라인 원본 백업"><span class="pv">v2.14<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">원본 백업</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.14" aria-controls="pane-v2.14" title="수정 전 Jenkins 파이프라인 원본 백업"><span class="pv">v2.14</span><span class="pt">원본 백업</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.15" aria-controls="pane-v2.15" title="시설물 핀 묶음(클러스터링) 추가"><span class="pv">v2.15</span><span class="pt">핀 묶음 보기</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.16" aria-controls="pane-v2.16" title="시설물 핀·묶음을 항상 최상단 레이어로"><span class="pv">v2.16</span><span class="pt">시설물 최상단</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.17" aria-controls="pane-v2.17" title="시설물 핀이 WFS 아이콘에 가리던 문제 해결(declutter)"><span class="pv">v2.17</span><span class="pt">declutter 가림 해결</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.18" aria-controls="pane-v2.18" title="확대해도 풀리지 않는 묶음을 부채꼴로 펼치기"><span class="pv">v2.18</span><span class="pt">묶음 펼치기</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.19" aria-controls="pane-v2.19" title="겹친 시설물 펼치기를 클릭이 아니라 배율로"><span class="pv">v2.19</span><span class="pt">확대하면 자동 펼침</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.20" aria-controls="pane-v2.20" title="겹친 시설물이 확대 시 자연스럽게 흠어지도록"><span class="pv">v2.20<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">배지 숨김 · 자연스럽게</span></button>
     </div>
   </div>
 </nav>
@@ -4539,6 +4545,392 @@ cleanRemote: true      ← 전송 전에 이 디렉터리를 통째로 비움</d
 </section>
 </div>
 
+<!-- ===================== v2.15 ===================== -->
+<div class="vpane" data-ver="2.15" id="pane-v2.15" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.15</span>
+      <span>2026-09-23</span>
+      <span>mapservice(프론트)</span>
+    </div>
+    <h1>겹친 핀을<br>개수로 묶어 보기</h1>
+    <p class="dek">
+      전국 조회 시 2,400여 개의 핀이 겹쳐 개수를 가늠할 수 없었습니다.
+      가까운 핀을 하나로 묶어 숫자로 보여주고, 누르면 그 범위로 확대합니다.
+    </p>
+    <dl class="facts">
+      <div><dt>기본</dt><dd class="ok">묶음 켬</dd></div>
+      <div><dt>필터</dt><dd>배지 숫자와 목록 일치</dd></div>
+      <div><dt>클릭</dt><dd>범위로 확대</dd></div>
+      <div><dt>백엔드</dt><dd>변경 없음</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">구현</p>
+    <h2>원본 소스는 건드리지 않는다</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">소스</span><span class="fv"><code>ol.source.Cluster</code> 를 원본 위에 <b>씌우고</b> 레이어의 소스·스타일만 교체 — <code>getFeatureById()</code>·목록 연동·데이터 적재는 그대로</span></div>
+      <div class="frow"><span class="fk">필터</span><span class="fv"><code>geometryFunction</code> 에서 판정해 탈락 피처를 묶음에서 제외 → <b>배지 숫자 = 목록 건수</b></span></div>
+      <div class="frow"><span class="fk">스타일</span><span class="fv">1건이면 기존 핀, 2건 이상이면 개수 배지. 처리할 보수 건이 있으면 주황, 전부 내업 완료면 초록, 그 외 파랑</span></div>
+      <div class="frow"><span class="fk">클릭</span><span class="fv">선택이 아니라 <b>범위 확대</b>. 좌표가 같은 묶음은 2단계씩만 확대해 최대 배율로 튀지 않게 함</span></div>
+      <div class="frow"><span class="fk">토글</span><span class="fv">“핀 묶어 보기” 체크박스 · 선택은 <code>localStorage</code> 에 기억</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>헤드리스 브라우저로 실제 동작 확인</h2>
+    <div class="cmd">묶음 켬(줌 11.5)     248건 → 39개 묶음 (가장 큰 묶음 33건)
+묶음 클릭            줌 11.54 → 15.8 (범위로 확대)
+토글 끔              개별 핀 248개, localStorage=off 저장
+다시 켬              묶음 108개 (줌이 높아 잘게), 총원 248 유지
+
+필터 × 묶음 일치
+  전체        248 / 248
+  보수 필요     1 / 1
+  처리 대기     0 / 0
+  보수 불필요  247 / 247</div>
+    <div class="grid2" style="margin-top:1.6rem">
+      <div class="cell">
+        <h3>바뀐 파일 <span class="badge pass">프론트만</span></h3>
+        <p><code>map-facility.js</code>(묶음 소스·스타일·클릭·토글), <code>index.html</code>(체크박스 + CSS 캐시 무효화), <code>layer-panel.css</code>(토글 스타일), 문서 2개. 백엔드·API·DB 변경 없음.</p>
+      </div>
+      <div class="cell caution">
+        <h3>남은 판단 <span class="badge skip">운영 후</span></h3>
+        <p>배지 색 기준은 “묶음 안에 처리할 보수 건이 하나라도 있으면 주황”입니다. 실제로 써 보고 기준을 바꿀지 결정하면 됩니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v2.16 ===================== -->
+<div class="vpane" data-ver="2.16" id="pane-v2.16" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.16</span>
+      <span>2026-09-23</span>
+      <span>mapservice(프론트)</span>
+    </div>
+    <h1>시설물은<br>언제나 맨 위에</h1>
+    <p class="dek">
+      시설물 관리가 이 서비스의 주 기능인데, 레이어 순서가 다른 레이어와 10 차이밖에 나지 않아
+      새 레이어 하나면 핀이 가려질 수 있는 구조였습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>이전</dt><dd>zIndex 1010</dd></div>
+      <div><dt>기본값</dt><dd class="ok">1500</dd></div>
+      <div><dt>보정</dt><dd>추가·제거마다 재계산</dd></div>
+      <div><dt>묶음</dt><dd>같은 레이어라 동일 적용</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">조치</p>
+    <h2>값만 올리지 않고 보정까지</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">기본값</span><span class="fv"><code>FACILITY_LAYER_Z_INDEX = 1500</code> — 다른 레이어(WFS·WMS 1000, 영역 선택 999~1000, 측정·배경 0)와 충분히 벌림</span></div>
+      <div class="frow"><span class="fk">보정</span><span class="fv"><code>keepFacilityLayerOnTop()</code> 이 레이어 <b>추가·제거마다</b> 다른 레이어의 최대값을 다시 계산해, 더 높은 레이어가 생기면 <code>+10</code> 으로 올림</span></div>
+      <div class="frow"><span class="fk">안전</span><span class="fv"><code>setZIndex</code> 는 add/remove 이벤트를 일으키지 않아 순환 호출이 없음</span></div>
+      <div class="frow"><span class="fk">규칙</span><span class="fv">시설물 레이어의 zIndex 를 <b>다른 곳에서 직접 바꾸지 말 것</b> — 보정과 충돌한다(문서에 명시)</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>일부러 더 높은 레이어를 넣어 봤다</h2>
+    <div class="cmd">초기            레이어 12개, zIndex [0,0,0,0,1000×7,1500]  → 시설물 최상단
+WFS 켠 뒤       그대로 1500 최상단
+zIndex 9000 추가  시설물이 자동으로 9010 으로 상승 → 최상단 유지
+그 레이어 제거    다시 1500 으로 복귀 (무한정 올라가지 않음)</div>
+    <div class="grid2" style="margin-top:1.6rem">
+      <div class="cell">
+        <h3>묶음도 함께 <span class="badge pass">동일 적용</span></h3>
+        <p>클러스터는 같은 레이어의 소스만 바꾼 것이라, 핀이든 개수 배지든 이 규칙을 그대로 따릅니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v2.17 ===================== -->
+<div class="vpane" data-ver="2.17" id="pane-v2.17" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.17</span>
+      <span>2026-09-23</span>
+      <span>mapservice(프론트)</span>
+    </div>
+    <h1>zIndex 문제가<br>아니었다</h1>
+    <p class="dek">
+      시설물 레이어를 1500까지 올렸는데도 편의점 아이콘이 위에 있었습니다.
+      OpenLayers 는 declutter 레이어의 심볼을 <b>모든 레이어를 그린 뒤 따로</b> 그리기 때문입니다.
+    </p>
+    <dl class="facts">
+      <div><dt>원인</dt><dd class="ok">declutter 렌더 순서</dd></div>
+      <div><dt>조치</dt><dd>obstacle 모드</dd></div>
+      <div><dt>숨김</dt><dd>시설물은 0건</dd></div>
+      <div><dt>배지</dt><dd>SVG 한 장으로</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">원인</p>
+    <h2>렌더러가 두 번 그린다</h2>
+    <div class="cmd">// 모든 레이어를 zIndex 순으로 그린 뒤,
+for (...) { layer.render(frameState); if ("getDeclutter" in layer) declutterLayers.push(layer); }
+
+// declutter 레이어의 심볼만 마지막에 다시 그린다
+for (let i = declutterLayers.length - 1; i >= 0; --i) declutterLayers[i].renderDeclutter(frameState);</div>
+    <p class="promptnote">
+      WFS 레이어는 <code>declutter: true</code>, 시설물 레이어는 <code>declutter: false</code> 였습니다.
+      그래서 <b>zIndex 를 아무리 올려도</b> 편의점 아이콘이 시설물 핀 위에 그려졌습니다.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">조치</p>
+    <h2>obstacle 모드로 참여시키기</h2>
+    <ul class="notes">
+      <li>시설물 레이어를 <code>declutter: true</code> 로 바꾸고 모든 스타일에 <code>declutterMode: "obstacle"</code> 지정 — <b>항상 그리되 다른 declutter 심볼이 피해 가게</b> 하는 모드라, 시설물은 하나도 숨지 않고 겹치던 WFS 아이콘 쪽이 밀려납니다</li>
+      <li>묶음 개수 숫자를 <code>ol.style.Text</code> 로 얹으면 declutter 대상이 되어 <b>같은 자리의 원(obstacle)과 충돌해 사라집니다</b> → 원+숫자를 한 장으로 그리는 SVG 아이콘으로 교체</li>
+      <li>v2.16 의 zIndex 1500 + 자동 보정은 유지 — 일반 레이어와 declutter 레이어 양쪽 모두를 덮으려면 두 장치가 함께 필요합니다</li>
+    </ul>
+    <div class="cmd">편의점 레이어 켠 상태   묶음 배지가 편의점 아이콘 위, 겹치던 아이콘은 밀려남
+묶음 개수 숫자          조치 전 사라짐 → SVG 교체 후 정상(2·3·5·6·7·8·9·15·23…)
+클러스터 끔 + 줌 15     개별 핀도 편의점 아이콘 위
+건수 일치               시설물 248 = 목록 248 (obstacle 이라 숨김 없음)</div>
+    <div class="grid2" style="margin-top:1.6rem">
+      <div class="cell caution">
+        <h3>바꾸지 말 것 <span class="badge skip">규칙</span></h3>
+        <p><code>declutter</code> 를 끄거나 <code>declutterMode</code> 를 빼면 <b>둘 중 하나만 바꿔도</b> 가림 문제가 그대로 돌아옵니다. 문서(<code>docs/map-architecture.md</code>)에 이유와 함께 적어 두었습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v2.18 ===================== -->
+<div class="vpane" data-ver="2.18" id="pane-v2.18" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.18</span>
+      <span>2026-09-23</span>
+      <span>mapservice(프론트)</span>
+    </div>
+    <h1>같은 자리 묶음은<br>부채꼴로 펼친다</h1>
+    <p class="dek">
+      한 건물에 여러 시설물이 있으면 좌표가 완전히 같아, 최대 배율까지 확대해도 묶음이 풀리지 않았습니다.
+      그 경우 확대 대신 핀을 펼쳐 하나씩 고를 수 있게 했습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>문제</dt><dd class="pending">확대해도 안 풀림</dd></div>
+      <div><dt>판정</dt><dd>extent &lt; 1픽셀</dd></div>
+      <div><dt>펼침</dt><dd class="ok">핀 + 연결선</dd></div>
+      <div><dt>접기</dt><dd>재클릭 · 배율 변경</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">원인</p>
+    <h2>좌표가 완전히 같았다</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">실측</span><span class="fv">13건 묶음의 extent <b>폭·높이 = 0</b> — 한 건물 안의 시설물들이라 좌표가 동일</span></div>
+      <div class="frow"><span class="fk">기존 동작</span><span class="fv">묶음 클릭 = “그 범위로 확대” → 범위가 0 이라 <b>최대 배율(19)까지 가도 그대로</b></span></div>
+      <div class="frow"><span class="fk">결과</span><span class="fv">그 시설물들은 지도에서 고를 방법이 없었음(목록으로만 접근)</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">조치</p>
+    <h2>펼치기(spiderfy)</h2>
+    <ul class="notes">
+      <li>구성원 extent 가 화면 1픽셀보다 작거나 이미 최대 배율이면 <b>중심에서 원형으로 핀을 펼치고 연결선</b>을 그림. 반지름은 개수에 따라 46px + (n−4)×5px</li>
+      <li>전용 레이어(시설물 바로 위, 같은 obstacle declutter)에 그리고, 펼친 핀은 <b>원본 피처 참조만</b> 들고 있어 스타일·클릭이 기존 규칙 그대로</li>
+      <li>접기: 같은 배지 재클릭 · 배율 변경 · 필터 변경 · 목록 재조회 · 묶음 토글 끔</li>
+      <li>클릭 순서는 <b>펼친 핀 → 묶음/핀</b>. 펼친 핀을 누르면 평소처럼 상세 팝업이 열림</li>
+      <li>zIndex 보정 계산에서 펼침 레이어는 제외 — 넣으면 두 레이어가 서로를 밀어 올려 값이 무한히 커짐</li>
+    </ul>
+    <div class="cmd">같은 자리 묶음 탐지    서울 데이터에서 extent 0 인 묶음 3건(3·3·2건)
+묶음 클릭              핀 3 + 연결선 3 생성 (부채꼴 배치 확인)
+펼친 핀 클릭           해당 시설물이 목록에서 선택됨
+같은 배지 재클릭        6 → 0 → 6 (토글 정상)
+배율 변경              자동 접힘(0)</div>
+    <div class="grid2" style="margin-top:1.6rem">
+      <div class="cell">
+        <h3>동작 기준 <span class="badge pass">정리</span></h3>
+        <p>좌표가 <b>같은</b> 묶음은 배율과 무관하게 즉시 펼치고, 좌표가 <b>다른</b> 묶음은 종전대로 범위를 확대합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v2.19 ===================== -->
+<div class="vpane" data-ver="2.19" id="pane-v2.19" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.19</span>
+      <span>2026-09-23</span>
+      <span>mapservice(프론트)</span>
+    </div>
+    <h1>누르지 않아도<br>확대하면 펼쳐진다</h1>
+    <p class="dek">
+      겹친 시설물을 펼치는 방식을 클릭에서 <b>배율</b>로 옮겼습니다.
+      배율 16 이상이면 저절로 펼쳐지고, 축소하면 다시 접힙니다.
+    </p>
+    <dl class="facts">
+      <div><dt>기준</dt><dd class="ok">배율 16</dd></div>
+      <div><dt>진입점</dt><dd>moveend 동기화</dd></div>
+      <div><dt>깜빡임</dt><dd>구성 같으면 재렌더 없음</dd></div>
+      <div><dt>클릭</dt><dd>배지는 확대만</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">동작</p>
+    <h2>배율이 결정한다</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">동기화</span><span class="fv"><code>syncFacilitySpiders()</code> 가 <b>확대·이동이 끝날 때마다</b>, 그리고 필터 변경·목록 재조회·묶음 토글 때 펼침 상태를 다시 계산</span></div>
+      <div class="frow"><span class="fk">재렌더</span><span class="fv">대상 id 목록 + 해상도로 만든 키가 같으면 <b>다시 그리지 않음</b> — 지도를 움직여도 깜빡이지 않는다</span></div>
+      <div class="frow"><span class="fk">대상</span><span class="fv">묶어 보기 켬: 구성원이 한 점에 모인 묶음 · 묶어 보기 끔: <b>좌표가 같아 완전히 겹치는 핀들</b></span></div>
+      <div class="frow"><span class="fk">배지 클릭</span><span class="fv">펼치지 않고 <b>확대만</b> — 좌표가 같은 묶음이면 펼침 배율까지 올려 주고, 그 결과로 동기화가 펼친다</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>배율만 바꿔 가며 관찰</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>배율</th><th>펼친 핀 / 연결선</th></tr></thead>
+        <tbody>
+          <tr><td>11.3 (이동 직후)</td><td>0 / 0</td></tr>
+          <tr><td>14</td><td>0 / 0</td></tr>
+          <tr><td>15</td><td>0 / 0</td></tr>
+          <tr><td><b>16</b></td><td><b>3 / 3</b> — 자동으로 펼쳐짐</td></tr>
+          <tr><td>17</td><td>3 / 3</td></tr>
+          <tr><td>13 (다시 축소)</td><td>0 / 0 — 자동으로 접힘</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="cmd">펼쳐진 핀 클릭    해당 시설물이 목록에서 선택됨
+화면 캡처        배지 주변으로 핀 3개가 점선 연결선과 함께 펼쳐진 모습 확인
+node --check     통과</div>
+    <div class="grid2" style="margin-top:1.6rem">
+      <div class="cell caution">
+        <h3>조정 여지 <span class="badge skip">실사용 후</span></h3>
+        <p>기준 배율 16과 펼침 반지름(46px + 개수에 따라 증가)은 써 보고 바꾸면 됩니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v2.20 ===================== -->
+<div class="vpane" data-ver="2.20" id="pane-v2.20" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.20</span>
+      <span>2026-09-23</span>
+      <span>mapservice(프론트)</span>
+    </div>
+    <h1>묶음이 사라지고<br>핀만 흩어진다</h1>
+    <p class="dek">
+      점선으로 잇는 대신 개수 배지를 지우고 핀만 남겼습니다.
+      기준 배율도 더 깊게 잡아, 건물 하나가 화면을 채울 때 흩어집니다.
+    </p>
+    <dl class="facts">
+      <div><dt>연결선</dt><dd class="ok">제거</dd></div>
+      <div><dt>배지</dt><dd>펼치면 숨김</dd></div>
+      <div><dt>기준</dt><dd>배율 18</dd></div>
+      <div><dt>클릭</dt><dd>확대 → 자동 흩어짐</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">요청과 조치</p>
+    <h2>세 가지</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>요청</th><th>조치</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>연결선 말고 자연스럽게</td>
+            <td>점선 연결선 생성·스타일·히트테스트 <b>전부 제거</b>. 펼친 묶음은 <b>개수 배지를 숨기고</b>, 묶어 보기를 껐을 때는 원래 자리의 핀을 숨겨 화면에는 흩어진 핀만 남게 함</td>
+          </tr>
+          <tr>
+            <td>더 확대했을 때</td>
+            <td>기준 배율 <b>16 → 18</b>(최대 19), 펼침 반지름 46px → 42px</td>
+          </tr>
+          <tr>
+            <td>클릭 시 확대 후 동일하게</td>
+            <td>묶음 배지 클릭은 <code>max(현재+2, 18)</code> 까지 <b>확대만</b> 하고, 그 결과로 동기화가 흩뿌림</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="promptnote">
+      펼친 핀은 <code>buildFacilityPinStyle()</code>(펼침 여부를 보지 않는 버전)로 그립니다 —
+      일반 스타일 함수를 쓰면 “펼쳐진 것은 숨김” 규칙에 걸려 핀까지 사라집니다.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>배율별 동작</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>배율</th><th>펼친 핀</th></tr></thead>
+        <tbody>
+          <tr><td>16</td><td>0</td></tr>
+          <tr><td>17</td><td>0</td></tr>
+          <tr><td><b>18</b></td><td><b>3</b></td></tr>
+          <tr><td>19</td><td>3</td></tr>
+          <tr><td>14 (축소)</td><td>0</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="cmd">펼친 묶음의 개수 배지   스타일 null = 숨김
+펼친 핀 3개            모두 그려짐
+연결선                 소스에 선 피처 없음 (핀만)
+배율 14에서 배지 클릭   줌 14 → 18, 펼친 핀 0 → 3
+화면 캡처              배지 없이 핀 3개만 흩어져 표시</div>
+  </div>
+</section>
+</div>
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -4549,7 +4941,7 @@ cleanRemote: true      ← 전송 전에 이 디렉터리를 통째로 비움</d
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.14.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.20.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·
