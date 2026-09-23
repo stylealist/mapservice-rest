@@ -385,7 +385,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.28</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.29</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -464,7 +464,8 @@
       <button type="button" class="vchip" role="tab" data-ver="2.25" aria-controls="pane-v2.25" title="로고 클릭 = 지도 사이트 새로 불러오기로 확정"><span class="pv">v2.25</span><span class="pt">로고 → 재로딩</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.26" aria-controls="pane-v2.26" title="전체 저장소 README.md 현행화 및 CLAUDE.md 유지 규칙 추가"><span class="pv">v2.26</span><span class="pt">README·규칙</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.27" aria-controls="pane-v2.27" title="전체 저장소 README.md 엔지니어링 및 업무 프로세스 중심 전면 개편"><span class="pv">v2.27</span><span class="pt">기술문서 개편</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.28" aria-controls="pane-v2.28" title="sj-lab 마스터 README에 실서비스 접속 안내 및 엔드투엔드 파이프라인 가시화 강화"><span class="pv">v2.28<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">마스터 문서 강화</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.28" aria-controls="pane-v2.28" title="sj-lab 마스터 README에 실서비스 접속 안내 및 엔드투엔드 파이프라인 가시화 강화"><span class="pv">v2.28</span><span class="pt">마스터 문서 강화</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.29" aria-controls="pane-v2.29" title="DevOps 인프라 대시보드(ArgoCD·Jenkins·K8s) 및 API Gateway 테스트 URL 안내 추가"><span class="pv">v2.29<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">인프라·테스트URL</span></button>
     </div>
   </div>
 </nav>
@@ -5305,6 +5306,38 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
 </section>
 </div>
 
+
+<!-- ===================== v2.29 ===================== -->
+<div class="vpane" data-ver="2.29" id="pane-v2.29" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.29</span>
+      <span>2026-09-23</span>
+      <span>sj-lab · apigateway · mapservice</span>
+    </div>
+    <h1>DevOps 인프라 대시보드 및<br>API Gateway 테스트 URL 안내 추가</h1>
+    <p class="dek">
+      마스터 저장소(sj-lab)에 ArgoCD, Jenkins, Kubernetes Dashboard 등 클러스터 운영 도구 주소를 명시하고,
+      게이트웨이 루트(404) 대신 즉시 정상 연결을 확인할 수 있는 API 게이트웨이 테스트 URL(/map/check) 안내를 추가했습니다.
+    </p>
+  </div>
+</header>
+
+<section class="sec">
+  <div class="wrap">
+    <h2>추가 내용</h2>
+    <div class="card">
+      <ul>
+        <li><b>DevOps 대시보드 URL 명시</b>: ArgoCD (https://argo.sj-lab.co.kr), Jenkins (https://jenkins.sj-lab.co.kr), Kubernetes Dashboard (https://dashboard.sj-lab.co.kr)</li>
+        <li><b>API Gateway 테스트 URL 안내</b>: 루트(/) 404 원인 설명 및 즉각적인 연결 확인이 가능한 https://api.sj-lab.co.kr/map/check 안내 추가</li>
+        <li><b>연관 저장소 동기화</b>: sj-lab, sj-lab-apigateway, mapservice-rest README.md 동시 반영</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</div>
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -5315,7 +5348,7 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.28.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.29.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·

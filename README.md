@@ -109,6 +109,8 @@ LEFT JOIN LATERAL (
 
 | 메서드 | 경로 | 설명 | 파라미터 / 특징 |
 |---|---|---|---|
+| `GET` | `/map/check` | 게이트웨이 라우팅 및 백엔드 헬스체크 | 인스턴스 포트 메시지 반환 (게이트웨이 연결 확인용) |
+| `GET` | `/map/welcome` | 서비스 연결 웰컴 엔드포인트 | 웰컴 문자열 반환 |
 | `GET` | `/map/wfs/{layerName}` | 공공데이터 공간 레이어 조회 | `bbox`, `limit` (편의점, 버스정류장, CCTV, 병원 등) |
 | `GET` | `/map/qfield/facilities` | QField 점검 시설물 목록 조회 | `bbox`, `limit`, `admCd`, `condition`, `repairYn` |
 | `GET` | `/map/admin-area/{sido\|sgg\|emd}` | 행정구역 폴리곤 및 중심점 조회 | `admCd` 계층 필터링 |
