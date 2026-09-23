@@ -385,7 +385,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.30</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.31</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -466,7 +466,8 @@
       <button type="button" class="vchip" role="tab" data-ver="2.27" aria-controls="pane-v2.27" title="전체 저장소 README.md 엔지니어링 및 업무 프로세스 중심 전면 개편"><span class="pv">v2.27</span><span class="pt">기술문서 개편</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.28" aria-controls="pane-v2.28" title="sj-lab 마스터 README에 실서비스 접속 안내 및 엔드투엔드 파이프라인 가시화 강화"><span class="pv">v2.28</span><span class="pt">마스터 문서 강화</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.29" aria-controls="pane-v2.29" title="DevOps 인프라 대시보드(ArgoCD·Jenkins·K8s) 및 API Gateway 테스트 URL 안내 추가"><span class="pv">v2.29</span><span class="pt">인프라·테스트URL</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.30" aria-controls="pane-v2.30" title="/map/check 응답 메시지 한글화 및 서비스 상태 안내 개선"><span class="pv">v2.30<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">체크 한글화</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.30" aria-controls="pane-v2.30" title="/map/check 응답 메시지 한글화 및 서비스 상태 안내 개선"><span class="pv">v2.30</span><span class="pt">체크 한글화</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.31" aria-controls="pane-v2.31" title="SJ-LAB 마스터 플랫폼 정의 및 다중 서비스 확장 맵 개편"><span class="pv">v2.31<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">멀티 플랫폼</span></button>
     </div>
   </div>
 </nav>
@@ -5371,6 +5372,38 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
 </section>
 </div>
 
+
+<!-- ===================== v2.31 ===================== -->
+<div class="vpane" data-ver="2.31" id="pane-v2.31" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.31</span>
+      <span>2026-09-23</span>
+      <span>sj-lab (마스터)</span>
+    </div>
+    <h1>SJ-LAB 마스터 플랫폼 정의 및<br>다중 서비스 확장 아키텍처 개편</h1>
+    <p class="dek">
+      SJ-LAB을 단일 시설물 관리용이 아닌 Kubernetes & MSA 기반의 다중 서비스 클라우드 웹 플랫폼으로 재정립하고,
+      중앙 허브(sj-lab-hub)와 연계된 4대 서비스 맵(2D GIS, 3D 시뮬레이션, AI 실험실, OpenAPI)을 체계화했습니다.
+    </p>
+  </div>
+</header>
+
+<section class="sec">
+  <div class="wrap">
+    <h2>개편 요약</h2>
+    <div class="card">
+      <ul>
+        <li><b>플랫폼 위상 정립</b>: 다양한 도메인의 기술 프로젝트를 모듈화하여 유연하게 탑재·운영하는 종합 클라우드 플랫폼</li>
+        <li><b>플래그십 프로젝트 규정</b>: 시설물 관리 2D GIS는 플랫폼 위에 완벽히 구현된 첫 번째 플래그십 서비스로 명시</li>
+        <li><b>확장 서비스 맵 체계화</b>: 2D 시설물 관리(운영 중), 3D 시뮬레이션(확장 예정), AI/예측 모델 실험실(확장 예정), OpenAPI 플랫폼</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</div>
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -5381,7 +5414,7 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.30.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.31.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·
