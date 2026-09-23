@@ -112,6 +112,66 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v2.25</span>
+        <span class="ver-title">로고 클릭 = 지도 사이트 새로 불러오기로 확정</span>
+        <span class="date">2026-09-23</span>
+      </div>
+      <ul>
+        <li>동작 변천: <code>origin + "/map"</code>(로컬 404) → SPA 전환(무반응) → 첫 화면 복귀 → <b>사이트 재로딩</b></li>
+        <li>이동 주소를 <b>현재 문서가 있는 디렉터리</b> 기준으로 계산 — 운영 <code>/map/</code>, 로컬 <code>:4000/</code> 양쪽에서 맞고 토큰 해시는 떨어짐</li>
+        <li>v2.24 에서 넣었던 <code>resetMapView()</code> 와 <code>window</code> 등록은 제거(기본 중심·배율 상수는 유지)</li>
+        <li>검증: 소개 탭 + 부산 확대 → 로고 클릭 → map-page, 첫 화면(126.89 / 11.3) 로 재로딩</li>
+      </ul>
+      <p><a href="../history_v2.25.md">history_v2.25.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v2.24</span>
+        <span class="ver-title">로고 클릭이 "무반응"으로 보이던 문제 (첫 화면 복귀 동작 추가)</span>
+        <span class="date">2026-09-23</span>
+      </div>
+      <ul>
+        <li>v2.23 에서 404 를 고치며 SPA 전환으로 바꾸었는데, <b>이미 지도 화면이면 전환할 것이 없어</b> 화면이 그대로였음</li>
+        <li><code>map-core.js</code> 에 기본 중심·배율 상수와 <code>resetMapView()</code> 추가, <code>map.js</code> 에서 <code>window</code> 에 등록</li>
+        <li>로고 클릭 = 지도 페이지 전환 <b>+ 첫 화면(127.0, 37.5 / 배율 10) 복귀</b>. 레이어·필터·선택 상태는 그대로</li>
+        <li>검증: 부산으로 이동·확대 → 로고 클릭 → 기본 중심·배율로 복귀, 소개 화면에서도 동일</li>
+      </ul>
+      <p><a href="../history_v2.24.md">history_v2.24.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v2.23</span>
+        <span class="ver-title">헤더 로고 클릭 시 404 나던 문제 수정</span>
+        <span class="date">2026-09-23</span>
+      </div>
+      <ul>
+        <li><b>원인</b> — <code>goToMap()</code> 이 <code>origin + "/map"</code> 으로 통째 이동. 운영에만 있는 경로라 로컬(루트 서빙)에서는 404, 새로고침이라 지도 상태도 사라짐</li>
+        <li><b>조치</b> — SPA 페이지 전환(지도 탭 버튼 클릭)으로 변경. 주소 그대로, 지도도 다시 만들지 않음. 버튼을 못 찾으면 <code>./</code> 폴백</li>
+        <li>문서에 “로고 클릭을 절대 경로로 이동시키지 말 것” 규칙 추가. 환경 분기가 필요한 것은 허브 링크뿐</li>
+        <li>검증: 소개 탭 → 로고 클릭 → map-page 활성·URL 유지·지도 캔버스 유지</li>
+      </ul>
+      <p><a href="../history_v2.23.md">history_v2.23.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v2.22</span>
+        <span class="ver-title">지도에서 허브로 돌아가는 링크 추가</span>
+        <span class="date">2026-09-23</span>
+      </div>
+      <ul>
+        <li>허브 → 지도 경로만 있고 되돌아갈 방법이 없었음 → 헤더 오른쪽에 "허브" 버튼(<code>#hubLink</code>) 추가</li>
+        <li>운영은 같은 오리진 루트(<code>/</code>), 로컬은 <code>http://localhost:3000</code> 으로 분기(허브의 <code>resolveFeaturePath()</code> 와 짝)</li>
+        <li><code>.nav-btn</code> 을 쓰지 않음 — <code>ui.js</code> 가 그 클래스를 전부 페이지 전환 버튼으로 바인딩하기 때문</li>
+        <li>수정한 <code>header.css</code> 참조의 <code>?v=</code> 갱신, 문서에 규칙 추가</li>
+      </ul>
+      <p><a href="../history_v2.22.md">history_v2.22.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v2.21</span>
         <span class="ver-title">확대해도 안 풀리던 묶음 수정 (펼침 조건을 "좌표 동일"에서 "아직 묶여 있음"으로)</span>
         <span class="date">2026-09-23</span>

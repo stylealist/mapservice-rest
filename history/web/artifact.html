@@ -385,7 +385,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.21</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.25</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -457,7 +457,11 @@
       <button type="button" class="vchip" role="tab" data-ver="2.18" aria-controls="pane-v2.18" title="확대해도 풀리지 않는 묶음을 부채꼴로 펼치기"><span class="pv">v2.18</span><span class="pt">묶음 펼치기</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.19" aria-controls="pane-v2.19" title="겹친 시설물 펼치기를 클릭이 아니라 배율로"><span class="pv">v2.19</span><span class="pt">확대하면 자동 펼침</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.20" aria-controls="pane-v2.20" title="겹친 시설물이 확대 시 자연스럽게 흠어지도록"><span class="pv">v2.20</span><span class="pt">배지 숨김 · 자연스럽게</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.21" aria-controls="pane-v2.21" title="확대해도 안 풀리던 묶음 수정"><span class="pv">v2.21<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">안 풀리던 묶음 수정</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.21" aria-controls="pane-v2.21" title="확대해도 안 풀리던 묶음 수정"><span class="pv">v2.21</span><span class="pt">안 풀리던 묶음 수정</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.22" aria-controls="pane-v2.22" title="지도에서 허브로 돌아가는 링크 추가"><span class="pv">v2.22</span><span class="pt">허브 링크</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.23" aria-controls="pane-v2.23" title="헤더 로고 클릭 시 404 나던 문제 수정"><span class="pv">v2.23</span><span class="pt">로고 404 수정</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.24" aria-controls="pane-v2.24" title="로고 클릭 무반응 문제 — 첫 화면 복귀 동작 추가"><span class="pv">v2.24</span><span class="pt">로고 → 첫 화면</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.25" aria-controls="pane-v2.25" title="로고 클릭 = 지도 사이트 새로 불러오기로 확정"><span class="pv">v2.25<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">로고 → 재로딩</span></button>
     </div>
   </div>
 </nav>
@@ -4991,6 +4995,216 @@ node --check  통과</div>
 </section>
 </div>
 
+<!-- ===================== v2.22 ===================== -->
+<div class="vpane" data-ver="2.22" id="pane-v2.22" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.22</span>
+      <span>2026-09-23</span>
+      <span>mapservice(프론트)</span>
+    </div>
+    <h1>지도에서 허브로<br>돌아가는 길</h1>
+    <p class="dek">
+      허브에서 지도로 들어오는 경로는 있었지만 되돌아갈 방법이 없었습니다.
+      헤더에 허브 링크를 넣었습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>위치</dt><dd class="ok">헤더 오른쪽</dd></div>
+      <div><dt>운영</dt><dd>같은 오리진 루트</dd></div>
+      <div><dt>로컬</dt><dd>localhost:3000</dd></div>
+      <div><dt>주의</dt><dd>.nav-btn 금지</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">구현</p>
+    <h2>작은 링크, 두 가지 함정</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">클래스</span><span class="fv"><code>.nav-btn</code> 을 쓰면 <code>ui.js</code> 가 <b>페이지 전환 버튼</b>으로 바인딩해 허브로 가지 않는다 → 별도 클래스(<code>.hub-link</code>)</span></div>
+      <div class="frow"><span class="fk">주소</span><span class="fv">운영은 같은 오리진 루트(<code>/</code>), 로컬은 허브 dev 서버(<code>localhost:3000</code>) — 허브의 <code>resolveFeaturePath()</code> 와 짝</span></div>
+      <div class="frow"><span class="fk">로고</span><span class="fv"><code>#logoHome</code> 은 이미 지도 페이지 복귀에 쓰이고 있어 건드리지 않음</span></div>
+      <div class="frow"><span class="fk">캐시</span><span class="fv">수정한 <code>header.css</code> 참조의 <code>?v=</code> 갱신(서버가 Cache-Control 을 안 내려주므로)</span></div>
+    </div>
+    <div class="cmd">헤더 표시     "허브" 버튼이 지도·소개·연락처 왼쪽에 표시(캡처 확인)
+로컬 링크     href = http://localhost:3000/
+네비 바인딩   .nav-btn 아님 → 페이지 전환 핸들러에 안 걸림
+운영 링크     마크업 기본값 "/" (같은 오리진 루트 = 허브)</div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v2.23 ===================== -->
+<div class="vpane" data-ver="2.23" id="pane-v2.23" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.23</span>
+      <span>2026-09-23</span>
+      <span>mapservice(프론트)</span>
+    </div>
+    <h1>로고를 누르면<br>404가 났다</h1>
+    <p class="dek">
+      로고 클릭이 <code>origin + "/map"</code> 으로 통째 이동하고 있었습니다.
+      운영에만 있는 경로라 로컬에서는 404, 게다가 새로고침이라 지도 상태도 날아갔습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>원인</dt><dd class="pending">절대 경로 하드코딩</dd></div>
+      <div><dt>조치</dt><dd class="ok">SPA 전환</dd></div>
+      <div><dt>주소</dt><dd>그대로 유지</dd></div>
+      <div><dt>지도</dt><dd>다시 만들지 않음</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">원인</p>
+    <h2>운영 기준으로만 맞던 경로</h2>
+    <div class="cmd">const homeUrl = window.location.origin + "/map";   // 운영 기준 하드코딩
+window.location.href = homeUrl;
+
+운영  sj-lab.co.kr/map/     → 우연히 맞음
+로컬  localhost:4000/map    → 그런 경로 없음 → 404</div>
+    <h2 style="margin-top:2.25rem">조치</h2>
+    <ul class="notes">
+      <li><code>goToMap()</code> 을 <b>SPA 페이지 전환</b>으로 변경 — 지도 탭 버튼을 클릭해 기존 전환 핸들러를 그대로 탄다. 주소도 그대로고 지도를 다시 만들지도 않는다</li>
+      <li>버튼을 못 찾으면 <code>./</code>(현재 디렉터리 첫 화면)로 폴백 — 운영·로컬 모두 유효</li>
+      <li>문서에 “로고 클릭을 절대 경로로 이동시키지 말 것”을 이유와 함께 규칙화</li>
+      <li>환경 분기가 필요한 것은 <b>허브 링크뿐</b> — 그쪽은 실제로 다른 사이트로 가는 링크라서</li>
+    </ul>
+    <div class="cmd">시작        active = map-page,  URL http://localhost:4000/
+소개 클릭    active = about-page, URL 그대로
+로고 클릭    active = map-page,  URL 그대로, 지도 캔버스 유지 (404 없음)</div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v2.24 ===================== -->
+<div class="vpane" data-ver="2.24" id="pane-v2.24" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.24</span>
+      <span>2026-09-23</span>
+      <span>mapservice(프론트)</span>
+    </div>
+    <h1>404는 고쳤는데<br>이번엔 무반응</h1>
+    <p class="dek">
+      로고 클릭을 페이지 전환으로 바꿨더니, 이미 지도 화면일 때는 전환할 것이 없어
+      아무 일도 일어나지 않았습니다. 첫 화면으로 되돌아가는 동작을 더했습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>증상</dt><dd class="pending">눌러도 반응 없음</dd></div>
+      <div><dt>조치</dt><dd class="ok">첫 화면 복귀</dd></div>
+      <div><dt>기준</dt><dd>127.0, 37.5 / 배율 10</dd></div>
+      <div><dt>유지</dt><dd>레이어·필터·선택</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">조치</p>
+    <h2>무엇을 더했나</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">map-core</span><span class="fv">기본 중심·배율을 상수로 분리하고 <code>resetMapView()</code> 신설 — 400ms 애니메이션으로 첫 화면 복귀</span></div>
+      <div class="frow"><span class="fk">map.js</span><span class="fv"><code>window.resetMapView</code> 등록(저장소 규칙: 모듈 밖에서 쓰는 함수는 여기서 <code>window</code> 에)</span></div>
+      <div class="frow"><span class="fk">ui.js</span><span class="fv">로고 클릭 = 지도 페이지 전환 <b>+ 첫 화면 복귀</b>. 지도 탭이 없으면 <code>./</code> 폴백</span></div>
+      <div class="frow"><span class="fk">유지</span><span class="fv">레이어 표시·필터·선택 상태는 건드리지 않는다</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>중심·배율 추적</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>단계</th><th>중심(경도, 위도)</th><th>배율</th><th>페이지</th></tr></thead>
+        <tbody>
+          <tr><td>초기</td><td>126.892, 37.565</td><td>11.3</td><td>map-page</td></tr>
+          <tr><td>부산으로 이동·확대</td><td>129.07, 35.18</td><td>15</td><td>map-page</td></tr>
+          <tr><td><b>로고 클릭(지도 화면)</b></td><td><b>127.0, 37.5</b></td><td><b>10</b></td><td>map-page</td></tr>
+          <tr><td>소개 화면 + 제주 이동 후 <b>로고 클릭</b></td><td><b>127.0, 37.5</b></td><td><b>10</b></td><td>map-page</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid2" style="margin-top:1.6rem">
+      <div class="cell caution">
+        <h3>확인 시 주의 <span class="badge skip">캐시</span></h3>
+        <p>모듈 JS 는 <code>?v=</code> 캐시 무효화 대상이 아니라 브라우저가 옛 파일을 쓸 수 있습니다. 반응이 없으면 Ctrl+F5 로 강제 새로고침 후 확인하세요.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v2.25 ===================== -->
+<div class="vpane" data-ver="2.25" id="pane-v2.25" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.25</span>
+      <span>2026-09-23</span>
+      <span>mapservice(프론트)</span>
+    </div>
+    <h1>로고는 사이트를<br>다시 불러온다</h1>
+    <p class="dek">
+      404 → 무반응 → 화면 복귀를 거쳐, 로고 클릭은 “지도 사이트를 통째로 다시 불러오기”로 확정했습니다.
+      경로는 현재 문서가 있는 디렉터리 기준이라 운영·로컬 모두 맞습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>운영</dt><dd class="ok">/map/ 재로딩</dd></div>
+      <div><dt>로컬</dt><dd>:4000/ 재로딩</dd></div>
+      <div><dt>기준</dt><dd>현재 디렉터리</dd></div>
+      <div><dt>제거</dt><dd>resetMapView</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">경위</p>
+    <h2>세 번 바뀐 동작</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>버전</th><th>동작</th><th>문제</th></tr></thead>
+        <tbody>
+          <tr><td>~v2.22</td><td><code>origin + "/map"</code> 이동</td><td>운영에만 있는 경로 → 로컬 <b>404</b></td></tr>
+          <tr><td>v2.23</td><td>SPA 페이지 전환</td><td>이미 지도 화면이면 <b>아무 변화 없음</b></td></tr>
+          <tr><td>v2.24</td><td>전환 + 첫 화면 복귀</td><td>요구사항과 다름(사이트 재로딩을 원함)</td></tr>
+          <tr><td><b>v2.25</b></td><td><b>현재 디렉터리를 다시 불러오기</b></td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="cmd">window.location.origin + window.location.pathname.replace(/[^/]*$/, "")
+
+운영  /map/ 또는 /map/index.html → https://sj-lab.co.kr/map/
+로컬  /                          → http://localhost:4000/</div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>재로딩 확인</h2>
+    <div class="cmd">소개 탭 + 부산으로 이동·확대   about-page, 경도 129.07, 배율 15
+로고 클릭                     사이트 재로딩 → map-page, 경도 126.89, 배율 11.3
+node --check                  ui.js · map.js · map-core.js 통과</div>
+    <div class="grid2" style="margin-top:1.6rem">
+      <div class="cell caution">
+        <h3>검증 중 만난 함정 <span class="badge skip">제품 버그 아님</span></h3>
+        <p>토큰을 해시로 수동 주입할 때 <code>auth_expires</code> 를 빼면 게이트가 <b>만료된 토큰</b>으로 저장해 새로고침 즉시 로그인 페이지로 튕깁니다. 테스트에서는 <code>auth_token</code>·<code>auth_expires</code>·<code>auth_username</code> 을 함께 넣어야 합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -5001,7 +5215,7 @@ node --check  통과</div>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.21.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.25.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·
