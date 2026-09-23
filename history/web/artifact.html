@@ -385,7 +385,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.25</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.26</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -461,7 +461,8 @@
       <button type="button" class="vchip" role="tab" data-ver="2.22" aria-controls="pane-v2.22" title="지도에서 허브로 돌아가는 링크 추가"><span class="pv">v2.22</span><span class="pt">허브 링크</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.23" aria-controls="pane-v2.23" title="헤더 로고 클릭 시 404 나던 문제 수정"><span class="pv">v2.23</span><span class="pt">로고 404 수정</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.24" aria-controls="pane-v2.24" title="로고 클릭 무반응 문제 — 첫 화면 복귀 동작 추가"><span class="pv">v2.24</span><span class="pt">로고 → 첫 화면</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.25" aria-controls="pane-v2.25" title="로고 클릭 = 지도 사이트 새로 불러오기로 확정"><span class="pv">v2.25<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">로고 → 재로딩</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.25" aria-controls="pane-v2.25" title="로고 클릭 = 지도 사이트 새로 불러오기로 확정"><span class="pv">v2.25</span><span class="pt">로고 → 재로딩</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.26" aria-controls="pane-v2.26" title="전체 저장소 README.md 현행화 및 CLAUDE.md 유지 규칙 추가"><span class="pv">v2.26<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">README·규칙</span></button>
     </div>
   </div>
 </nav>
@@ -5205,6 +5206,39 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
 </section>
 </div>
 
+
+<!-- ===================== v2.26 ===================== -->
+<div class="vpane" data-ver="2.26" id="pane-v2.26" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.26</span>
+      <span>2026-09-23</span>
+      <span>전체 11개 저장소</span>
+    </div>
+    <h1>전체 저장소 README 현행화 및<br>CLAUDE.md 유지 규칙 추가</h1>
+    <p class="dek">
+      11개 저장소의 README.md를 현재 MSA·GIS 아키텍처 현실에 맞게 전면 작성·보강하고,
+      향후 코드 수정 시 README를 즉시 동시 갱신하도록 모든 CLAUDE.md에 규칙을 확립했습니다.
+    </p>
+  </div>
+</header>
+
+<section class="sec">
+  <div class="wrap">
+    <h2>작업 개요</h2>
+    <div class="card">
+      <p>sj-lab 플랫폼이 백엔드·게이트웨이·디스커버리·배치·인증·프론트 2곳·인프라·모바일·동기화 등 11개 저장소로 확장됨에 따라, 각 저장소의 README를 외부 리뷰어·신규 개발자가 시스템의 전체 파이프라인을 쉽게 이해할 수 있도록 현행화했습니다.</p>
+      <ul>
+        <li><b>11개 저장소 README.md 현행화</b>: 각 서비스의 역할, 실행 방법, 포트·라우팅, 아키텍처 및 연동 구조 명시</li>
+        <li><b>CLAUDE.md 유지 규칙 추가</b>: 기능·API·화면·설정·배포가 바뀔 때 같은 작업에서 README.md도 반드시 갱신하도록 규칙화</li>
+        <li><b>전 저장소 Git 커밋 및 Push</b>: 11개 저장소 모두 커밋 생성 및 원격 브랜치 반영 완료</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</div>
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -5215,7 +5249,7 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.25.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.26.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·
