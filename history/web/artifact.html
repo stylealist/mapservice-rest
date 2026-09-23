@@ -467,7 +467,9 @@
       <button type="button" class="vchip" role="tab" data-ver="2.28" aria-controls="pane-v2.28" title="sj-lab 마스터 README에 실서비스 접속 안내 및 엔드투엔드 파이프라인 가시화 강화"><span class="pv">v2.28</span><span class="pt">마스터 문서 강화</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.29" aria-controls="pane-v2.29" title="DevOps 인프라 대시보드(ArgoCD·Jenkins·K8s) 및 API Gateway 테스트 URL 안내 추가"><span class="pv">v2.29</span><span class="pt">인프라·테스트URL</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.30" aria-controls="pane-v2.30" title="/map/check 응답 메시지 한글화 및 서비스 상태 안내 개선"><span class="pv">v2.30</span><span class="pt">체크 한글화</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.31" aria-controls="pane-v2.31" title="SJ-LAB 마스터 플랫폼 정의 및 다중 서비스 확장 맵 개편"><span class="pv">v2.31<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">멀티 플랫폼</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.31" aria-controls="pane-v2.31" title="SJ-LAB 마스터 플랫폼 정의 및 다중 서비스 확장 맵 개편"><span class="pv">v2.31</span><span class="pt">멀티 플랫폼</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.32" aria-controls="pane-v2.32" title="sj-lab-mapservice 소개 및 연락처 종합 정보 뷰 구현"><span class="pv">v2.32</span><span class="pt">소개·연락처 뷰</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.33" aria-controls="pane-v2.33" title="설명 영상 팝업 및 기간별(1·7·30일) 다시 보지 않기 구현"><span class="pv">v2.33<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">설명 영상 팝업</span></button>
     </div>
   </div>
 </nav>
@@ -5404,6 +5406,74 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
 </section>
 </div>
 
+
+<!-- ===================== v2.32 ===================== -->
+<div class="vpane" data-ver="2.32" id="pane-v2.32" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.32</span>
+      <span>2026-09-23</span>
+      <span>sj-lab-mapservice</span>
+    </div>
+    <h1>sj-lab-mapservice 소개 및<br>연락처 종합 정보 뷰 구현</h1>
+    <p class="dek">
+      기존 템플릿 수준이던 지도 웹의 소개와 연락처 탭을 전면 개편하여, 
+      엔드투엔드 데이터 파이프라인(현장 외업 → 동기화 → PostGIS → 관제), 4대 핵심 지표, 
+      주요 기능 하이라이트, 개발자 프로필 및 공식 기술 지원 채널을 완비했습니다.
+    </p>
+  </div>
+</header>
+
+<section class="sec">
+  <div class="wrap">
+    <h2>개편 요약</h2>
+    <div class="card">
+      <ul>
+        <li><b>소개(About) 뷰 완성</b>: 시스템 개요, 4대 운영 지표(2,500+ 시설물, 30초 주기 동기화, 6단계 내업 상태 등), 4단계 아키텍처 흐름, 6대 주요 기능 하이라이트, 기술 스택 뱃지 구축</li>
+        <li><b>연락처(Contact) 뷰 일원화</b>: 리드 엔지니어 프로필(주성중), 공식 GitHub 저장소(3개 핵심 저장소), 공식 기술 지원 이메일, 플랫폼/DevOps(ArgoCD·Jenkins) 관제 링크 및 이슈 제보 가이드 제공</li>
+        <li><b>전용 모던 반응형 스타일시트(info-pages.css)</b>: 데스크톱/태블릿/모바일 최적화 그리드 및 부모 높이 연동 100% 스크롤 컨테이너 적용</li>
+        <li><b>문서 및 원격 푸시 완료</b>: <code>sj-lab-mapservice/README.md</code> 갱신 및 Git push 완료</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</div>
+
+
+<!-- ===================== v2.33 ===================== -->
+<div class="vpane" data-ver="2.33" id="pane-v2.33" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.33</span>
+      <span>2026-09-23</span>
+      <span>sj-lab-mapservice</span>
+    </div>
+    <h1>sj-lab-mapservice 프로젝트 설명 영상 팝업 및<br>기간별(1·7·30일) 다시 보지 않기 구현</h1>
+    <p class="dek">
+      웹 지도 접속 시 사용자에게 시스템 핵심 가치와 엔드투엔드 데이터 파이프라인을 안내하는 
+      인트로 영상 모달 팝업을 구현하고, "자세히 보기" 소개 탭 이동 및 1·7·30일 만료 제어를 적용했습니다.
+    </p>
+  </div>
+</header>
+
+<section class="sec">
+  <div class="wrap">
+    <h2>개편 요약</h2>
+    <div class="card">
+      <ul>
+        <li><b>인트로 설명 영상 팝업 모달</b>: 16:9 반응형 비디오 플레이어 및 미디어 미존재 시 자동 폴백 안내 카드(시스템 개요 브리핑) 지원</li>
+        <li><b>자세히 보기 연계</b>: 팝업 닫기 + 비디오 일시정지 후 상단 '소개' 탭으로 즉시 화면 전환</li>
+        <li><b>1일·7일·30일 다시 보지 않기 제어</b>: <code>localStorage</code> 타임스탬프 기반 만료 억제 로직 구현</li>
+        <li><b>소개·연락처 대화면 확장 및 스크롤바 위치 개선</b>: 스크롤 컨테이너를 100% 폭으로 확장하여 스크롤바를 브라우저 우측 끝에 밀착시키고, 콘텐츠 폭을 1480px로 확대하여 시원한 대화면 뷰포트 제공</li>
+        <li><b>신규 모듈 및 스타일</b>: <code>intro-modal.js</code>, <code>intro-modal.css</code>, <code>videos/</code> 디렉터리 분리 설계</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</div>
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -5414,7 +5484,7 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.31.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.33.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·
