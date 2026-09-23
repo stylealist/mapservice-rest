@@ -10,6 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - @docs/dev-environment.md — 로컬 저장소 경로, 포트·라우팅(8100=게이트웨이, 4000=프론트, 8761=Eureka), CORS, 워커 운영 시 주의
 - @docs/mcp.md — GitHub/DB MCP 설정과 비밀값 관리 규칙
 - `docs/k8s-secrets.md` — 운영 k8s Secret·Jenkins Credential 이름·용도·없을 때 증상, 확인·생성·변경 명령어(값은 적지 않음). 차트의 `secretKeyRef`/`pullSecret`을 바꾸면 이 문서도 같이 고칠 것
+- `docs/deploy-static-sites.md` — 허브·지도 정적 사이트 배포(웹서버 노드에 파일 복사). **두 사이트가 한 디렉터리를 공유해 허브 배포가 지도를 지울 수 있음** — 안전한 배포 스테이지, 확인(`scripts/check-prod-sites.ps1`)·복구 방법
 - `docs/analysis/sjlab-dev-db-check.md`, `docs/analysis/db-analysis.md` — 개발 DB 연결·권한·스키마 점검 및 인덱스·뷰·데이터 품질 분석
 
 공통 규칙:

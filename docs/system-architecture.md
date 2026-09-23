@@ -152,6 +152,8 @@ git push → Jenkins(빌드 → 이미지 push: sj-lab-registry.kr.ncr.ntruss.co
 - 롤아웃 중에는 게이트웨이가 잠시 **503**을 반환합니다(옛 파드 종료 ~ 새 파드의 Eureka 등록 사이). 배포 직후 503은 몇 초 뒤 다시 확인해 보세요.
 - 차트를 고쳤다면 해당 차트 디렉터리에서 `helm lint`와 `helm template`을 돌려 렌더링을 확인합니다. 로컬 저장소가 Jenkins 자동 커밋보다 뒤처져 있을 수 있으니 **수정 전 `git pull`** 하세요.
 
+**정적 프론트(허브·지도)는 이 경로가 아닙니다** — 이미지·ArgoCD를 거치지 않고 Jenkins가 웹서버 노드의 디렉터리에 **파일을 그대로 복사**합니다. 허브는 `/home/kuber-volume/sj-lab-webserver/html`, 지도는 그 **하위 폴더** `html/map`이라 **허브 배포가 상위 디렉터리를 비우면 지도가 함께 지워집니다**(반복 발생). nginx SPA 폴백 때문에 그때 `/map/`은 404가 아니라 **허브 화면을 200으로** 돌려주므로 증상이 헷갈립니다. 원인·안전한 배포 스테이지·확인/복구 방법은 `docs/deploy-static-sites.md`, 상태 확인은 `scripts/check-prod-sites.ps1`.
+
 ## 총괄 세션에서 다른 저장소를 다룰 때
 
 - `.claude/settings.local.json`의 `permissions.additionalDirectories`에 이 저장소를 제외한 10개 저장소(게이트웨이·디스커버리·scheduler·fast-api-ai·authserver·프론트 등)가 등록되어 있어, 이 세션에서 바로 읽고 수정할 수 있습니다(로컬 전용 설정). 폴더 신뢰 등록 위치는 `docs/dev-environment.md` 참고.
