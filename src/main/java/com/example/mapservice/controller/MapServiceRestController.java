@@ -20,9 +20,9 @@ public class MapServiceRestController {
         this.env = env;
     }
 
-    @GetMapping("/welcome")
+    @GetMapping(value = "/welcome", produces = "text/plain;charset=UTF-8")
     public String welcome() {
-        return "Welcome to the First service.";
+        return "[SJ-LAB] 지도 및 시설물 관리 서비스(mapservice-rest)에 정상적으로 연결되었습니다.";
     }
 
     @GetMapping("/message")
@@ -30,10 +30,10 @@ public class MapServiceRestController {
         log.info(header);
         return "Hello World in First Service";
     }
-    @GetMapping("/check")
+    @GetMapping(value = "/check", produces = "text/plain;charset=UTF-8")
     public String check(HttpServletRequest request){
         log.info("Server Port={}",request.getServerPort());
-        return String.format("Hi, there. This is a message from First Service on PORT %s"
+        return String.format("[SJ-LAB] API 게이트웨이 및 지도/시설물 백엔드 서비스(mapservice-rest)가 정상적으로 연결되어 원활히 운영 중입니다. (포트: %s)"
                 ,env.getProperty("local.server.port"));
     }
 }
