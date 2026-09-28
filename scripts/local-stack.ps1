@@ -192,9 +192,18 @@ function startStack {
   } else { Write-Host '  건너뜀: 8100 이미 사용 중' }
 
   if ($needFrontend) {
-    $python = (Get-Command python -ErrorAction Stop).Source
-    $proc = Start-Process -FilePath $python -ArgumentList '-m', 'http.server', '4000', '--bind', '127.0.0.1' -WorkingDirectory $frontendRoot `
-      -RedirectStandardOutput (Join-Path $stateDir 'frontend.log') -RedirectStandardError (Join-Path $stateDir 'frontend.err.log') -WindowStyle Hidden -PassThru
+    # Node 로 띄운다 — python -m http.server 는 Range 요청을 지원하지 않아 동영상 위치 이동(seek)이 안 된다.
+    $node = Get-Command node -ErrorAction SilentlyContinue
+    if ($node) {
+      $staticServer = Join-Path $PSScriptRoot 'static-server.js'
+      $proc = Start-Process -FilePath $node.Source -ArgumentList $staticServer, $frontendRoot, '4000', '127.0.0.1' `
+        -RedirectStandardOutput (Join-Path $stateDir 'frontend.log') -RedirectStandardError (Join-Path $stateDir 'frontend.err.log') -WindowStyle Hidden -PassThru
+    } else {
+      Write-Host '  주의: node 가 없어 python -m http.server 로 띄웁니다 — 동영상 위치 이동(seek)이 되지 않습니다.'
+      $python = (Get-Command python -ErrorAction Stop).Source
+      $proc = Start-Process -FilePath $python -ArgumentList '-m', 'http.server', '4000', '--bind', '127.0.0.1' -WorkingDirectory $frontendRoot `
+        -RedirectStandardOutput (Join-Path $stateDir 'frontend.log') -RedirectStandardError (Join-Path $stateDir 'frontend.err.log') -WindowStyle Hidden -PassThru
+    }
     savePid 'frontend' $proc.Id
     Write-Host "  기동: frontend (pid $($proc.Id))"
   } else { Write-Host '  건너뜀: 4000 이미 사용 중' }

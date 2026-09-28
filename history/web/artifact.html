@@ -385,7 +385,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.35</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.38</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -471,7 +471,10 @@
       <button type="button" class="vchip" role="tab" data-ver="2.32" aria-controls="pane-v2.32" title="sj-lab-mapservice 소개 및 연락처 종합 정보 뷰 구현"><span class="pv">v2.32</span><span class="pt">소개·연락처 뷰</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.33" aria-controls="pane-v2.33" title="설명 영상 팝업 및 기간별(1·7·30일) 다시 보지 않기 구현"><span class="pv">v2.33</span><span class="pt">설명 영상 팝업</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.34" aria-controls="pane-v2.34" title="소개 영상 제작(전체 6분 · 요약 1분)과 사이트 연결, 개인정보 블러"><span class="pv">v2.34</span><span class="pt">소개 영상 제작</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.35" aria-controls="pane-v2.35" title="소개 탭의 전체 영상 섹션 제거 — 재생 지점을 팝업 하나로 통일"><span class="pv">v2.35<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">재생 지점 통일</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.35" aria-controls="pane-v2.35" title="소개 탭의 전체 영상 섹션 제거 — 재생 지점을 팝업 하나로 통일"><span class="pv">v2.35</span><span class="pt">재생 지점 통일</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.36" aria-controls="pane-v2.36" title="소개·연락처 문구를 사람 말투로 고치고 연락처 링크 정리"><span class="pv">v2.36</span><span class="pt">문구·링크 정리</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.37" aria-controls="pane-v2.37" title="로컬 정적 서버가 Range 요청을 못 받아 영상 위치 이동이 안 되던 문제 수정"><span class="pv">v2.37</span><span class="pt">영상 위치 이동</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.38" aria-controls="pane-v2.38" title="쿠버네티스 대시보드 주소 연결과 탭 이름 변경"><span class="pv">v2.38<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">탭 이름·대시보드</span></button>
     </div>
   </div>
 </nav>
@@ -5602,6 +5605,213 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
 </div>
 
 
+<!-- ===================== v2.36 ===================== -->
+<div class="vpane" data-ver="2.36" id="pane-v2.36" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.36</span>
+      <span>2026-09-28</span>
+      <span>mapservice(소개 · 연락처)</span>
+    </div>
+    <h1>홍보 문구를 걷어내고<br>사람 말투로</h1>
+    <p class="dek">
+      소개·연락처 탭의 문구를 전부 다시 썼습니다. 고치다 보니 실제 코드와 어긋나는 숫자·기술명도
+      다섯 군데 나와 같이 바로잡았고, 연락처 링크도 정리했습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>문구 수정</dt><dd class="ok">43곳</dd></div>
+      <div><dt>저장소 링크</dt><dd>3 → 13개</dd></div>
+      <div><dt>틀린 내용</dt><dd>5건 정정</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">문구</p>
+    <h2>읽히는 문장으로</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">제목</span><span class="fv">"원스톱 공간정보(GIS) 시설물 관리 플랫폼" → <b>"현장에서 찍은 사진 한 장이 사무실의 조치 기록까지 이어지도록"</b></span></div>
+      <div class="frow"><span class="fk">섹션명</span><span class="fv">"엔드투엔드 데이터 아키텍처" → "데이터가 지나가는 길" · "주요 기능 및 엔지니어링 하이라이트" → "이런 기능들이 있습니다"</span></div>
+      <div class="frow"><span class="fk">금지</span><span class="fv">차세대 · 엔드투엔드로 완결 · 100% 동기화 · 초고속 · 〜를 완비하였으며 같은 표현</span></div>
+      <div class="frow"><span class="fk">팭업까지</span><span class="fv">인트로 팭업 안의 소개 문단과 폴백 카드도 같은 톤으로 맞춤</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">정정</p>
+    <h2>문구를 고치다 나온 틀린 내용</h2>
+    <div class="cmd">내업 처리 상태    6단계 → 5단계 (PENDING/RECEIVED/IN_PROGRESS/DONE/HOLD)
+지표 4번째       "100% OGC 표준" → "6종 함께 보는 공공데이터"
+PDF 생성        jsPDF(프론트) → OpenPDF(백엔드 QfieldReportController)
+DB 버전         PostgreSQL 15 → PostgreSQL 17 · PostGIS 3.4
+동기화 대상       infra_facilities 테이블 → qfield 스키마</div>
+
+    <h2 style="margin-top:2.25rem">연락처 링크</h2>
+    <ul class="notes">
+      <li><b>GitHub 저장소 3 → 13개</b> — GitHub API로 공개 저장소만 확인해 넣고(비공개 1개 제외), 링크마다 무슨 저장소인지 한 줄씩 붙임</li>
+      <li><b>이메일</b> — <code>contact@sj-lab.co.kr</code> 제거, 네이버 주소를 <code>stylealist@gmail.com</code> 으로 변경</li>
+      <li><b>인프라</b> — QFieldCloud와 Kubernetes(k3s) 추가. 대시보드는 NodePort로만 열려 있어 <b>없는 주소 대신 배포 매니페스트 저장소를 링크</b>하고 그 사실을 적음</li>
+      <li>저장소 카드를 한 줄 전체로 넓히고 링크만 여러 열로 배치, <code>sj-lab-k8s-man/ifests</code>처럼 글자 단위로 끊기던 것도 수정</li>
+    </ul>
+    <div class="cmd">소개 탭        지표 2,500+ · 30초 · 5단계 · 6종 · 기능 카드 6 · 기술 뱃지 18
+연락처 탭       GitHub 13 + 매니페스트 1 · 메일 1 · 인프라 4
+카드 폭         저장소 1331px(전체) · 이메일/인프라 656px · 가로 스크롤 없음
+남은 문구 검사   naver.com · contact@ · jsPDF · PostgreSQL 15 · 차세대 → 모두 제거</div>
+    <div class="grid2" style="margin-top:1.6rem">
+      <div class="cell">
+        <h3>규칙으로 남김 <span class="badge">문서</span></h3>
+        <p><code>ui-conventions.md</code>에 문구 톤(홍보 문구·번역투 금지, 숫자는 실제 값), 기술 뱃지는 실제 쓰는 것만, 저장소 목록은 수동 관리(공개만), 없는 주소 금지를 추가했습니다.</p>
+      </div>
+      <div class="cell caution">
+        <h3>유지 부담 <span class="badge skip">확인</span></h3>
+        <p>저장소 목록은 손으로 관리합니다. 새 저장소를 만들거나 이름을 바꾸면 연락처 탭도 같이 고쳐야 합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+
+<!-- ===================== v2.37 ===================== -->
+<div class="vpane" data-ver="2.37" id="pane-v2.37" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.37</span>
+      <span>2026-09-28</span>
+      <span>로컬 정적 서버</span>
+    </div>
+    <h1>영상이 안 넘어간 건<br>영상 탓이 아니었다</h1>
+    <p class="dek">
+      00:03에서 00:10으로 넘기면 제자리로 돌아오던 문제. 범인은 로컬 정적 서버였습니다 —
+      <code>python -m http.server</code>는 Range 요청을 무시하고 항상 파일 전체를 돌려줍니다.
+    </p>
+    <dl class="facts">
+      <div><dt>전</dt><dd class="bad">200 · 4,471,363B</dd></div>
+      <div><dt>후</dt><dd class="ok">206 · 101B</dd></div>
+      <div><dt>영상 파일</dt><dd>정상(faststart)</dd></div>
+      <div><dt>의존성</dt><dd>없음(Node 기본)</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">원인</p>
+    <h2>부분 응답을 못 하는 서버</h2>
+    <div class="cmd">$ curl -D - -o /dev/null -H "Range: bytes=100000-100100" \
+    http://localhost:4000/videos/intro-summary.mp4
+
+HTTP/1.0 200 OK                      &lt;- 206 이어야 함
+Server: SimpleHTTP/0.6 Python/3.12.7
+Content-Length: 4471363              &lt;- 요청한 101바이트가 아니라 파일 전체</div>
+    <ul class="notes">
+      <li>브라우저는 재생 위치를 옮길 때 그 지점의 <b>바이트 범위를 요청</b>합니다. 서버가 부분 응답을 못 하니 <code>Accept-Ranges</code>도 없고 진행 바를 끌어도 되돌아왔습니다</li>
+      <li>영상 파일은 멀정했습니다 — 두 파일 모두 atom 순서가 <code>ftyp → moov → free → mdat</code>로 <b>moov가 앞에 있어</b>(faststart) 전체를 받지 않아도 탐색할 수 있는 구조입니다</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">수정</p>
+    <h2>Range를 받는 정적 서버로 교체</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">신규</span><span class="fv"><code>scripts/static-server.js</code> — Node 기본 모듈만으로 206 응답, <code>Content-Range</code>, 잘못된 범위는 416, 문서 루트 밖 경로 차단</span></div>
+      <div class="frow"><span class="fk">교체</span><span class="fv"><code>local-stack.ps1</code>의 프론트 서버를 node로. node가 없으면 경고 한 줄 찍고 python으로 폴백</span></div>
+      <div class="frow"><span class="fk">문서</span><span class="fv"><code>dev-environment.md</code> 포트 표·주의사항, 프론트 <code>README.md</code>의 로컬 실행 절</span></div>
+    </div>
+
+    <h2 style="margin-top:2.25rem">검증</h2>
+    <div class="cmd">HTTP/1.1 206 Partial Content
+Accept-Ranges: bytes
+Content-Range: bytes 100000-100100/4471363
+Content-Length: 101
+
+요약본 초기     65.9초 · seekable 0~65.9
+40초로 이동    현재 42.5초 · 재생 계속
+10초로 되감기  현재 12.0초 · 재생 계속
+전체본 전환    370.3초 · seekable 0~370.3
+200초로 이동   현재 203.4초 · 재생 계속</div>
+    <div class="grid2" style="margin-top:1.6rem">
+      <div class="cell caution">
+        <h3>운영 <span class="badge skip">미확인</span></h3>
+        <p>운영은 nginx가 Range를 기본 지원하므로 같은 증상은 없을 것으로 보이지만, 영상이 아직 배포되지 않았으므로 배포 뒤 실제 브라우저에서 한 번 확인해야 합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+
+<!-- ===================== v2.38 ===================== -->
+<div class="vpane" data-ver="2.38" id="pane-v2.38" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.38</span>
+      <span>2026-09-28</span>
+      <span>mapservice(저장소 · 문의)</span>
+    </div>
+    <h1>연락처보다는<br>저장소 · 문의</h1>
+    <p class="dek">
+      세 번째 탭에 실제로 들어 있는 건 공개 저장소 13곳과 운영 서비스 링크입니다.
+      이름을 내용에 맞추고, 비워 두었던 쿠버네티스 대시보드 주소도 채워 넣었습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>탭 이름</dt><dd class="ok">저장소 · 문의</dd></div>
+      <div><dt>인프라 링크</dt><dd>4 → 5개</dd></div>
+      <div><dt>대시보드</dt><dd>HTTP 200 확인</dd></div>
+      <div><dt>id 변경</dt><dd>없음(표시명만)</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">링크</p>
+    <h2>비워 둔 자리를 채움</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">전</span><span class="fv">외부 주소를 못 찾아 <code>github.com/…/sj-lab-k8s-manifests</code> 를 대신 링크 — "대시보드는 클러스터 안에서만"</span></div>
+      <div class="frow"><span class="fk">후</span><span class="fv"><b>https://dashboard.sj-lab.co.kr/</b> — "Kubernetes 대시보드 · 클러스터 · 워크로드 상태 (k3s)". curl 로 200 확인 후 넣음</span></div>
+      <div class="frow"><span class="fk">설명</span><span class="fv">"ArgoCD · Jenkins · QFieldCloud는 로그인 필요" → <b>"허브를 모두 로그인 필요"</b></span></div>
+      <div class="frow"><span class="fk">매니페스트</span><span class="fv">GitHub 저장소 목록에 그대로 있어 접근 경로는 유지됩니다</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">이름</p>
+    <h2>왜 "연락처"가 아니었나</h2>
+    <ul class="notes">
+      <li>그 탭에 들어 있는 것: 만든 사람 소개 · <b>공개 저장소 13곳</b> · 이메일 · 운영 서비스 링크 5개 · 제보 안내</li>
+      <li>"연락처"는 이 중 이메일 하나만 가리켜, 처음 보는 사람은 저장소가 거기 있다는 걸 짐작하기 어렵습니다</li>
+      <li>표시 이름만 바꾸고 <code>#contact-page</code> · <code>data-page="contact"</code> 는 그대로 — JS·CSS 선택자가 그 값을 씁니다</li>
+    </ul>
+    <div class="cmd">탭 이름      지도 / 소개 / 저장소 · 문의
+인프라 링크   허브 · ArgoCD · Jenkins · QFieldCloud · dashboard.sj-lab.co.kr
+저장소 링크   13개 그대로 · 이메일 1개 · 가로 스크롤 없음 · 콘솔 오류 0건</div>
+    <div class="grid2" style="margin-top:1.6rem">
+      <div class="cell caution">
+        <h3>작업 중 실수 <span class="badge skip">발견·복구</span></h3>
+        <p>정규식이 <code>re.S</code>로 너무 넓게 잡혀 <b>저장소 목록의 매니페스트 링크까지 대시보드 주소로 바뀜습니다.</b> 링크를 하나씩 출력해 확인하다 발견해 되돌렸고, 그 전수 확인을 검증 항목으로 고정했습니다.</p>
+      </div>
+      <div class="cell">
+        <h3>규칙 교체 <span class="badge">문서</span></h3>
+        <p><code>ui-conventions.md</code>의 "대시보드는 외부에 없음" 규칙을 <b>"인프라 링크는 실제로 열리는 주소만, 넣기 전 응답 확인"</b> 으로 바꿔 적었습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -5612,7 +5822,7 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.35.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.38.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·

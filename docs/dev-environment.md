@@ -39,7 +39,7 @@
 | 랜덤(`server.port: 0`) | `sj-lab-scheduler` (context-path `/scheduler`) | 게이트웨이 `/scheduler/**`. 기동만 해도 cron 배치가 실제 DB에 적재하므로 검증용으로 함부로 띄우지 말 것. **CCTV는 기동 시 1회 즉시 수집됨**(스트리밍 URL이 주기적으로 갱신돼야 재생됨, 다음 06:00 cron까지 기다리지 않음) |
 | `8000` | `fast-api-ai` (`python main.py`, `root_path=/fast-api-ai`) | 게이트웨이 `/fast-api-ai/**`. 로컬은 Eureka에 `127.0.0.1`로 등록 |
 | 랜덤(`server.port: 0`) | `sj-lab-authserver` (context-path `/auth`) | 게이트웨이 `/auth/**`. **hub·mapservice는 로그인 게이트가 있어 이게 없으면 접속 자체가 안 됨**(로그인 페이지 503). 로그인 페이지 `http://localhost:8100/auth/login.html` |
-| `4000` | 프론트엔드 정적 서버(node, 또는 `python -m http.server 4000`) | 게이트웨이 CORS 허용 origin |
+| `4000` | 프론트엔드 정적 서버(`node scripts/static-server.js <프론트경로> 4000`) | 게이트웨이 CORS 허용 origin. **`python -m http.server`로 띄우지 말 것** — Range 요청을 지원하지 않아 소개 영상의 재생 위치를 옮길 수 없습니다(2026-09-28 확인) |
 
 **기동 순서**: Eureka(8761) → mapservice-rest → 게이트웨이(8100) → 프론트(4000). 게이트웨이·백엔드는 반드시 `local` 프로파일로 띄워야 Eureka 주소(`localhost:8761`)가 잡힙니다(게이트웨이는 프로파일이 없으면 Eureka 주소가 비어 있음). 백엔드가 막 뜬 직후에는 게이트웨이의 레지스트리 캐시가 갱신될 때까지 잠시 503이 날 수 있으니, Eureka 대시보드에서 `MAPSERVICE-REST`가 UP인지 먼저 확인합니다.
 
@@ -56,6 +56,7 @@ powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 stop      # 이
 - 로그·pid는 `.local-stack\`(git 제외)에 쌓입니다. `sj-lab-discoveryServer`는 `target/`이 git에 추적되므로 `.local-stack\build\` 복사본에서 빌드합니다.
 - scheduler는 DB 적재 때문에 이 스크립트에 넣지 않았습니다.
 - **`sj-lab-authserver`도 함께 띄웁니다**(2026-09-22 추가, mapservice-rest 다음·게이트웨이 전). 로컬 로그인은 비밀값 없이 됩니다 — JWT 서명 키는 `local` 프로파일의 로컬 전용 기본값, 일반 로그인은 입력한 QFieldCloud 계정으로 검증합니다. **체험용 계정 버튼**만 `AUTH_DEMO_USERNAME`/`AUTH_DEMO_PASSWORD`가 필요하며, 스크립트가 `.claude\settings.local.json`의 `env`에서 읽어 넣습니다(없으면 그 버튼만 503). IntelliJ로 authserver를 띄울 때는 Run Configuration의 환경변수에 같은 두 값을 넣으세요. 이미 다른 방법으로 떠 있으면(프로세스 명령줄에 `sj-lab-authserver`가 있으면) 건너뜁니다.
+- **프론트 정적 서버는 Node로 띄웁니다**(`scripts/static-server.js`, 의존성 없음). `python -m http.server`는 `Range` 헤더를 무시하고 항상 200 + 전체 파일을 돌려주기 때문에, 브라우저가 동영상의 특정 지점을 요청할 수 없어 **재생 위치 이동(seek)이 동작하지 않습니다**(소개 영상에서 00:03 → 00:10으로 못 넘어가던 원인). 이 서버는 206 Partial Content로 응답하고 `Accept-Ranges: bytes`를 붙여 운영의 nginx와 같게 동작합니다. `node`가 없으면 스크립트가 경고를 찍고 예전처럼 python으로 띄웁니다(그 경우 seek 불가).
 - **백엔드만 재기동하면 Eureka에 죽은 인스턴스가 남아** 게이트웨이 요청의 절반이 500이 됩니다(리스 만료까지 1~3분). 기다리거나, 죽은 인스턴스를 직접 해제하세요: `Invoke-WebRequest -Method Delete "http://localhost:8761/eureka/apps/MAPSERVICE-REST/<instanceId>"` (인스턴스 목록은 `http://localhost:8761/eureka/apps/MAPSERVICE-REST`, Accept: application/json).
 
 **외부 서비스**: QFieldCloud `https://qfield.sj-lab.co.kr` — 현장조사 앱이 조사 데이터와 첨부 파일(사진·음성·영상)을 올리는 곳이고, `sj-qfieldsync`가 여기서 내려받아 DB에 적재합니다. **API는 인증이 필요**하므로(`/api/v1/` → 401) 브라우저가 첨부 파일을 직접 받을 수 없어, 백엔드 중계 엔드포인트(`/map/qfield/facilities/{totalId}/media`)를 통해 재생합니다. GeoServer는 `https://geoserver.sj-lab.co.kr`.
