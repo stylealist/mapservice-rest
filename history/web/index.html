@@ -112,6 +112,53 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v2.41</span>
+        <span class="ver-title">범례 섹션 이름·순서 정리 — "공공데이터 레이어"를 맨 아래로</span>
+        <span class="date">2026-09-28</span>
+      </div>
+      <ul>
+        <li>섹션 이름 "켜 둔 레이어" → <b>"공공데이터 레이어"</b> (켜져 있을 때만 나오므로 "켜 둔"은 군더더기)</li>
+        <li>순서를 <b>시설물 상태 → 시설물 종류 → 공공데이터 레이어</b>로 변경 — 바뀌는 섹션이 가운데 있어 레이어를 콠 때마다 아래 내용이 밀리던 문제 해결</li>
+        <li>맨 아래라 가려질 수 있어, 항목이 늘어날 때만 본문을 아래로 스크롤(<code>prefers-reduced-motion</code> 이면 즉시 이동)</li>
+        <li>검증: 켜기/끄기 시 위 두 섹션 위치 고정 확인, 새 항목 자동 노출, 콘솔 오류 0건</li>
+      </ul>
+      <p><a href="../history_v2.41.md">history_v2.41.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v2.40</span>
+        <span class="ver-title">범례 디자인 정리와 머리글 드래그 이동</span>
+        <span class="date">2026-09-28</span>
+      </div>
+      <ul>
+        <li>모서리 14px · 두 겹 그림자 · 머리글 아이콘 배지 · 24×24 아이콘 칸 정렬 · 접기 애니메이션으로 범례 모양 정리</li>
+        <li><b>머리글을 잡아 끌면 범례를 옮길 수 있음</b> — 4px 미만은 접기/펼치기, 그 이상은 이동으로 구분</li>
+        <li>옮긴 자리를 <code>localStorage</code>에 저장해 다음 접속에 복원, 가장자리 밖으로는 나가지 못하게 클램</li>
+        <li>검증: 실제 마우스 이벤트로 끌어 이동·클램·제자리 클릭 접기·새로고침 복원까지 확인, 콘솔 오류 0건</li>
+        <li>범위는 먼저 확인 — 범례만 다듬고 범례를 드래그 대상으로(시설물·WFS·WMS 팝업은 이미 드래그 가능)</li>
+      </ul>
+      <p><a href="../history_v2.40.md">history_v2.40.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v2.39</span>
+        <span class="ver-title">지도 범례 추가 — 시설물은 항상, 그 밖의 레이어는 켜진 것만</span>
+        <span class="date">2026-09-28</span>
+      </div>
+      <ul>
+        <li>지도 왼쪽 아래에 범례 추가(<code>js/modules/map/map-legend.js</code> 신규) — 시설물 상태 → 켜 둔 레이어 → 시설물 종류 순</li>
+        <li><b>시설물은 항상 표시</b>(켜고 끄는 기능이 없음), WFS·WMS 레이어는 <b>켜진 것만</b> 표시</li>
+        <li>아이콘을 새로 만들지 않고 지도에 쓰는 함수에서 가져옴 — DB 아이콘을 바꾸면 범례도 자동으로 바뀜</li>
+        <li>위치 문제 두 건 해결: 헤더 때문에 화면 아래로 잘리던 것(JS 로 bottom 재계산), 오른쪽 세로 컨트롤을 덮던 것(왼쪽 아래로 이동)</li>
+        <li>검증: 레이어 켜기/끄기 · 묶어 보기 토글 · 접기 · 1280×800·1366×700 · 다른 탭에서 숨김까지 확인, 콘솔 오류 0건</li>
+      </ul>
+      <p><a href="../history_v2.39.md">history_v2.39.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v2.38</span>
         <span class="ver-title">쿠버네티스 대시보드 주소 연결, 세 번째 탭 이름을 "저장소 · 문의"로 변경</span>
         <span class="date">2026-09-28</span>

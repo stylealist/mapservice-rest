@@ -385,7 +385,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.38</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.41</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -474,7 +474,10 @@
       <button type="button" class="vchip" role="tab" data-ver="2.35" aria-controls="pane-v2.35" title="소개 탭의 전체 영상 섹션 제거 — 재생 지점을 팝업 하나로 통일"><span class="pv">v2.35</span><span class="pt">재생 지점 통일</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.36" aria-controls="pane-v2.36" title="소개·연락처 문구를 사람 말투로 고치고 연락처 링크 정리"><span class="pv">v2.36</span><span class="pt">문구·링크 정리</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.37" aria-controls="pane-v2.37" title="로컬 정적 서버가 Range 요청을 못 받아 영상 위치 이동이 안 되던 문제 수정"><span class="pv">v2.37</span><span class="pt">영상 위치 이동</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.38" aria-controls="pane-v2.38" title="쿠버네티스 대시보드 주소 연결과 탭 이름 변경"><span class="pv">v2.38<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">탭 이름·대시보드</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.38" aria-controls="pane-v2.38" title="쿠버네티스 대시보드 주소 연결과 탭 이름 변경"><span class="pv">v2.38</span><span class="pt">탭 이름·대시보드</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.39" aria-controls="pane-v2.39" title="지도 범례 추가 — 시설물은 항상, 그 밖의 레이어는 켜진 것만"><span class="pv">v2.39</span><span class="pt">지도 범례</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.40" aria-controls="pane-v2.40" title="범례 디자인 정리와 머리글 드래그 이동"><span class="pv">v2.40</span><span class="pt">범례 다듬기</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.41" aria-controls="pane-v2.41" title="범례 섹션 이름·순서 정리"><span class="pv">v2.41<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">섹션 정리</span></button>
     </div>
   </div>
 </nav>
@@ -5812,6 +5815,202 @@ Content-Length: 101
 </div>
 
 
+<!-- ===================== v2.39 ===================== -->
+<div class="vpane" data-ver="2.39" id="pane-v2.39" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.39</span>
+      <span>2026-09-28</span>
+      <span>mapservice(지도)</span>
+    </div>
+    <h1>지금 보이는 기호를<br>설명하는 범례</h1>
+    <p class="dek">
+      지도 왼쪽 아래에 범례를 넣었습니다. 시설물은 켜고 끄는 기능이 없어 <b>항상</b>,
+      공공데이터 레이어는 <b>켜진 것만</b> 나옵니다.
+    </p>
+    <dl class="facts">
+      <div><dt>시설물 상태</dt><dd class="ok">항상 4항목</dd></div>
+      <div><dt>시설물 종류</dt><dd>DB 설정 7개</dd></div>
+      <div><dt>다른 레이어</dt><dd>켜진 것만</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">구성</p>
+    <h2>세 칸, 그리고 갱신 규칙</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">시설물 상태</span><span class="fv">보수 불필요(파랑) · 보수 필요(주황) · 보수 필요·내업 완료(초록) · 겹친 핀 묶음 — <b>항상 표시</b>(묶음은 핀 묶어 보기가 켜져 있을 때)</span></div>
+      <div class="frow"><span class="fk">켜 둔 레이어</span><span class="fv">편의점 · 버스정류장 · CCTV · 약국 · 병원 · 관공서(WFS)와 WMS — <b>getVisible() 이 참인 것만</b></span></div>
+      <div class="frow"><span class="fk">시설물 종류</span><span class="fv">DB <code>map.facility_icon</code> 설정 순서 그대로 7개(기본 아이콘 포함), 2열 배치</span></div>
+      <div class="frow"><span class="fk">갱신</span><span class="fv">레이어 <code>change:visible</code> 구독 + 아이콘 설정 로드·묶어 보기 토글 이벤트. 50ms 안에 여러 번 불려도 한 번만 그림</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">설계</p>
+    <h2>아이콘을 다시 만들지 않았다</h2>
+    <ul class="notes">
+      <li>지도에 쓰는 함수를 그대로 씬다 — 시설물은 <code>buildFacilityIconUrl()</code>·<code>buildFacilityClusterIconUrl()</code>, WFS 는 스타일의 <code>ol.style.Icon#getSrc()</code></li>
+      <li>그래서 <b>DB 아이콘을 추가하거나 핀 색 규칙을 바꾸면 범례도 자동으로 따라갑니다</b>(두 곳을 따로 관리하지 않음)</li>
+      <li>각 레이어 모듈은 목록 함수 하나씩만 내준다 — <code>getFacilityLegendItems()</code> · <code>getWfsLegendItems()</code> · <code>getWmsLegendItems()</code></li>
+    </ul>
+
+    <h2 style="margin-top:2.25rem">위치를 왼쪽 아래로 옥긴 이유</h2>
+    <div class="cmd">아래 잘림      .main-content 가 헤더 높이만큼 화면 아래로 넘쳐 있음
+           -> 넘친 만큼 JS 가 재서 bottom 을 다시 계산
+버튼 가림     1280x800 · 1366x700 에서 오른쪽 세로 컨트롤(측정·로드뷰·편의시설·교통·지도캡쳐)을 덮음
+           -> 높이를 깎아도 낮은 화면에서는 부족 → 왼쪽 아래(left 348px)로 이동</div>
+    <div class="cmd" style="margin-top:1rem">접속 직후        시설물 상태 4 + 종류 7 · "켜 둔 레이어" 섹션 없음
+편의점 켜기       켜 둔 레이어: 편의점
+CCTV 추가       켜 둔 레이어: 편의점, CCTV
+편의점 끄기       켜 둔 레이어: CCTV
+묶어 보기 끄기    상태에서 "겹친 핀 묶음(개수)"만 사라짐
+접기/펼치기       localStorage 저장되고 다시 펼쳐짐
+소개 탭          지도 페이지가 숨겨져 범례도 보이지 않음</div>
+    <div class="grid2" style="margin-top:1.6rem">
+      <div class="cell caution">
+        <h3>검증 중 헛짚음 <span class="badge skip">캐시</span></h3>
+        <p>헤드리스 브라우저가 <b>예전 모듈을 캐시</b>해 범례가 비어 보였습니다(파이썬 서버 시절 캐시). 테스트 스크립트에 <code>Network.setCacheDisabled</code> 를 넣어 해결 — 코드 문제가 아니었습니다.</p>
+      </div>
+      <div class="cell">
+        <h3>기록 <span class="badge">문서</span></h3>
+        <p><code>map-architecture.md</code> 에 모듈 설명과 규칙(아이콘을 범례에서 새로 만들지 말 것, 오른쪽으로 옥기지 말 것, 섹션 순서 유지)을 남겼습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+
+<!-- ===================== v2.40 ===================== -->
+<div class="vpane" data-ver="2.40" id="pane-v2.40" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.40</span>
+      <span>2026-09-28</span>
+      <span>mapservice(범례)</span>
+    </div>
+    <h1>투박했던 범례를<br>다듬고, 끌 수 있게</h1>
+    <p class="dek">
+      모서리·그림자·아이콘 칸을 정리하고, 머리글을 잡아 끌면 범례를 원하는 자리로
+      옮길 수 있게 했습니다. 올긴 자리는 다음 접속에도 그대로입니다.
+    </p>
+    <dl class="facts">
+      <div><dt>드래그 기준</dt><dd>4px 미만은 접기</dd></div>
+      <div><dt>화면 밖</dt><dd class="ok">나가지 않음</dd></div>
+      <div><dt>위치 기억</dt><dd>localStorage</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">모양</p>
+    <h2>손본 곳</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">모서리·그림자</span><span class="fv">10px → <b>14px</b>, 단색 그림자 → 두 겹(<code>0 1px 2px</code> + <code>0 8px 24px -8px</code>)으로 떠 있는 느낌</span></div>
+      <div class="frow"><span class="fk">머리글</span><span class="fv">글자만 → <b>레이어 아이콘 배지</b> + 제목 + 꺾쇠, 호버 시 얙은 파랑</span></div>
+      <div class="frow"><span class="fk">아이콘 줄</span><span class="fv">크기가 제각각(핀 24×32, 공공데이터 32×32)이라 <b>24×24 칸</b>에 담아 정렬, 항목 호버 강조</span></div>
+      <div class="frow"><span class="fk">접기</span><span class="fv">즉시 사라짐 → <b>높이·투명도 애니메이션</b>(0.24s). <code>prefers-reduced-motion</code> 이면 끕</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">드래그</p>
+    <h2>접기 버튼이면서 손잡이</h2>
+    <ul class="notes">
+      <li>머리글 하나가 두 역할을 합니다 — 움직인 거리가 <b>4px 미만이면 접기/펼치기</b>, 그 이상이면 이동(끌고 난 직후의 click 은 한 번 무시)</li>
+      <li>옮긴 자리는 지도 컨테이너 기준 <code>{left, top}</code> 으로 <code>localStorage</code> 에 저장하고 다음 접속에 복원</li>
+      <li>가장자리 밖으로 못 나가게 막습니다 — 지도 폭과 <b>화면에 보이는 아래 끝</b>을 함께 보고(컨테이너가 헤더 높이만큼 넘쳐 있음) 창 크기가 바뀔 때도 다시 맞춤</li>
+      <li>pointer 이벤트 + <code>touch-action: none</code>, <code>pointerdown</code> 전파 차단으로 지도가 같이 끌려가지 않음</li>
+    </ul>
+    <div class="cmd">초기 위치        [348, 602] ~ [560, 984] · 저장값 없음
+420x320 끌기    [768, 282] 로 이동 · {"left":768,"top":222} 저장 · 접히지 않음
+화면 밖으로      [1220, 68] ~ [1432, 450] 에서 멈춤 — 화면 안 유지
+제자리 클릭      접힘 (드래그로 오인하지 않음)
+새로고침         옮긴 자리 그대로 복원</div>
+    <div class="grid2" style="margin-top:1.6rem">
+      <div class="cell">
+        <h3>범위 확인 <span class="badge">질문</span></h3>
+        <p>"UI"와 "팝업"이 가리킬 수 있는 것이 여럿이라 먼저 물어본 뒤 진행했습니다 — <b>범례만 다듬고 범례를 드래그 대상으로</b>. 시설물 상세·WFS·WMS 팝업은 이미 헤더 드래그가 됩니다.</p>
+      </div>
+      <div class="cell">
+        <h3>기록 <span class="badge">문서</span></h3>
+        <p><code>map-architecture.md</code> 의 범례 규격에 드래그·위치 저장·클램·pointer 처리 규칙을 더했습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+
+<!-- ===================== v2.41 ===================== -->
+<div class="vpane" data-ver="2.41" id="pane-v2.41" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.41</span>
+      <span>2026-09-28</span>
+      <span>mapservice(범례)</span>
+    </div>
+    <h1>바뀌는 섹션은<br>맨 아래로</h1>
+    <p class="dek">
+      레이어를 콠 때마다 가운데에서 내용이 밀려 내려가던 문제를 고쳐, 이름도
+      "켜 둔 레이어"에서 "공공데이터 레이어"로 바꿈습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>순서</dt><dd class="ok">바뀌는 것은 끝에</dd></div>
+      <div><dt>이름</dt><dd>공공데이터 레이어</dd></div>
+      <div><dt>새 항목</dt><dd>자동으로 보이게</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">바뀜 점</p>
+    <h2>이름과 자리</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">이름</span><span class="fv">"켜 둔 레이어" → <b>"공공데이터 레이어"</b>. 켜져 있을 때만 나오므로 "켜 둔"은 군더더기였고, 무엇을 가리키는지도 이름으로 드러나지 않았습니다</span></div>
+      <div class="frow"><span class="fk">순서</span><span class="fv">시설물 상태 → <s>켜 둔 레이어</s> → 시설물 종류 에서 <b>시설물 상태 → 시설물 종류 → 공공데이터 레이어</b> 로</span></div>
+      <div class="frow"><span class="fk">이유</span><span class="fv">앞의 둘은 항상 있는 내용, 마지막 하나만 생겼다 없어집니다. 바뀌는 것이 가운데 있으면 레이어를 콠 때마다 아래 7개 항목이 통째로 밀려 내려갑니다</span></div>
+      <div class="frow"><span class="fk">보완</span><span class="fv">맨 아래라 가려질 수 있으므로, <b>항목이 늘어날 때만</b> 본문을 아래로 스크롤(끌 때·처음 표시할 때는 가만히)</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>자리가 흔들리지 않는지</h2>
+    <div class="cmd">접속 직후      시설물 상태 → 시설물 종류 (공공데이터 레이어 섹션 없음)
+편의점 켜기     맨 아래에 "공공데이터 레이어: 편의점" 추가 · 위 두 섹션 위치 그대로
+CCTV 추가      "편의점, CCTV" · 본문이 자동으로 내려가 새 항목이 보임
+편의점 끄기     "CCTV" 만 남음
+묶어 보기 끄기  시설물 상태의 묶음 항목만 사라짐
+접기·드래그     기존과 동일</div>
+    <div class="grid2" style="margin-top:1.6rem">
+      <div class="cell">
+        <h3>규칙 교체 <span class="badge">문서</span></h3>
+        <p>v2.39 에 적어 둔 "방금 켄 레이어가 위에 보이도록 가운데에 둔다" 규칙을 <b>"바뀌는 섹션은 맨 아래"</b> 로 바꿔 <code>map-architecture.md</code> 에 다시 적었습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -5822,7 +6021,7 @@ Content-Length: 101
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.38.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.41.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·
