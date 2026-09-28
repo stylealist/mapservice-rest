@@ -385,7 +385,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.41</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.43</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -477,7 +477,9 @@
       <button type="button" class="vchip" role="tab" data-ver="2.38" aria-controls="pane-v2.38" title="쿠버네티스 대시보드 주소 연결과 탭 이름 변경"><span class="pv">v2.38</span><span class="pt">탭 이름·대시보드</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.39" aria-controls="pane-v2.39" title="지도 범례 추가 — 시설물은 항상, 그 밖의 레이어는 켜진 것만"><span class="pv">v2.39</span><span class="pt">지도 범례</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.40" aria-controls="pane-v2.40" title="범례 디자인 정리와 머리글 드래그 이동"><span class="pv">v2.40</span><span class="pt">범례 다듬기</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.41" aria-controls="pane-v2.41" title="범례 섹션 이름·순서 정리"><span class="pv">v2.41<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">섹션 정리</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.41" aria-controls="pane-v2.41" title="범례 섹션 이름·순서 정리"><span class="pv">v2.41</span><span class="pt">섹션 정리</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.42" aria-controls="pane-v2.42" title="패널 스크롤 두 줄 제거와 목록 잘림 수정"><span class="pv">v2.42</span><span class="pt">패널 스크롤</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.43" aria-controls="pane-v2.43" title="하이브리드 토글 버그 수정과 소개 탭 기능·기술 보강"><span class="pv">v2.43<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">배경지도·기술 보강</span></button>
     </div>
   </div>
 </nav>
@@ -6011,6 +6013,135 @@ CCTV 추가      "편의점, CCTV" · 본문이 자동으로 내려가 새 항�
 </div>
 
 
+<!-- ===================== v2.42 ===================== -->
+<div class="vpane" data-ver="2.42" id="pane-v2.42" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.42</span>
+      <span>2026-09-28</span>
+      <span>mapservice(왼쪽 패널)</span>
+    </div>
+    <h1>스크롤은 한 곳에서<br>끝까지 내려가게</h1>
+    <p class="dek">
+      패널 안에 스크롤바가 두 줄 생기던 것과, 끝까지 내려도 마지막 시설물이 잘려 보이던
+      문제를 같이 고쳤습니다. 둘 다 높이를 <code>calc(100vh - …)</code> 로 잡아 둔 탓이었습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>스크롤 요소</dt><dd class="ok">1개</dd></div>
+      <div><dt>패널 높이</dt><dd>100vh → 100vh-60</dd></div>
+      <div><dt>목록 높이</dt><dd>calc → flex</dd></div>
+      <div><dt>항목 248건</dt><dd class="ok">끝까지 보임</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">원인</p>
+    <h2>화면 기준 계산이 어긋난 곳</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">.layer-panel</span><span class="fv"><code>height: 100vh</code> — 지도 컨테이너가 헤더(60px) 아래에서 시작하는데 높이는 100vh 라 <b>패널이 화면 아래로 60px 넘쳐</b> 있었음 → 마지막 항목이 화면 밖에 그려짐</span></div>
+      <div class="frow"><span class="fk">.panel-content</span><span class="fv"><code>height/max-height: calc(100vh - 60px)</code> + <code>overflow-y: auto</code> — 목록 컨테이너와 <b>스크롤이 두 겹</b></span></div>
+      <div class="frow"><span class="fk">.facility-list-container</span><span class="fv"><code>max-height: calc(100vh - 320px)</code> — 위쪽 검색·필터 높이가 바뀜때(내업 상태 필터 등) 320 이 어긋나 아래가 잘림</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">수정</p>
+    <h2>세로 플렉스로 높이 물려주기</h2>
+    <div class="cmd">.layer-panel                 height: calc(100vh - 60px) + flex column
+.panel-content               flex: 1 1 auto · min-height: 0 · overflow: hidden   (스크롤 없음)
+.tab-content                 같은 방식으로 남은 높이 전달
+#facility-tab.active         flex column · overflow: hidden               (검색·필터 고정)
+.tab-pane.active (그 외)   overflow-y: auto                           (탭이 스스로 스크롤)
+.facility-list-container     flex: 1 1 auto · min-height: 0 · overflow-y: auto  (여기서만)</div>
+
+    <h2 style="margin-top:2.25rem">검증</h2>
+    <p class="dek" style="margin-bottom:1rem">패널 안에서 <b>실제로 스크롤이 생기는 요소</b>를 전부 찾아 확인했습니다(overflow-y 가 auto/scroll 이면서 내용이 넘치는 것).</p>
+    <div class="cmd">1440x1000   스크롤 요소: facility-list-container 하나 · 패널 60~1000 (잘림 없음)
+            끝까지 내리면 마지막 항목 914~975 — 화면 안·목록 안 모두 OK
+1280x800    스크롤 요소: facility-list-container 하나 · 패널 60~800
+            마지막 항목 714~775 — OK  (시설물 248건 · 콘솔 오류 0건)</div>
+    <div class="grid2" style="margin-top:1.6rem">
+      <div class="cell">
+        <h3>규칙 <span class="badge">문서</span></h3>
+        <p><code>ui-conventions.md</code> 에 "왼쪽 패널 스크롤은 시설물 목록 한 곳에서만"을 남겼습니다 — 위쪽에 <code>overflow-y</code> 를 되살리지 말 것, 목록 높이를 <code>calc(100vh - …)</code> 로 잡지 말 것.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+
+<!-- ===================== v2.43 ===================== -->
+<div class="vpane" data-ver="2.43" id="pane-v2.43" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.43</span>
+      <span>2026-09-28</span>
+      <span>mapservice(지도 · 소개)</span>
+    </div>
+    <h1>두 번 누르면 꺼지던 하이브리드,<br>빠져 있던 기술 목록</h1>
+    <p class="dek">
+      배경지도 버튼이 오버레이를 "뒤집고" 있어서 같은 버튼을 두 번 누르면 도로·지명이 사라졌습니다.
+      상태를 정해 주도록 바꾸고, 소개 탭에는 실제로 쓰고 있는 기능·기술을 모두 채워 넣었습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>반복 클릭</dt><dd class="ok">상태 유지</dd></div>
+      <div><dt>기능 카드</dt><dd>6 → 11개</dd></div>
+      <div><dt>기술 그룹</dt><dd>3 → 4개 · 뱃지 35</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">버그</p>
+    <h2>토글이 아니라 상태 지정으로</h2>
+    <div class="cmd">// 전 — 어느 버튼이든 누를 때마다 뒤집힘
+if (mapType === "satellite") toggleOverlay("hybrid");
+else if (mapType === "common") toggleOverlay("hybrid");
+
+// 후 — 위성일 때만 켜지도록 상태를 정해 준다
+window.setOverlayVisible("hybrid", mapType === "satellite");</div>
+    <ul class="notes">
+      <li><code>map-layers.js</code> 에 <b><code>setOverlayVisible(overlayType, visible)</code></b> 추가(기존 <code>toggleOverlay</code> 는 그대로 두되, 상태가 정해진 자리에는 쓰지 말 것을 주석·문서로 남김)</li>
+      <li>검증: 위성 1·2·3회 연속 → 하이브리드 계속 켜짐 / 일반 1·2회 연속 → 계속 꺼짐 / 다시 위성 → 켜짐</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">소개 탭</p>
+    <h2>쓴 것을 빠짐없이</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">기능 +5</span><span class="fv">공공데이터 레이어 6종(bbox 조회·줄 별 표본) · 로드뷰 · 지도 캐처 후 편집 · 범례 · QFieldCloud 계정 로그인</span></div>
+      <div class="frow"><span class="fk">프론트</span><span class="fv">OpenLayers · 바닐라 JS · ES 모듈 · GeoJSON·WFS · VWorld · <b>카카오맵 로드뷰 SDK</b> · hls.js · <b>Fabric.js</b> · Canvas</span></div>
+      <div class="frow"><span class="fk">백엔드</span><span class="fv">Spring Boot 3.3 · Java 17 · MyBatis · PostgreSQL 17 · PostGIS 3.4 · OpenPDF · <b>springdoc OpenAPI</b> · <b>GeoServer(WMS)</b></span></div>
+      <div class="frow"><span class="fk">현장 수집</span><span class="fv"><b>QField 포크(C++·QML) · QGIS · QFieldCloud · GPKG · Python 워커(GeoPandas·Shapely·psycopg2·SQLAlchemy) · FastAPI</b></span></div>
+      <div class="frow"><span class="fk">인프라</span><span class="fv">k3s · <b>Helm</b> · ArgoCD · Jenkins · Docker · <b>NCP 레지스트리</b> · <b>nginx</b> · Gateway · Eureka · <b>JWT 로그인 서버</b></span></div>
+    </div>
+    <div class="grid2" style="margin-top:1.6rem">
+      <div class="cell">
+        <h3>근거 확인 <span class="badge">사실</span></h3>
+        <p>추가한 항목은 저장소에서 사용을 확인한 것만 넣었습니다 — <code>pom.xml</code>(springdoc·OpenPDF), <code>qfield_data_sync.py</code>(GeoPandas·psycopg2·SQLAlchemy), <code>fabric-editor.html</code>(Fabric.js 5.3.0), <code>load-view.html</code>(카카오 SDK).</p>
+      </div>
+      <div class="cell">
+        <h3>배치 <span class="badge">CSS</span></h3>
+        <p>그룹이 4개가 되면서 <code>.tech-groups</code> 를 <code>repeat(auto-fit, minmax(280px, 1fr))</code> 로 바꿔 폭에 맞게 배치되게 했습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -6021,7 +6152,7 @@ CCTV 추가      "편의점, CCTV" · 본문이 자동으로 내려가 새 항�
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.41.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.43.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·

@@ -112,6 +112,37 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v2.43</span>
+        <span class="ver-title">배경지도 반복 클릭 시 하이브리드 버그 수정, 소개 탭 기능·기술 보강</span>
+        <span class="date">2026-09-28</span>
+      </div>
+      <ul>
+        <li>배경지도 버튼이 <code>toggleOverlay</code> 로 상태를 뒤집어 같은 버튼을 두 번 누르면 하이브리드가 꺼지던 문제 — <b><code>setOverlayVisible("hybrid", 위성인가)</code></b> 로 교체</li>
+        <li>소개 탭 기능 카드 <b>6 → 11개</b>: 공공데이터 레이어 6종 · 로드뷰 · 지도 캐처 후 편집 · 범례 · QFieldCloud 계정 로그인</li>
+        <li>기술 스택 <b>3 → 4그룹·35개</b>: 카카오맵 SDK·Fabric.js·springdoc·GeoServer·QGIS·GPKG·GeoPandas·Helm·nginx·JWT 등 누락 항목 보충</li>
+        <li>추가 항목은 저장소에서 사용을 확인한 것만 기재, <code>.tech-groups</code> 를 auto-fit 그리드로 변경</li>
+        <li>검증: 위성/일반 연속 클릭 시 레이어 가시성 유지 확인, 소개 탭 카드 11·그룹 4·뱃지 35 표출, 콘솔 오류 0건</li>
+      </ul>
+      <p><a href="../history_v2.43.md">history_v2.43.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v2.42</span>
+        <span class="ver-title">왼쪽 패널 스크롤 두 줄 제거, 목록 아래가 잘리던 문제 수정</span>
+        <span class="date">2026-09-28</span>
+      </div>
+      <ul>
+        <li><code>.panel-content</code> 의 <code>overflow-y: auto</code> 를 걷어내 <b>스크롤은 <code>.facility-list-container</code> 한 곳만</b> 남김</li>
+        <li><code>.layer-panel</code> 높이를 <code>100vh</code> → <b><code>calc(100vh - 60px)</code></b> — 지도 컨테이너가 헤더만큼 화면 아래로 넘쳐 마지막 항목이 잘리던 원인</li>
+        <li>목록 높이를 <code>calc(100vh - 320px)</code> 대신 <b>플렉스</b>로 계산 — 검색·필터 영역 높이가 바뀌어도 안 잘림</li>
+        <li>검증: 1440×1000·1280×800 모두 스크롤 요소 1개, 끝까지 내렸을 때 마지막 항목이 화면 안에 온전히 보임(248건)</li>
+      </ul>
+      <p><a href="../history_v2.42.md">history_v2.42.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v2.41</span>
         <span class="ver-title">범례 섹션 이름·순서 정리 — "공공데이터 레이어"를 맨 아래로</span>
         <span class="date">2026-09-28</span>
