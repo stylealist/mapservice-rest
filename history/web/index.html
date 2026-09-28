@@ -112,6 +112,38 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v2.35</span>
+        <span class="ver-title">소개 탭의 전체 영상 섹션 제거 — 재생 지점을 팝업 하나로 통일</span>
+        <span class="date">2026-09-28</span>
+      </div>
+      <ul>
+        <li>소개 탭의 <code>#aboutVideoSection</code>(플레이어·포스터·챕터 버튼 4개) 삭제 — 같은 탭의 <b>"프로젝트 소개 영상 보기"</b> 버튼이 같은 팝업을 열어 중복</li>
+        <li><code>intro-modal.js</code>의 챕터 시킹 바인딩과 <code>intro-modal.css</code>의 <code>.about-video-*</code> 규칙 정리(8,951B → 7,327B)</li>
+        <li>문서 3개(<code>ui-conventions.md</code>·<code>videos/README.md</code>·<code>README.md</code>)에 "플레이어를 다시 추가하지 말 것" 규칙 반영</li>
+        <li>검증: 팝업 자동재생·전체본 전환·탭 버튼 재생·다시 보지 않기 모두 정상, 콘솔 오류 0건</li>
+        <li>기록 번호 정정: 영상 작업을 덮어썼던 <code>history_v2.26.md</code>를 복원하고 해당 기록을 v2.34로 이동</li>
+      </ul>
+      <p><a href="../history_v2.35.md">history_v2.35.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v2.34</span>
+        <span class="ver-title">소개 영상 제작(전체 6분 · 요약 1분)과 사이트 연결, 개인정보 블러</span>
+        <span class="date">2026-09-28</span>
+      </div>
+      <ul>
+        <li>화면녹화 4개(QGIS 업로드 · 현장조사 앱 · 웹 내업 · 소개·연락처)를 업무 흐름 순서로 편집, <b>자막 33개 번인</b> — 전체 6분 10초</li>
+        <li>규격이 제각각(가로 2544×988·912, <b>세로 720×1760</b>)이라 1920×1080 캔버스로 정규화하고 여백은 블러 배경으로 채움</li>
+        <li><b>개인정보 블러</b> — 담당자명·전화·이메일이 보이는 100.0~104.6초 구간만 원본 좌표계에서 boxblur 처리</li>
+        <li>팝업용 <b>1분 요약본(무음)</b> 제작 — 자동재생 정책 대응. 버튼 하나로 같은 플레이어가 전체본(소리 포함)으로 전환</li>
+        <li>검증: 팝업 자동재생·전환·다시 보지 않기까지 헤드리스 브라우저로 확인</li>
+      </ul>
+      <p><a href="../history_v2.34.md">history_v2.34.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v2.33</span>
         <span class="ver-title">sj-lab-mapservice 프로젝트 설명 영상 팝업 및 기간별(1·7·30일) 다시 보지 않기 구현</span>
         <span class="date">2026-09-23</span>

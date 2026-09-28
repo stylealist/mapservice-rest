@@ -385,7 +385,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.31</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.35</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -469,7 +469,9 @@
       <button type="button" class="vchip" role="tab" data-ver="2.30" aria-controls="pane-v2.30" title="/map/check 응답 메시지 한글화 및 서비스 상태 안내 개선"><span class="pv">v2.30</span><span class="pt">체크 한글화</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.31" aria-controls="pane-v2.31" title="SJ-LAB 마스터 플랫폼 정의 및 다중 서비스 확장 맵 개편"><span class="pv">v2.31</span><span class="pt">멀티 플랫폼</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.32" aria-controls="pane-v2.32" title="sj-lab-mapservice 소개 및 연락처 종합 정보 뷰 구현"><span class="pv">v2.32</span><span class="pt">소개·연락처 뷰</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.33" aria-controls="pane-v2.33" title="설명 영상 팝업 및 기간별(1·7·30일) 다시 보지 않기 구현"><span class="pv">v2.33<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">설명 영상 팝업</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.33" aria-controls="pane-v2.33" title="설명 영상 팝업 및 기간별(1·7·30일) 다시 보지 않기 구현"><span class="pv">v2.33</span><span class="pt">설명 영상 팝업</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.34" aria-controls="pane-v2.34" title="소개 영상 제작(전체 6분 · 요약 1분)과 사이트 연결, 개인정보 블러"><span class="pv">v2.34</span><span class="pt">소개 영상 제작</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.35" aria-controls="pane-v2.35" title="소개 탭의 전체 영상 섹션 제거 — 재생 지점을 팝업 하나로 통일"><span class="pv">v2.35<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">재생 지점 통일</span></button>
     </div>
   </div>
 </nav>
@@ -5474,6 +5476,132 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
 </section>
 </div>
 
+<!-- ===================== v2.34 ===================== -->
+<div class="vpane" data-ver="2.34" id="pane-v2.34" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.34</span>
+      <span>2026-09-28</span>
+      <span>mapservice(프론트 · 영상)</span>
+    </div>
+    <h1>소개 영상 두 벌<br>요약 1분 · 전체 6분</h1>
+    <p class="dek">
+      화면녹화 4개를 업무 흐름 순서로 편집해 자막을 넣고, 접속 팝업용 요약본과 전체본으로 나눠
+      사이트에 연결했습니다. 개인정보가 보이던 구간은 블러 처리했습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>전체본</dt><dd class="ok">6분 10초</dd></div>
+      <div><dt>요약본</dt><dd>1분 05초 · 무음</dd></div>
+      <div><dt>자막</dt><dd>33개 번인</dd></div>
+      <div><dt>개인정보</dt><dd>4.6초 블러</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">편집</p>
+    <h2>규격이 제각각인 녹화본 합치기</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">정규화</span><span class="fv">2544×988 · 2544×912 가로와 <b>720×1760 세로 모바일</b>을 1920×1080 캔버스로. 여백은 같은 화면을 확대·블러해 채움</span></div>
+      <div class="frow"><span class="fk">구성</span><span class="fv">인트로 → ① QGIS→QFieldCloud → ② 현장조사 앱 → ③ 웹 내업·기능 → ④ 소개·연락처 → 아웃트로</span></div>
+      <div class="frow"><span class="fk">자막</span><span class="fv">프레임을 직접 확인해 화면과 시점을 맞춘 <b>33개</b>를 ASS로 번인, 구간 라벨 상시 표시</span></div>
+      <div class="frow"><span class="fk">요약본</span><span class="fv">핵심 장면 6개 + 카드. <b>무음으로 인코딩</b>해 브라우저 자동재생 정책을 통과</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">개인정보</p>
+    <h2>노출 구간을 찾아 가렸다</h2>
+    <div class="cmd">탐지    0.5초 간격 필름스트립으로 노출 구간을 100.0s ~ 104.6s 로 좁힘
+처리    스케일 전 원본 좌표계(720x1760)에서 하단 패널(y 1040, 720x720)에 boxblur
+        해당 시간에만 enable → 나머지 구간 화질은 그대로
+자막    "담당 부서·담당자 정보까지 현장에서 확인 (개인정보는 가림 처리)"</div>
+
+    <h2 style="margin-top:2.25rem">사이트 연결</h2>
+    <ul class="notes">
+      <li>접속하면 팝업이 <b>요약본을 음소거 자동재생</b>, 버튼 한 번으로 같은 플레이어가 <b>전체본(소리 포함)</b>으로 전환</li>
+      <li>소개 탭에도 전체 영상 섹션과 챕터 바로가기 4개를 두었지만, 바로 다음 버전(v2.35)에서 제거해 <b>재생 지점을 팝업 하나로 통일</b>했습니다</li>
+      <li>"다시 보지 않기" 1·7·30일은 기존 동작 유지, 영상 로드 실패 시 기존 안내 카드로 대체</li>
+    </ul>
+    <div class="cmd">접속 직후          팝업 열림 · intro-summary.mp4 · 음소거 자동재생 · 배지 "1분 요약"
+전체 영상 클릭      full-demo.mp4 · 음소거 해제 · 재생 · 배지 "전체 6분"
+1일 다시 보지 않기   localStorage 저장 + 팝업 닫힘
+블러 확인          해당 구간 프레임에서 개인정보 판독 불가</div>
+    <div class="grid2" style="margin-top:1.6rem">
+      <div class="cell caution">
+        <h3>용량 <span class="badge skip">확인 필요</span></h3>
+        <p>영상 2개(약 29MB)가 저장소에 들어갑니다. 더 늘어나면 외부 스토리지·CDN 또는 비공개 YouTube 임베드로 옮기는 편이 낫습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== v2.35 ===================== -->
+<div class="vpane" data-ver="2.35" id="pane-v2.35" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.35</span>
+      <span>2026-09-28</span>
+      <span>mapservice(소개 탭)</span>
+    </div>
+    <h1>영상을 틀어주는 곳은<br>팝업 하나로</h1>
+    <p class="dek">
+      소개 탭에 따로 두었던 전체 영상 섹션을 걷어냈습니다. 같은 탭 위쪽의
+      "프로젝트 소개 영상 보기" 버튼이 이미 같은 팝업을 열어 요약본→전체본을 다 보여 줍니다.
+    </p>
+    <dl class="facts">
+      <div><dt>삭제</dt><dd>섹션 1 · 플레이어 1 · 챕터 4</dd></div>
+      <div><dt>CSS</dt><dd>8,951B → 7,327B</dd></div>
+      <div><dt>중복 다운로드</dt><dd class="ok">없음</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">변경</p>
+    <h2>지운 것과 남긴 것</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">index.html</span><span class="fv"><code>#aboutVideoSection</code> 블록 삭제(플레이어·포스터·챕터 버튼 4개). 히어로 → 지표 그리드가 바로 이어짐</span></div>
+      <div class="frow"><span class="fk">intro-modal.js</span><span class="fv">챕터 시킹 바인딩 제거. 팝업의 요약↔전체 전환(<code>playFullIntroVideo</code>)은 그대로</span></div>
+      <div class="frow"><span class="fk">intro-modal.css</span><span class="fv">쓰이지 않게 된 <code>.about-video-*</code> 규칙과 전용 미디어 쿼리 삭제, 참조는 <code>?v=20260928b</code></span></div>
+      <div class="frow"><span class="fk">문서</span><span class="fv"><code>ui-conventions.md</code>·<code>videos/README.md</code>·<code>README.md</code> — "플레이어를 다시 추가하지 말 것"으로 규칙화</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>팭업은 그대로, 탭은 깔끔하게</h2>
+    <div class="cmd">접속 직후        팝업 열림 · intro-summary.mp4 · 음소거 자동재생 · 배지 "1분 요약"
+전체 영상 버튼    full-demo.mp4 · 음소거 해제 · 재생 · 배지 "전체 6분" · 버튼 숨김
+소개 탭           섹션·플레이어 없음 · 챕터 0 · 탭 안 video 0 · 지표 카드 4 유지
+탭의 영상 버튼     팝업 다시 열림 + 요약본부터 재생
+1일 숨김          localStorage 저장 + 팝업 닫힘
+콘솔 오류         없음 (node --check intro-modal.js 통과)</div>
+    <div class="grid2" style="margin-top:1.6rem">
+      <div class="cell caution">
+        <h3>기록 번호 정정 <span class="badge skip">정정</span></h3>
+        <p>v2.34의 영상 작업을 처음에 <code>history_v2.26.md</code>로 저장해 기존 v2.26(README 현행화)을 덮어썼습니다. 원본을 되돌리고 영상 기록을 v2.34로 옮겼습니다.</p>
+      </div>
+      <div class="cell">
+        <h3>남은 일 <span class="badge">확인</span></h3>
+        <p>영상 2개(약 29MB) 커밋·push 여부와, 운영 배포 뒤 실제 브라우저에서의 자동재생 확인.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -5484,7 +5612,7 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.33.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.35.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·
