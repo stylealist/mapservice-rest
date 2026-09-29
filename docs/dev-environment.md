@@ -20,6 +20,8 @@
 
 이 저장소를 제외한 10개 저장소는 `.claude/settings.local.json`의 `permissions.additionalDirectories`에 등록되어 총괄 세션에서 바로 읽고 수정할 수 있습니다. 경로가 바뀌면 그 목록도 함께 고칩니다.
 
+**로컬 clone이 없는 저장소 — `stylealist/sj-lab`**: 플랫폼 전체를 소개하는 README 한 장짜리 저장소라 로컬에 두지 않습니다. 고칠 일이 생기면 임시 디렉터리에 `git clone --depth 1` → 수정 → 커밋·push 하고 임시 디렉터리를 정리합니다(2026-09-29 개발 변경 로그 링크 추가 때 이 방식 사용). 이 README의 "1. 서비스 접속 및 실서비스 체험 안내" 표는 운영 주소 목록이므로, 주소가 늘거나 바뀌면 지도 프론트의 "저장소 · 문의" 탭과 함께 확인할 것.
+
 **폴더 신뢰(2026-09-15 등록, 2026-09-16 2곳 추가)**: 위 저장소 전부를 도구별 신뢰 목록에 미리 등록해 두었습니다. 새 저장소를 추가하면 세 곳 모두에 넣어야 워커가 신뢰 확인 창에서 멈추지 않습니다.
 - Claude Code: `~/.claude.json`의 `projects["C:/..."].hasTrustDialogAccepted: true` (Orca 등에서 `c:/...` 소문자 드라이브 키로도 따로 생기므로 둘 다 확인)
 - Antigravity CLI(agy): `~/.gemini/antigravity-cli/settings.json`의 `trustedWorkspaces` (`C:\\...` 형식)

@@ -385,7 +385,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.43</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.46</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -479,7 +479,10 @@
       <button type="button" class="vchip" role="tab" data-ver="2.40" aria-controls="pane-v2.40" title="범례 디자인 정리와 머리글 드래그 이동"><span class="pv">v2.40</span><span class="pt">범례 다듬기</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.41" aria-controls="pane-v2.41" title="범례 섹션 이름·순서 정리"><span class="pv">v2.41</span><span class="pt">섹션 정리</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.42" aria-controls="pane-v2.42" title="패널 스크롤 두 줄 제거와 목록 잘림 수정"><span class="pv">v2.42</span><span class="pt">패널 스크롤</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.43" aria-controls="pane-v2.43" title="하이브리드 토글 버그 수정과 소개 탭 기능·기술 보강"><span class="pv">v2.43<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">배경지도·기술 보강</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.43" aria-controls="pane-v2.43" title="하이브리드 토글 버그 수정과 소개 탭 기능·기술 보강"><span class="pv">v2.43</span><span class="pt">배경지도·기술 보강</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.44" aria-controls="pane-v2.44" title="인프라 링크 3개 추가(게이트웨이·Eureka·로그인)"><span class="pv">v2.44</span><span class="pt">인프라 링크</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.45" aria-controls="pane-v2.45" title="개발 변경 로그 페이지 링크를 사이트에 추가"><span class="pv">v2.45</span><span class="pt">변경 로그 링크</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.46" aria-controls="pane-v2.46" title="sj-lab README 에 개발 변경 로그 행 추가"><span class="pv">v2.46<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">README 반영</span></button>
     </div>
   </div>
 </nav>
@@ -6142,6 +6145,173 @@ window.setOverlayVisible("hybrid", mapType === "satellite");</div>
 </div>
 
 
+<!-- ===================== v2.44 ===================== -->
+<div class="vpane" data-ver="2.44" id="pane-v2.44" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.44</span>
+      <span>2026-09-28</span>
+      <span>mapservice(저장소 · 문의)</span>
+    </div>
+    <h1>돌아가는 것을<br>직접 눌러 볼 수 있게</h1>
+    <p class="dek">
+      인프라 카드에 API 게이트웨이 상태, Eureka 등록 현황, 공유 로그인 화면을 더해
+      5개 → 8개가 됐습니다. 세 주소 모두 응답을 확인하고 넣었습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>인프라 링크</dt><dd class="ok">5 → 8개</dd></div>
+      <div><dt>응답 확인</dt><dd>3개 모두 200</dd></div>
+      <div><dt>순서</dt><dd>바로 열림 → 로그인</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">추가</p>
+    <h2>넣기 전에 눌러 봤다</h2>
+    <div class="cmd">https://api.sj-lab.co.kr/map/check         200 text/plain
+  "[SJ-LAB] API 게이트웨이 및 지도/시설물 백엔드 서비스(mapservice…"
+https://eureka.sj-lab.co.kr                200 text/html   (Eureka 대시보드)
+https://api.sj-lab.co.kr/auth/login.html   200 text/html   (공유 로그인 화면)</div>
+    <ul class="notes">
+      <li><b>API 게이트웨이</b> — "지도·시설물 백엔드 상태 확인"</li>
+      <li><b>Eureka</b> — "마이크로서비스 등록 현황"</li>
+      <li><b>로그인(SSO)</b> — "허브·지도가 함께 쓰는 로그인 화면"</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">정리</p>
+    <h2>로그인 없이 열리는 것부터</h2>
+    <div class="cmd">허브 → API 게이트웨이 → Eureka → 로그인(SSO)
+  → QFieldCloud → ArgoCD → Jenkins → 쿠버네티스 대시보드</div>
+    <ul class="notes">
+      <li>카드 설명도 같은 순서로 — "허브 · API 게이트웨이 · Eureka · 로그인 화면은 바로 열리고, ArgoCD · Jenkins · QFieldCloud · 쿠버네티스 대시보드는 로그인이 필요합니다"</li>
+      <li><code>ui-conventions.md</code> 에 8개 목록과 "로그인 없이 열리는 것 먼저" 순서 규칙, "설명 문구도 같이 고칠 것"을 기록</li>
+      <li>검증: 인프라 8개 · 저장소 13개 · 메일 1개 그대로, 가로 스크롤 없음</li>
+    </ul>
+  </div>
+</section>
+</div>
+
+
+<!-- ===================== v2.45 ===================== -->
+<div class="vpane" data-ver="2.45" id="pane-v2.45" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.45</span>
+      <span>2026-09-28</span>
+      <span>mapservice(소개 · 저장소)</span>
+    </div>
+    <h1>지금 보고 계신<br>이 페이지로 오는 길</h1>
+    <p class="dek">
+      버전별 작업 기록을 모아 둔 이 페이지를 사이트 안에서 바로 열 수 있게 했습니다 —
+      소개 탭 히어로와 저장소·문의 탭 두 곳입니다.
+    </p>
+    <dl class="facts">
+      <div><dt>링크 위치</dt><dd class="ok">2곳</dd></div>
+      <div><dt>소개 탭</dt><dd>영상 버튼 옆</dd></div>
+      <div><dt>저장소 탭</dt><dd>목록 위 강조 상자</dd></div>
+      <div><dt>sj-lab README</dt><dd class="bad">확인 대기</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">배치</p>
+    <h2>코드는 GitHub, 과정은 여기</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">소개 탭</span><span class="fv">히어로의 "프로젝트 소개 영상 보기" 옆에 <b>"개발 변경 로그 보기"</b> 버튼(새 탭)</span></div>
+      <div class="frow"><span class="fk">저장소 탭</span><span class="fv">GitHub 저장소 13개 목록 <b>위</b>에 강조 상자 — "개발 변경 로그 (v1.0 ~ 현재)" + 한 줄 설명</span></div>
+      <div class="frow"><span class="fk">의도</span><span class="fv">처음 보는 사람이 "결과물은 GitHub, 만들어 온 과정은 변경 로그"로 자연스럽게 읽히게</span></div>
+      <div class="frow"><span class="fk">규칙</span><span class="fv">주소가 두 곳에 나뉘므로 <code>ui-conventions.md</code> 에 "바뀌면 둘 다 고칠 것" 기록</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>두 링크 모두 제자리에</h2>
+    <div class="cmd">소개 탭        링크 있음 · 주소 정확 · target=_blank · "개발 변경 로그 보기"
+                 영상 버튼과 같은 줄 · 밑줄 없음
+저장소·문의   강조 링크 있음 · 주소 정확 · 저장소 목록보다 위 · 저장소 13개 유지
+콘솔 오류     없음</div>
+    <div class="grid2" style="margin-top:1.6rem">
+      <div class="cell caution">
+        <h3>sj-lab README <span class="badge skip">확인 대기</span></h3>
+        <p><code>stylealist/sj-lab</code> 은 로컬에 clone 돼 있지 않고 작업 범위 표에도 없어, 원격 커밋 전에 확인을 받기로 했습니다. Live Demo 표 마지막에 "기록 · 개발 변경 로그" 한 줄을 더할 계획입니다.</p>
+      </div>
+      <div class="cell caution">
+        <h3>공개 상태 <span class="badge skip">유지 필요</span></h3>
+        <p>이 페이지는 현재 "링크가 있는 누구나" 공개 상태입니다. 사이트에서 링크하므로 비공개로 바꾸면 두 링크가 열리지 않습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+
+<!-- ===================== v2.46 ===================== -->
+<div class="vpane" data-ver="2.46" id="pane-v2.46" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.46</span>
+      <span>2026-09-29</span>
+      <span>sj-lab(README)</span>
+    </div>
+    <h1>플랫폼 대문에도<br>이 기록으로 오는 길</h1>
+    <p class="dek">
+      v2.45에서 확인을 받기로 했던 <code>stylealist/sj-lab</code> README 반영을 마무리했습니다.
+      Live Demo 표 마지막에 "개발 변경 로그" 한 줄이 들어갔습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>커밋</dt><dd class="ok">432a981..0039991</dd></div>
+      <div><dt>README</dt><dd>28,040B → 28,351B</dd></div>
+      <div><dt>링크 위치</dt><dd>총 3곳</dd></div>
+      <div><dt>로컬 clone</dt><dd>없음(임시)</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">반영</p>
+    <h2>로컬에 없는 저장소 고치기</h2>
+    <div class="cmd">git clone --depth 1 https://github.com/stylealist/sj-lab.git &lt;임시&gt;
+README.md 교체 → 커밋 → push → 임시 디렉터리 정리
+
+확인    GitHub API 로 main 의 README 를 다시 읽어 행이 들어간 것 확인
+        (raw.githubusercontent 은 CDN 캐시라 잠시 옛 내용을 돌려줌)</div>
+    <ul class="notes">
+      <li>추가한 행: <b>기록 · 개발 변경 로그 (v1.0 ~ 현재)</b> — "하네스(Harness) 엔지니어링으로 개발하며 버전마다 남긴 작업 기록"</li>
+      <li><code>dev-environment.md</code> 에 <b>로컬 clone 이 없는 저장소</b> 항목과 그 절차를 기록</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">정리</p>
+    <h2>같은 페이지를 가리키는 세 곳</h2>
+    <div class="cmd">지도 소개 탭        히어로의 "개발 변경 로그 보기" 버튼
+지도 저장소·문의   저장소 목록 위 강조 링크
+sj-lab README       Live Demo 표 "기록" 행
+
+→ 주소가 바뀜면 세 곳을 함께 고칠 것 (ui-conventions.md · dev-environment.md 에 명시)</div>
+  </div>
+</section>
+</div>
+
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -6152,7 +6322,7 @@ window.setOverlayVisible("hybrid", mapType === "satellite");</div>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.43.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.46.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·

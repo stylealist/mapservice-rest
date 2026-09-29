@@ -112,6 +112,51 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v2.46</span>
+        <span class="ver-title">sj-lab README 에 개발 변경 로그 행 추가 (v2.45 마무리)</span>
+        <span class="date">2026-09-29</span>
+      </div>
+      <ul>
+        <li>플랫폼 소개 저장소 <code>stylealist/sj-lab</code> 의 Live Demo 표에 "기록 · 개발 변경 로그 (v1.0 ~ 현재)" 행 추가</li>
+        <li>로컬 clone 이 없는 저장소라 <b>임시 clone → 수정 → push → 정리</b> 방식으로 처리(커밋 <code>432a981..0039991</code>)</li>
+        <li>GitHub API 로 main 의 README 를 다시 읽어 반영 확인(28,040B → 28,351B)</li>
+        <li><code>dev-environment.md</code> 에 해당 저장소 작업 절차와 "주소가 바뀌면 지도 프론트와 함께 확인" 기록</li>
+      </ul>
+      <p><a href="../history_v2.46.md">history_v2.46.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v2.45</span>
+        <span class="ver-title">개발 변경 로그 페이지 링크를 소개·저장소 탭에 추가</span>
+        <span class="date">2026-09-28</span>
+      </div>
+      <ul>
+        <li>소개 탭 히어로에 <b>"개발 변경 로그 보기"</b> 버튼 추가(영상 버튼 옆, 새 탭으로 열림)</li>
+        <li>저장소·문의 탭의 GitHub 카드 <b>목록 위</b>에 강조 링크 — "개발 변경 로그 (v1.0 ~ 현재)"</li>
+        <li>주소가 두 곳에 나뉘어 <code>ui-conventions.md</code>에 "바뀌면 둘 다 고칠 것" 기록, <code>README.md</code> 갱신</li>
+        <li><code>stylealist/sj-lab</code> README 반영은 로컬 clone·작업 범위 밖이라 <b>원격 커밋 전 확인 대기</b></li>
+      </ul>
+      <p><a href="../history_v2.45.md">history_v2.45.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v2.44</span>
+        <span class="ver-title">저장소·문의 탭 인프라 링크 3개 추가(게이트웨이·Eureka·로그인)</span>
+        <span class="date">2026-09-28</span>
+      </div>
+      <ul>
+        <li>API 게이트웨이(<code>/map/check</code>) · Eureka · 공유 로그인 화면을 추가해 인프라 링크 <b>5 → 8개</b></li>
+        <li>규칙대로 넣기 전에 세 주소 모두 응답 확인(모두 200)</li>
+        <li>순서를 <b>로그인 없이 열리는 것 → 로그인이 필요한 것</b>으로 재배치하고 카드 설명도 맞춤</li>
+        <li><code>ui-conventions.md</code>·<code>README.md</code> 갱신, 검증에서 저장소 13개·메일 1개 유지 확인</li>
+      </ul>
+      <p><a href="../history_v2.44.md">history_v2.44.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v2.43</span>
         <span class="ver-title">배경지도 반복 클릭 시 하이브리드 버그 수정, 소개 탭 기능·기술 보강</span>
         <span class="date">2026-09-28</span>
