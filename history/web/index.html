@@ -113,6 +113,21 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v2.58</span>
+        <span class="ver-title">활용 페이지에서 로그인 후 돌아오지 못하던 문제 수정<span class="ver-note">로그인 페이지 허용 주소 목록에 4100 추가</span></span>
+        <span class="date">2026-09-29</span>
+      </div>
+      <ul>
+        <li>로그인 화면에 "demo님, 로그인되었습니다."만 뜨고 멈추던 증상</li>
+        <li>돌아갈 주소를 미리 정해 둔 목록(토큰 유출 방지)에 새 페이지 주소가 빠져 있었음</li>
+        <li><b>운영은 영향 없음</b> — 활용 페이지가 sj-lab.co.kr 같은 도메인이라 목록을 고칠 필요가 없습니다</li>
+        <li>확인: 로그인 → 4100 복귀 → 계정 저장·API 목록 12개 표시</li>
+      </ul>
+      <p><a href="../history_v2.58.md">history_v2.58.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v2.57</span>
         <span class="ver-title">허브에서 OpenAPI 페이지로 바로 들어갈 수 있게 했습니다<span class="ver-note">카드 열기 · 게이트웨이 · 차트 · 배포 준비(4단계)</span></span>
         <span class="date">2026-09-29</span>

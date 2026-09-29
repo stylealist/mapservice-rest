@@ -388,7 +388,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.57</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.58</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -496,7 +496,8 @@
       <button type="button" class="vchip" role="tab" data-ver="2.54" aria-controls="pane-v2.54" title="공개 API 서비스 신설 — 카탈로그와 중계"><span class="pv">v2.54</span><span class="pt">공개 API</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.55" aria-controls="pane-v2.55" title="API 활용 페이지 화면 구현"><span class="pv">v2.55</span><span class="pt">활용 페이지</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.56" aria-controls="pane-v2.56" title="API 키 발급·사용량"><span class="pv">v2.56</span><span class="pt">API 키</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.57" aria-controls="pane-v2.57" title="허브 카드 열기·게이트웨이·배포 준비"><span class="pv">v2.57<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">배포 준비</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.57" aria-controls="pane-v2.57" title="허브 카드 열기·게이트웨이·배포 준비"><span class="pv">v2.57</span><span class="pt">배포 준비</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.58" aria-controls="pane-v2.58" title="로그인 후 돌아오지 못하던 문제 수정"><span class="pv">v2.58<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">로그인 복귀</span></button>
     </div>
   </div>
 </nav>
@@ -7062,6 +7063,52 @@ npm run build     성공 (bundle 161 KiB)</div>
 </div>
 
 
+<!-- ===================== v2.58 ===================== -->
+<div class="vpane" data-ver="2.58" id="pane-v2.58" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.58</span>
+      <span>2026-09-29</span>
+      <span>sj-lab-authserver</span>
+    </div>
+    <h1>로그인은 됐는데<br>돌아오지를 않았다</h1>
+    <p class="plainline">활용 페이지에서 로그인한 뒤 원래 화면으로 돌아오지 못하던 문제를 고쳤습니다</p>
+    <p class="dek">
+      로그인 화면에 "demo님, 로그인되었습니다."만 뜨고 멈춰 있었습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>원인</dt><dd class="bad">돌아갈 주소 미등록</dd></div>
+      <div><dt>고친 곳</dt><dd>허용 목록 1줄</dd></div>
+      <div><dt>운영 영향</dt><dd class="ok">없음(같은 도메인)</dd></div>
+      <div><dt>확인</dt><dd class="ok">복귀 · API 12개</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">원인</p>
+    <h2>아무 주소로나 돌려보내지 않는다</h2>
+    <p style="margin:0 0 1rem">로그인 페이지는 돌아갈 주소를 <b>미리 정해 둔 목록과 대조</b>합니다. 아무 주소로나 돌려보내면 토큰이 엉뚝한 사이트로 새기 때문입니다.</p>
+    <div class="cmd">전                        후
+  localhost:3000 (허브)      localhost:3000 (허브)
+  localhost:4000 (지도)      localhost:4000 (지도)
+                              localhost:4100 (API 활용 페이지)  ← 빠져 있었다
+  sj-lab.co.kr                sj-lab.co.kr</div>
+    <ul class="notes">
+      <li><b>운영은 고칠 것이 없습니다</b> — 활용 페이지가 <code>sj-lab.co.kr/openapi/</code> 로 같은 도메인이기 때문입니다</li>
+      <li>문서에 "새 프론트를 추가하면 이 목록도 같이 고칠 것"을 <b>증상과 함께</b> 적어 뚝같은 일을 막았습니다</li>
+    </ul>
+    <div class="cmd" style="margin-top:1.1rem">확인(브라우저)
+  로그인 안 한 채 4100 접속   →  로그인 화면으로 이동
+  체험용 계정으로 로그인        →  localhost:4100 으로 복귀
+  복귀 후                        →  계정 demo 저장, API 목록 12개 표시</div>
+  </div>
+</section>
+</div>
+
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -7072,7 +7119,7 @@ npm run build     성공 (bundle 161 KiB)</div>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.57.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.58.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·
