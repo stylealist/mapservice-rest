@@ -388,7 +388,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.58</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.59</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -497,7 +497,8 @@
       <button type="button" class="vchip" role="tab" data-ver="2.55" aria-controls="pane-v2.55" title="API 활용 페이지 화면 구현"><span class="pv">v2.55</span><span class="pt">활용 페이지</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.56" aria-controls="pane-v2.56" title="API 키 발급·사용량"><span class="pv">v2.56</span><span class="pt">API 키</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.57" aria-controls="pane-v2.57" title="허브 카드 열기·게이트웨이·배포 준비"><span class="pv">v2.57</span><span class="pt">배포 준비</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.58" aria-controls="pane-v2.58" title="로그인 후 돌아오지 못하던 문제 수정"><span class="pv">v2.58<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">로그인 복귀</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.58" aria-controls="pane-v2.58" title="로그인 후 돌아오지 못하던 문제 수정"><span class="pv">v2.58</span><span class="pt">로그인 복귀</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.59" aria-controls="pane-v2.59" title="공개 API 배포 파이프라인 정리"><span class="pv">v2.59<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">배포 잡</span></button>
     </div>
   </div>
 </nav>
@@ -7109,6 +7110,67 @@ npm run build     성공 (bundle 161 KiB)</div>
 </div>
 
 
+<!-- ===================== v2.59 ===================== -->
+<div class="vpane" data-ver="2.59" id="pane-v2.59" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.59</span>
+      <span>2026-09-30</span>
+      <span>mapservice-rest(문서)</span>
+    </div>
+    <h1>배포 잡 두 개를<br>그대로 붙여 넣게</h1>
+    <p class="plainline">공개 API 를 운영에 올리는 Jenkins 파이프라인을 정리했습니다</p>
+    <p class="dek">
+      서버(이미지)와 화면(정적 파일)은 올리는 방식이 달라 잡도 따로 둡니다.
+    </p>
+    <dl class="facts">
+      <div><dt>서버 잡</dt><dd>이미지 → 매니페스트 → ArgoCD</dd></div>
+      <div><dt>화면 잡</dt><dd>빌드 → 노드에 복사</dd></div>
+      <div><dt>마지막 단계</dt><dd class="ok">둘 다 확인</dd></div>
+      <div><dt>새 비밀값</dt><dd class="ok">없음</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">잡 두 개</p>
+    <h2>서버와 화면은 올리는 길이 다르다</h2>
+    <div class="cmd">sj-lab-openapi (서버)
+  jar 빌드 → 이미지 push → 매니페스트 image.tag 커밋 → ArgoCD 동기화
+  확인: https://api.sj-lab.co.kr/open-api/catalog 에 카탈로그가 오는지
+
+sj-lab-openapi-web (화면)
+  npm build → 웹서버 노드 스테이징 → 폴더 바꿔치기
+  확인: https://sj-lab.co.kr/openapi/ 에 활용 페이지가 뜨는지</div>
+    <ul class="notes">
+      <li>서버 잡은 지도·로그인 서버와 <b>같은 방식</b>입니다 — 쓰던 자격 증명을 그대로 씨서 새로 만들 것이 없습니다</li>
+      <li>둘 다 <b>마지막에 확인 단계</b>를 넣었습니다 — 배포가 반쪽만 됐거나 다른 잡이 파일을 지웠으면 잡이 빨간색으로 떨어집니다</li>
+      <li>여러 서비스가 동시에 매니페스트를 올리면 한 잡이 <code>cannot lock ref</code> 로 실패합니다 — 그 잡만 재실행하면 됩니다</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">남은 일</p>
+    <h2>여기부터는 사람이 합니다</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>순서</th><th>할 일</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Jenkins 에 잡 2개 등록(저장소의 groovy 파일을 붙여넣기)</td></tr>
+          <tr><td>2</td><td>ArgoCD 에 sj-lab-openapi Application 등록</td></tr>
+          <tr><td>3</td><td>api 스키마 표 2개 생성 + Secret 등록 → 차트에서 키 기능 켜기</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+</div>
+
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -7119,7 +7181,7 @@ npm run build     성공 (bundle 161 KiB)</div>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.58.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.59.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·

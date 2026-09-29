@@ -113,6 +113,21 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v2.59</span>
+        <span class="ver-title">공개 API 배포용 Jenkins 잡 두 개를 정리했습니다<span class="ver-note">서버(이미지) · 화면(정적 파일)</span></span>
+        <span class="date">2026-09-30</span>
+      </div>
+      <ul>
+        <li>서버: jar 빌드 → 이미지 push → 매니페스트 <code>image.tag</code> 커밋 → ArgoCD 동기화</li>
+        <li>화면: 빌드 → 웹서버 스테이징 → 폴더 바꿔치기(배포 중 빈 화면 없음)</li>
+        <li>둘 다 마지막에 확인 단계 — 반쪽만 배포되거나 파일이 지워졌으면 잡이 실패로 드러납니다</li>
+        <li>새로 만들 비밀값은 없습니다 — 기존 Jenkins 자격 증명을 그대로 씁니다</li>
+      </ul>
+      <p><a href="../history_v2.59.md">history_v2.59.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v2.58</span>
         <span class="ver-title">활용 페이지에서 로그인 후 돌아오지 못하던 문제 수정<span class="ver-note">로그인 페이지 허용 주소 목록에 4100 추가</span></span>
         <span class="date">2026-09-29</span>
