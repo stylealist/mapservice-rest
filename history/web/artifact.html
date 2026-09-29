@@ -375,6 +375,8 @@
   .colophon { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--line-soft); font-size: .82rem; color: var(--faint); }
 
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+    .plainline{font-size:1.05rem;line-height:1.55;color:#cfe0ff;background:rgba(59,130,246,.10);border-left:3px solid #3b82f6;border-radius:0 8px 8px 0;padding:.65rem .9rem;margin:0 0 .9rem;max-width:60ch;word-break:keep-all}
+    .plainline b{color:#fff}
 </style>
 
 <nav class="vswitch" aria-label="작업 버전">
@@ -385,7 +387,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.47</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.52</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -483,7 +485,12 @@
       <button type="button" class="vchip" role="tab" data-ver="2.44" aria-controls="pane-v2.44" title="인프라 링크 3개 추가(게이트웨이·Eureka·로그인)"><span class="pv">v2.44</span><span class="pt">인프라 링크</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.45" aria-controls="pane-v2.45" title="개발 변경 로그 페이지 링크를 사이트에 추가"><span class="pv">v2.45</span><span class="pt">변경 로그 링크</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.46" aria-controls="pane-v2.46" title="sj-lab README 에 개발 변경 로그 행 추가"><span class="pv">v2.46</span><span class="pt">README 반영</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.47" aria-controls="pane-v2.47" title="전체화면 자막 잘림과 화면·자막 불일치 수정"><span class="pv">v2.47<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">영상 자막 수정</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.47" aria-controls="pane-v2.47" title="전체화면 자막 잘림과 화면·자막 불일치 수정"><span class="pv">v2.47</span><span class="pt">영상 자막 수정</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.48" aria-controls="pane-v2.48" title="QGIS 구간 자막 싱크와 문구 4건 수정"><span class="pv">v2.48</span><span class="pt">자막 싱크·문구</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.49" aria-controls="pane-v2.49" title="작업 로그 한 줄 요약 · 소개 탭 사진 · 문구 정리"><span class="pv">v2.49</span><span class="pt">쉽게 · 사진 추가</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.50" aria-controls="pane-v2.50" title="소개 탭 파이프라인 사진을 내용에 맞게 교체"><span class="pv">v2.50</span><span class="pt">사진 교체</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.51" aria-controls="pane-v2.51" title="파이프라인 사진 제거와 문구 정리"><span class="pv">v2.51</span><span class="pt">글로만 정리</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.52" aria-controls="pane-v2.52" title="헤더를 접으면 시설물 패널 아래가 비던 문제 수정"><span class="pv">v2.52<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">패널 높이</span></button>
     </div>
   </div>
 </nav>
@@ -498,6 +505,7 @@
       <span>mapservice-rest · sj-lab-mapservice</span>
     </div>
     <h1>왼쪽 패널 시설물 탭<br>QField 시설물 데이터 표출</h1>
+    <p class="plainline">왼쪽 패널에 시설물 목록을 만들었습니다</p>
     <p class="dek">
       지도 왼쪽 레이어 패널에 시설물 탭을 만들고, 시·도 → 시·군·구 → 읍·면·동으로 좁혀가며
       QField 시설물을 목록과 지도에 함께 표출합니다. 목록 항목을 고르면 지도가 이동하고 팝업으로 상세를 보여줍니다.
@@ -619,6 +627,7 @@
       <span>6개 저장소</span>
     </div>
     <h1>sj-lab 멀티 저장소<br>총괄 환경 구성</h1>
+    <p class="plainline">여러 저장소를 한 곳에서 작업할 수 있게 환경을 잡았습니다</p>
     <p class="dek">
       DB부터 프론트까지 한 세션에서 바라보고 작업하기 위해, 저장소 여섯 곳을 하나의 허브에 연결하고
       전체 구조·API 계약·기동 방법을 문서로 고정했습니다.
@@ -701,6 +710,7 @@
       <span>mapservice-rest</span>
     </div>
     <h1>작업 규칙과<br>history 체계 도입</h1>
+    <p class="plainline">작업 기록을 남기는 방식을 정했습니다</p>
     <p class="dek">
       세션이 지켜야 할 규칙을 CLAUDE.md에 고정하고, 파일을 바꾼 작업마다 버전 문서를 남기는 체계를 만들었습니다.
     </p>
@@ -768,6 +778,7 @@
       <span>mapservice-rest</span>
     </div>
     <h1>변경 이력<br>공유 웹사이트 발행</h1>
+    <p class="plainline">작업 기록을 공유할 수 있는 웹페이지를 만들었습니다</p>
     <p class="dek">
       로컬 파일로만 보던 변경 이력을 링크로 공유할 수 있는 페이지로 발행했습니다.
       버전 전환기로 v1.0부터 현재까지를 한 페이지에서 넘겨 봅니다.
@@ -845,6 +856,7 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
       <span>sj-lab-mapservice</span>
     </div>
     <h1>시설물 지도 아이콘을<br>시설 종류에 맞게 교체</h1>
+    <p class="plainline">시설물 종류에 맞는 지도 아이콘으로 바꿨습니다</p>
     <p class="dek">
       시설물 레이어가 편의시설(상점) 아이콘을 그대로 쓰고 있어 지도에서 시설물이 상점처럼 보였습니다.
       시설물명으로 종류를 판별해 주차장·충전소·강당·식당·체육시설에 맞는 아이콘을 그리도록 바꿨습니다.
@@ -951,6 +963,7 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
       <span>sj-lab-mapservice</span>
     </div>
     <h1>시설물 상세 팝업을<br>아이콘 체계에 맞게 정리</h1>
+    <p class="plainline">상세 창을 새 아이콘 체계에 맞게 정리했습니다</p>
     <p class="dek">
       지도 핀은 종류별 아이콘으로 바뀌었는데 팝업은 그대로였습니다.
       팝업 헤더에 같은 아이콘과 종류·상태 배지를 넣고, 중복 필드를 정리했으며, 팝업이 화면 위로 잘리던 문제도 고쳤습니다.
@@ -1041,6 +1054,7 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
       <span>mapservice-rest · sj-lab-mapservice</span>
     </div>
     <h1>시설물 아이콘 설정을<br>DB(qfield 스키마)로 이관</h1>
+    <p class="plainline">지도 아이콘을 코드가 아니라 데이터베이스에서 관리하게 바꿨습니다</p>
     <p class="dek">
       아이콘 종류·키워드·색·글리프가 프론트 코드에 박혀 있어, 종류를 하나 늘리려면 배포가 필요했습니다.
       설정을 <code>qfield.facility_icon</code> 테이블로 옮겨 DB 행만 고치면 바뀌도록 했습니다.
@@ -1139,6 +1153,7 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
       <span>DB sjlab · qfield 스키마</span>
     </div>
     <h1>아이콘 설정 테이블<br>생성 스크립트 실행</h1>
+    <p class="plainline">지도 아이콘 설정을 담는 표를 데이터베이스에 만들었습니다</p>
     <p class="dek">
       v1.6에서 만들어 둔 <code>db/qfield_facility_icon.sql</code>을 사용자 지시로 실행했습니다.
       이제 지도 아이콘이 코드가 아니라 DB 설정으로 그려집니다.
@@ -1227,6 +1242,7 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
       <span>mapservice-rest · k8s-manifests · hub</span>
     </div>
     <h1>작업 저장소 2곳 추가와<br>배포 경로 문서화</h1>
+    <p class="plainline">작업하는 저장소 두 곳을 추가하고 배포 방법을 적어 뒀습니다</p>
     <p class="dek">
       쿠버네티스 매니페스트 저장소와 사이트 첫 화면 저장소를 총괄 세션에 연결하고,
       실서버 반영 과정에서 드러난 배포 경로와 함정을 문서로 남겼습니다.
@@ -1326,6 +1342,7 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
       <span>sj-lab-mapservice · sj-lab-hub</span>
     </div>
     <h1>서비스 이름을<br>"SJ 시설물 관리"로 변경</h1>
+    <p class="plainline">서비스 이름을 'SJ 시설물 관리'로 정했습니다</p>
     <p class="dek">
       지도 플랫폼으로 시작했지만 지금은 기관 시설물을 관리하는 서비스입니다.
       화면에 보이는 이름을 기능에 맞게 바꾸고, 첫 화면 허브의 카드도 함께 맞췄습니다.
@@ -1404,6 +1421,7 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
       <span>sj-lab-mapservice · mapservice-rest</span>
     </div>
     <h1>헤더·시설물 패널 UI 개선과<br>목록 검색 추가</h1>
+    <p class="plainline">상단 바와 목록 화면을 정리하고 검색을 넣었습니다</p>
     <p class="dek">
       목록이 "강당 / 강당 / 강당"처럼 이름만 반복돼 구분이 되지 않았고, 2,474건을 스크롤로만 찾아야 했습니다.
       헤더·패널 제목·목록을 함께 정리하고 검색을 넣었습니다.
@@ -1498,6 +1516,7 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
       <span>sj-lab-mapservice</span>
     </div>
     <h1>시·도 기본값을<br>서울특별시로 설정</h1>
+    <p class="plainline">처음 들어오면 서울이 먼저 보이게 했습니다</p>
     <p class="dek">
       첫 화면이 전국 2,474건으로 시작해 무엇부터 봐야 할지 알기 어려웠습니다.
       서울(247건)로 시작하도록 바꾸면서, 전체를 받았다가 다시 받는 중복 요청도 없앴습니다.
@@ -1568,6 +1587,7 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
       <span>sj-lab-mapservice</span>
     </div>
     <h1>상세 팝업에서<br>내부 관리용 항목 숨김</h1>
+    <p class="plainline">내부 관리용 항목은 상세 창에서 감췄습니다</p>
     <p class="dek">
       팝업이 정의된 필드 뒤에 나머지 응답 프로퍼티를 키 이름 그대로 이어 붙이는 구조라,
       행정구역 코드와 QField 원본 테이블 식별자가 그대로 보이고 있었습니다.
@@ -1640,6 +1660,7 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
       <span>sj-lab-mapservice</span>
     </div>
     <h1>상세 팝업 일시 표기를<br>YYYY-MM-DD HH:MM 으로 정리</h1>
+    <p class="plainline">날짜 · 시간 표시 형식을 통일했습니다</p>
     <p class="dek">
       등록·수정일시가 <code>2026-08-28T05:12:42.635018</code> 처럼 DB 원본 그대로 보여 읽기 어려웠습니다.
     </p>
@@ -1695,6 +1716,7 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
       <span>sj-lab-mapservice</span>
     </div>
     <h1>팝업을 열 때 화면이<br>위로 밀리던 오류 수정</h1>
+    <p class="plainline">상세 창을 열면 화면이 위로 밀리던 문제를 고쳤습니다</p>
     <p class="dek">
       지도에서 시설물 핀을 클릭하면 본문 영역이 22px 위로 밀려 상단이 잘리고, 팝업 자체도 화면 밖으로 삐져나왔습니다.
       원인은 서로 다른 두 가지였습니다.
@@ -1773,6 +1795,7 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
       <span>sj-lab-mapservice</span>
     </div>
     <h1>상세 팝업에서<br>행정구역 이름 숨김</h1>
+    <p class="plainline">상세 창에서 중복되는 지역 이름을 감췄습니다</p>
     <p class="dek">
       시도·시군구·읍면동은 주소로 이미 알 수 있고, 왼쪽 패널의 선택과 목록의 소속 줄에서도 확인됩니다.
       팝업에서는 빼서 핵심 정보만 남겼습니다.
@@ -1830,6 +1853,7 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
       <span>mapservice-rest · sj-qfieldsync · infra-manage-app</span>
     </div>
     <h1>QField 앱·동기화 저장소 추가와<br>시설물 데이터 출처 확정</h1>
+    <p class="plainline">현장 앱과 동기화 프로그램을 작업 목록에 넣고 데이터 출처를 정리했습니다</p>
     <p class="dek">
       현장조사 앱과 동기화 배치를 총괄 세션에 연결하면서,
       그동안 "출처 미확인"으로 남아 있던 시설물 데이터의 흐름이 끝까지 이어졌습니다.
@@ -1909,6 +1933,7 @@ https://claude.ai/code/artifact/8a2480c7-2c72-4649-831a-417981b9f4a1 이런식�
       <span>sj-lab-mapservice</span>
     </div>
     <h1>상세 팝업에<br>점검 결과·사진·음성·영상 추가</h1>
+    <p class="plainline">상세 창에 점검 결과와 사진 · 음성 · 영상 항목을 넣었습니다</p>
     <p class="dek">
       현장에서 입력한 점검 결과와 촬영물이 팝업에 보이지 않았습니다.
       상태·보수 여부·특이사항·점검 일시를 한글로 표시하고, 사진은 한 줄에서 넘겨 보며 음성·영상은 바로 재생합니다.
@@ -2006,6 +2031,7 @@ repair_required_yn : Y=정비요청, N=양호</div>
       <span>sj-lab-mapservice</span>
     </div>
     <h1>값이 없는 항목도<br>&ldquo;-&rdquo; 로 표시</h1>
+    <p class="plainline">값이 없는 항목도 빈칸 대신 '-'로 보이게 했습니다</p>
     <p class="dek">
       값이 없으면 행 자체를 만들지 않아, 어떤 정보가 비어 있는지 알 수 없었습니다.
       이제 항목은 그대로 두고 값만 <code>-</code> 로 보여줍니다.
@@ -2063,6 +2089,7 @@ repair_required_yn : Y=정비요청, N=양호</div>
       <span>sj-lab-mapservice</span>
     </div>
     <h1>음성 관련 항목<br>라벨 정리</h1>
+    <p class="plainline">음성 관련 항목 이름을 알아보기 쉽게 바꿨습니다</p>
     <p class="dek">
       "현장 특이사항 텍스트화"라는 설명식 이름을, 무엇이 담기는지 바로 읽히는 이름으로 바꿨습니다.
     </p>
@@ -2114,6 +2141,7 @@ repair_required_yn : Y=정비요청, N=양호</div>
       <span>mapservice-rest · sj-lab-mapservice</span>
     </div>
     <h1>시설물 사진·음성·영상<br>실제 재생</h1>
+    <p class="plainline">현장에서 찍은 사진 · 음성 · 영상을 웹에서 바로 재생합니다</p>
     <p class="dek">
       팝업에 자리는 있었지만 실제로는 재생되지 않았습니다.
       원인을 세 가지로 좁힌 뒤, 백엔드가 QFieldCloud에서 받아 전달하는 중계 방식으로 해결했습니다.
@@ -2210,6 +2238,7 @@ repair_required_yn : Y=정비요청, N=양호</div>
       <span>sj-lab-mapservice</span>
     </div>
     <h1>오디오 플레이어가<br>보이지 않던 오류 수정</h1>
+    <p class="plainline">음성 재생 버튼이 보이지 않던 문제를 고쳤습니다</p>
     <p class="dek">
       "현장 특이사항"의 오디오를 들을 수 없다는 제보. 측정해 보니 재생은 되고 있었고, <b>플레이어 폭이 0</b>이라 화면에 나타나지 않던 것이었습니다.
     </p>
@@ -2271,6 +2300,7 @@ repair_required_yn : Y=정비요청, N=양호</div>
       <span>sj-qfieldsync · sj-lab-mapservice</span>
     </div>
     <h1>음성 변환(STT)이 DB에<br>들어오지 않던 원인 정리</h1>
+    <p class="plainline">음성을 글로 바꾼 내용이 저장되지 않던 원인을 찾았습니다</p>
     <p class="dek">
       변환 코드 자체는 멀쩡했습니다. 팝업이 다른 필드를 보고 있었고, 실패 원인은 로그에 남지 않고 있었습니다.
     </p>
@@ -2385,6 +2415,7 @@ except Exception:
       <span>sj-qfieldsync</span>
     </div>
     <h1>운영 워커가 음성 텍스트를<br>빈 값으로 덮어쓰던 문제 수정</h1>
+    <p class="plainline">음성을 글로 바꾼 내용이 지워지던 문제를 고쳤습니다</p>
     <p class="dek">
       로컬 워커가 변환해 넣은 텍스트가 실서버를 켜면 사라졌습니다.
       두 워커가 같은 DB를 보고 있었고, UPSERT가 변환 결과까지 무조건 덮어쓰고 있었습니다.
@@ -2473,6 +2504,7 @@ except Exception:
       <span>sj-lab-mapservice</span>
     </div>
     <h1>팝업을 핀 오른쪽으로 옮기고<br>헤더 드래그 이동 추가</h1>
+    <p class="plainline">상세 창을 핀 오른쪽에 띄우고 끌어서 옮길 수 있게 했습니다</p>
     <p class="dek">
       시설물을 누르면 팝업이 핀 위쪽 절반을 덮고 있었습니다. 간격을 핀 높이에 맞추고,
       헤더를 잡아 원하는 자리로 옮길 수 있게 했습니다.
@@ -2548,6 +2580,7 @@ except Exception:
       <span>sj-lab-k8s-manifests</span>
     </div>
     <h1>실서버 첨부 재생 503 해결<br>QFieldCloud 계정 Secret 주입</h1>
+    <p class="plainline">실제 서비스에서 첨부 파일이 열리지 않던 문제를 고쳤습니다</p>
     <p class="dek">
       로컬에서는 사진·음성·영상이 재생되는데 실서버만 503이었습니다.
       계정이 설정되지 않았을 때 백엔드가 의도적으로 내는 코드였고, 운영 차트에 주입 설정이 없었습니다.
@@ -2623,6 +2656,7 @@ kubectl rollout restart deployment/mapservice-rest -n sj-lab</div>
       <span>mapservice-rest · sj-lab-mapservice</span>
     </div>
     <h1>WFS 레이어 최초 로딩 속도 개선<br>화면 영역만 받아오기</h1>
+    <p class="plainline">지도 레이어가 처음 뜨는 속도를 크게 줄였습니다</p>
     <p class="dek">
       화면에 200개를 그리려고 전국 20만 개를 받고 있었습니다.
       백엔드에 화면 영역(bbox) 조회를 넣고 응답 압축을 켜서, 6개 레이어 합계 203MB·29.4초가 718KB·1.2초가 됐습니다.
@@ -2751,6 +2785,7 @@ GET /map/busStop-info                                        (bbox 없으면 기
       <span>mapservice-rest</span>
     </div>
     <h1>로컬에서도 첨부가 재생되도록<br>QField 계정 주입 자동화</h1>
+    <p class="plainline">내 컴퓨터에서도 사진 · 음성 · 영상이 재생되게 했습니다</p>
     <p class="dek">
       운영은 v1.25 Secret 생성으로 정상화됐는데, 로컬은 계정을 넣을 방법이 "띄우기 전에 셸에서 직접" 뿐이었습니다.
       그래서 <code>local-stack.ps1 start</code> 만 하면 첨부만 503 이었습니다.
@@ -2842,6 +2877,7 @@ GET /map/busStop-info                                        (bbox 없으면 기
       <span>sj-lab-mapservice</span>
     </div>
     <h1>시설물을 선택하면<br>보이는 지도의 가운데로 이동</h1>
+    <p class="plainline">시설물을 고르면 화면 가운데로 옮겨 줍니다</p>
     <p class="dek">
       지도에서 핀을 클릭하면 지도가 움직이지 않았고, 목록 클릭으로 이동할 때도 좌측 패널이 지도 위에 겹쳐 있어
       눈으로는 가운데가 아니었습니다. 화면에 실제로 보이는 영역을 기준으로 맞췄습니다.
@@ -2928,6 +2964,7 @@ GET /map/busStop-info                                        (bbox 없으면 기
       <span>sj-lab-mapservice</span>
     </div>
     <h1>상세 팝업은<br>지도 이동이 끝난 뒤 한 번에</h1>
+    <p class="plainline">시설물을 고르면 지도가 멈춘 뒤 상세 창이 한 번에 뜨게 했습니다</p>
     <p class="dek">
       시설물을 고르면 팝업이 핀 아래에 먼저 보였다가, 지도가 가운데로 이동한 뒤 위로 자리를 옮겨 어지러웠습니다.
       이동과 상세 로딩이 모두 끝날 때까지 숨겨 두고 최종 위치에서 한 번만 나타나게 했습니다.
@@ -3007,6 +3044,7 @@ GET /map/busStop-info                                        (bbox 없으면 기
       <span>sj-lab-mapservice · mapservice-rest</span>
     </div>
     <h1>브라우저 탭 아이콘을<br>메인 로고로</h1>
+    <p class="plainline">웹사이트 탭 아이콘을 로고로 바꿨습니다</p>
     <p class="dek">
       탭 아이콘이 빈 값(<code>data:,</code>)으로 지정돼 있어 아무것도 보이지 않았습니다.
       헤더 로고 배지와 같은 모양의 SVG 아이콘을 만들어 메인 화면과 팝업 페이지에 넣고, v1.28부터 쌓인 변경을 커밋·푸시했습니다.
@@ -3080,6 +3118,7 @@ GET /map/busStop-info                                        (bbox 없으면 기
       <span>sj-lab-hub</span>
     </div>
     <h1>허브 탭 아이콘을<br>허브에 맞는 모양으로 새로</h1>
+    <p class="plainline">허브 화면의 탭 아이콘을 새로 만들었습니다</p>
     <p class="dek">
       지도 서비스와 같은 집 모양을 쓰지 않고, 네 기능 카드로 들어가는 허브의 역할을 담아
       카드 색 네 개를 2×2 타일로 배치한 아이콘을 만들었습니다.
@@ -3149,6 +3188,7 @@ GET /map/busStop-info                                        (bbox 없으면 기
       <span>mapservice-rest</span>
     </div>
     <h1>작업 로그 탭이<br>15개를 넘던 오류 수정</h1>
+    <p class="plainline">작업 기록 페이지의 탭이 너무 많아지던 문제를 고쳤습니다</p>
     <p class="dek">
       새 버전을 두 번째 탭 끝에 계속 붙이면서 한 탭에 17개가 들어가 있었습니다.
       탭을 나누고, 앞으로는 페이지가 스스로 15개씩 묶도록 했습니다.
@@ -3210,6 +3250,7 @@ GET /map/busStop-info                                        (bbox 없으면 기
       <span>sj-lab-mapservice</span>
     </div>
     <h1>시설물 검색에<br>보수 필요 여부 필터</h1>
+    <p class="plainline">손봐야 하는 시설물만 골라 볼 수 있는 필터를 넣었습니다</p>
     <p class="dek">
       검색창 아래에 전체(기본) · 보수 필요 · 보수 불필요 버튼을 두고, 고른 조건으로 목록과 지도 핀을 함께 거릅니다.
       버튼 옆에 건수를 보여 어느 쪽에 결과가 있는지 바로 알 수 있습니다.
@@ -3292,6 +3333,7 @@ GET /map/busStop-info                                        (bbox 없으면 기
       <span>sj-lab-mapservice</span>
     </div>
     <h1>상세 팝업에<br>"보수 불필요"도 표시</h1>
+    <p class="plainline">손볼 필요가 없는 시설물도 상태를 표시합니다</p>
     <p class="dek">
       팝업 헤더에는 보수 필요일 때만 배지가 붙고, 본문 행은 빈 값이면 <code>-</code>, 값이 있어도 정비요청/양호라 필터와 용어가 달랐습니다.
       목록 필터와 같은 기준으로 둘 다 항상 보수 필요 / 보수 불필요를 보여줍니다.
@@ -3349,6 +3391,7 @@ Test     Y                    시설물 · 보수 필요(주황)    보수 필�
       <span>sj-lab-mapservice</span>
     </div>
     <h1>레이어 상세 팝업도<br>헤더를 끌어 이동</h1>
+    <p class="plainline">편의점 · 병원 같은 작은 창도 잡아서 옮길 수 있게 했습니다</p>
     <p class="dek">
       헤더 드래그 이동은 시설물 팝업에만 있었습니다. 공용 모듈로 빼서 편의점·약국·병원·관공서·버스·CCTV 팝업과
       WMS 팝업까지 같은 방식으로 옮길 수 있게 했습니다.
@@ -3428,6 +3471,7 @@ WMS         showWmsPopup 직접 호출    move   −140, +70   −100, 0        
       <span>mapservice-rest · sj-lab-mapservice</span>
     </div>
     <h1>시설물 내업 처리<br>DB · 쓰기 API · 작성 화면</h1>
+    <p class="plainline">사무실에서 처리한 내용을 기록하는 기능을 새로 만들었습니다</p>
     <p class="dek">
       외업 앱에서 보수 요청한 시설물을 사무실에서 확인하고 처리 정보를 작성하는 흐름을 처음부터 만들었습니다.
       이 저장소의 첫 쓰기 API이며, Claude·Antigravity 워커가 백엔드와 프론트를 나눠 맡고 최종 검증은 Claude가 했습니다.
@@ -3519,6 +3563,7 @@ qfield.facility_icon        → map.facility_icon   (아이콘 7건 복구, 이�
       <span>sj-lab-mapservice</span>
     </div>
     <h1>내업 영역을<br>팝업 하단에 고정</h1>
+    <p class="plainline">상세 창에서 처리 내용이 아래에 항상 보이도록 바꿨습니다</p>
     <p class="dek">
       내업 처리 영역이 상세 본문 맨 아래에 있어 끝까지 스크롤하기 전에는 기능이 있는지도 몰랐습니다.
       헤더가 위에 고정돼 있듯, 내업 영역을 팝업 하단에 고정했습니다.
@@ -3593,6 +3638,7 @@ qfield.facility_icon        → map.facility_icon   (아이콘 7건 복구, 이�
       <span>mapservice-rest / sj-lab-apigateway / 전체 저장소</span>
     </div>
     <h1>내업 사진 첨부 API 신설 및<br>멀티 에이전트 가이드 정비</h1>
+    <p class="plainline">처리 전 · 후 사진을 올릴 수 있게 했습니다</p>
     <p class="dek">
       시설물 내업 기록에 현장 전·후 사진을 첨부할 수 있는 API를 백엔드에 신설하고,
       게이트웨이 설정 및 10개 저장소의 멀티 에이전트(Antigravity/Orca) 가이드를 공통 정비했습니다.
@@ -3656,6 +3702,7 @@ qfield.facility_icon        → map.facility_icon   (아이콘 7건 복구, 이�
       <span>mapservice-rest · sj-lab-mapservice</span>
     </div>
     <h1>내업 처리 보고서를<br>PDF로 내려받기</h1>
+    <p class="plainline">처리 내용을 PDF 보고서로 내려받을 수 있게 했습니다</p>
     <p class="dek">
       내업 상태가 완료·보류인 기록에 대해 시설물 정보와 처리 내용, 외업 현장 사진과 처리 전·후 사진을 담은
       보고서 PDF를 서버에서 만들어 내려받습니다.
@@ -3740,6 +3787,7 @@ qfield.facility_icon        → map.facility_icon   (아이콘 7건 복구, 이�
       <span>mapservice-rest</span>
     </div>
     <h1>보고서 처리 전·후 사진<br>2장 제한 수정</h1>
+    <p class="plainline">보고서에 사진이 두 장만 나오던 문제를 고쳤습니다</p>
     <p class="dek">
       내업 처리 보고서 PDF의 처리 전·후(BEFORE/AFTER) 사진이 구분당 최대 5장까지 업로드되는데도
       2장까지만 출력되던 문제를 고쳤습니다.
@@ -3809,6 +3857,7 @@ qfield.facility_icon        → map.facility_icon   (아이콘 7건 복구, 이�
       <span>sj-lab-scheduler · mapservice-rest</span>
     </div>
     <h1>scheduler 기동 시<br>CCTV 데이터 1회 자동 수집</h1>
+    <p class="plainline">CCTV 영상이 끊기지 않도록 시작할 때 주소를 한 번 받아 옵니다</p>
     <p class="dek">
       CCTV 스트리밍 URL은 주기적으로 갱신돼야 재생됩니다. 기존에는 매일 06:00 cron으로만 수집해,
       그 시각 이후 서버를 새로 띄우면 다음 날 06:00까지 CCTV 레이어가 오래된 상태로 남았습니다.
@@ -3876,6 +3925,7 @@ ITS CCTV affected total               11,195건 적재</div>
       <span>sj-lab-authserver(신규) · sj-lab-apigateway · mapservice-rest</span>
     </div>
     <h1>QFieldCloud 계정으로 로그인하는<br>sj-lab 인증 서버 신설</h1>
+    <p class="plainline">따로 가입하지 않고 현장 앱 계정으로 로그인하는 서버를 만들었습니다</p>
     <p class="dek">
       별도 회원 DB 없이 기존 QFieldCloud 계정으로 로그인하는 서버를 새로 만들고, GitHub 저장소를 발행하고,
       게이트웨이에 라우팅을 연결했습니다.
@@ -3982,6 +4032,7 @@ Eureka 등록                          SJ-LAB-AUTHSERVER(1) 확인</div>
       <span>sj-lab-authserver · sj-lab-hub · sj-lab-mapservice</span>
     </div>
     <h1>hub·mapservice 로그인 게이트<br>+ SSO</h1>
+    <p class="plainline">허브와 지도에 로그인 화면을 붙였습니다 — 한 번 로그인하면 둘 다 열립니다</p>
     <p class="dek">
       한 곳에서 로그인하면 다른 sj-lab 사이트도 로그인 상태로 쓸 수 있도록,
       리다이렉트 기반 중앙 로그인 페이지 방식의 SSO를 붙였습니다.
@@ -4096,6 +4147,7 @@ npm start (hub) / 로컬 스택(mapservice)  curl로 200 + 스크립트 포함 �
       <span>sj-lab-authserver · sj-lab-k8s-manifests · 클러스터</span>
     </div>
     <h1>sj-lab-authserver<br>운영 배포 완료</h1>
+    <p class="plainline">로그인 서버를 실제 서비스에 올렸습니다</p>
     <p class="dek">
       로컬까지 완성했던 로그인 서버를 실제 운영 클러스터에 올렸습니다.
       Jenkins 파이프라인은 사용자가 직접 작성하고, Helm 차트는 이 세션에서 만들고,
@@ -4153,6 +4205,7 @@ GET https://api.sj-lab.co.kr/auth/session (쿠키 없음)    401 (예상된 정�
       <span>authserver · hub · mapservice · k8s-manifests</span>
     </div>
     <h1>로그인 게이트 후속<br>로그아웃·접속자 표시·체험용 계정</h1>
+    <p class="plainline">로그아웃 버튼과 접속자 이름, 체험용 계정을 정리했습니다</p>
     <p class="dek">
       운영에 로그인 게이트를 다시 붙인 뒤 나온 문제들을 정리하고, 포트폴리오 방문자용 체험 계정과
       운영 Secret 정리 문서를 추가했습니다.
@@ -4214,6 +4267,7 @@ helm lint · template            통과</div>
       <span>mapservice(프론트)</span>
     </div>
     <h1>내업을 완료해도<br>보수 필요 목록에 남는 이유</h1>
+    <p class="plainline">처리가 끝난 시설물을 목록에 어떻게 보여 줄지 정하고 필터를 보완했습니다</p>
     <p class="dek">
       "내업 완료 건을 보수 불필요로 바꿀까, 탭을 따로 둘까"를 데이터 출처부터 따져 본 뒤,
       두 축 구조는 그대로 두고 &ldquo;아직 처리할 건&rdquo;만 보는 수단을 더했습니다.
@@ -4283,6 +4337,7 @@ POST /auth/login/demo                          200</div>
       <span>mapservice-rest(문서·스크립트) · Jenkins</span>
     </div>
     <h1>배포하면 지도가<br>사라지던 이유</h1>
+    <p class="plainline">배포하면 지도 화면이 사라지던 문제의 원인을 찾았습니다</p>
     <p class="dek">
       지도는 허브 디렉터리의 <b>하위 폴더</b>에 놓여 있어, 허브 배포가 상위 디렉터리를 비울 때 함께 지워졌습니다.
       게다가 nginx 폴백이 그 사실을 404 대신 허브 화면 200으로 감추고 있었습니다.
@@ -4355,6 +4410,7 @@ Server 헤더                     nginx/1.24.0 (Ubuntu) ≠ 차트의 nginx:late
       <span>Jenkins 파이프라인(문서)</span>
     </div>
     <h1>배포 잡을<br>고쳐야 멈춘다</h1>
+    <p class="plainline">배포 설정을 새로 써서 지도가 지워지지 않게 했습니다</p>
     <p class="dek">
       지도를 지우는 주체는 허브 배포 잡이라, 저장소 코드로는 막을 수 없습니다.
       두 잡의 전체 교체본을 만들어 저장소에 넣었습니다.
@@ -4436,6 +4492,7 @@ scripts/check-prod-sites.ps1                     로컬에서 두 사이트 동�
       <span>Jenkins 파이프라인(문서)</span>
     </div>
     <h1>범인은 <code>rm -rf</code>가<br>아니라 전송 옵션이었다</h1>
+    <p class="plainline">배포할 때 지도가 지워지던 진짜 원인을 찾아 고쳤습니다</p>
     <p class="dek">
       실제 허브 파이프라인을 받아 확인하니, 지도를 지운 것은 삭제 명령이 아니라
       <b><code>cleanRemote: true</code></b> 였습니다. 대상이 최종 웹 디렉터리라 하위 <code>map/</code>이 매번 비워졌습니다.
@@ -4510,6 +4567,7 @@ cleanRemote: true      ← 전송 전에 이 디렉터리를 통째로 비움</d
       <span>Jenkins 파이프라인(문서)</span>
     </div>
     <h1>되돌릴 수 있게<br>원본부터 남긴다</h1>
+    <p class="plainline">배포 설정을 고치기 전에 원본을 따로 보관했습니다</p>
     <p class="dek">
       Jenkins 잡 스크립트는 덮어쓰면 복구할 방법이 없습니다.
       교체본을 넣기 전에 수정 전 원본 두 개를 저장소에 백업했습니다.
@@ -4582,6 +4640,7 @@ cleanRemote: true      ← 전송 전에 이 디렉터리를 통째로 비움</d
       <span>mapservice(프론트)</span>
     </div>
     <h1>겹친 핀을<br>개수로 묶어 보기</h1>
+    <p class="plainline">핀이 많을 때 가까운 것끼리 묶어 개수로 보여 줍니다</p>
     <p class="dek">
       전국 조회 시 2,400여 개의 핀이 겹쳐 개수를 가늠할 수 없었습니다.
       가까운 핀을 하나로 묶어 숫자로 보여주고, 누르면 그 범위로 확대합니다.
@@ -4647,6 +4706,7 @@ cleanRemote: true      ← 전송 전에 이 디렉터리를 통째로 비움</d
       <span>mapservice(프론트)</span>
     </div>
     <h1>시설물은<br>언제나 맨 위에</h1>
+    <p class="plainline">시설물 핀이 항상 맨 위에 보이도록 했습니다</p>
     <p class="dek">
       시설물 관리가 이 서비스의 주 기능인데, 레이어 순서가 다른 레이어와 10 차이밖에 나지 않아
       새 레이어 하나면 핀이 가려질 수 있는 구조였습니다.
@@ -4701,6 +4761,7 @@ zIndex 9000 추가  시설물이 자동으로 9010 으로 상승 → 최상단 �
       <span>mapservice(프론트)</span>
     </div>
     <h1>zIndex 문제가<br>아니었다</h1>
+    <p class="plainline">시설물 핀이 다른 아이콘에 가려지던 문제를 고쳤습니다</p>
     <p class="dek">
       시설물 레이어를 1500까지 올렸는데도 편의점 아이콘이 위에 있었습니다.
       OpenLayers 는 declutter 레이어의 심볼을 <b>모든 레이어를 그린 뒤 따로</b> 그리기 때문입니다.
@@ -4763,6 +4824,7 @@ for (let i = declutterLayers.length - 1; i >= 0; --i) declutterLayers[i].renderD
       <span>mapservice(프론트)</span>
     </div>
     <h1>같은 자리 묶음은<br>부채꼴로 펼친다</h1>
+    <p class="plainline">같은 자리에 겹친 핀을 부채꼴로 펼쳐 하나씩 고를 수 있게 했습니다</p>
     <p class="dek">
       한 건물에 여러 시설물이 있으면 좌표가 완전히 같아, 최대 배율까지 확대해도 묶음이 풀리지 않았습니다.
       그 경우 확대 대신 핀을 펼쳐 하나씩 고를 수 있게 했습니다.
@@ -4824,6 +4886,7 @@ for (let i = declutterLayers.length - 1; i >= 0; --i) declutterLayers[i].renderD
       <span>mapservice(프론트)</span>
     </div>
     <h1>누르지 않아도<br>확대하면 펼쳐진다</h1>
+    <p class="plainline">겹친 핀을 클릭이 아니라 확대할 때 펼치도록 바꿨습니다</p>
     <p class="dek">
       겹친 시설물을 펼치는 방식을 클릭에서 <b>배율</b>로 옮겼습니다.
       배율 16 이상이면 저절로 펼쳐지고, 축소하면 다시 접힙니다.
@@ -4890,6 +4953,7 @@ node --check     통과</div>
       <span>mapservice(프론트)</span>
     </div>
     <h1>묶음이 사라지고<br>핀만 흩어진다</h1>
+    <p class="plainline">겹친 핀이 확대하면 자연스럽게 흩어지도록 다듬었습니다</p>
     <p class="dek">
       점선으로 잇는 대신 개수 배지를 지우고 핀만 남겼습니다.
       기준 배율도 더 깊게 잡아, 건물 하나가 화면을 채울 때 흩어집니다.
@@ -4968,6 +5032,7 @@ node --check     통과</div>
       <span>mapservice(프론트)</span>
     </div>
     <h1>몇 미터 차이가<br>만든 사각지대</h1>
+    <p class="plainline">아무리 확대해도 풀리지 않던 핀 묶음이 풀리게 했습니다</p>
     <p class="dek">
       자동 펼침 조건이 “좌표가 완전히 같을 때”로 좁아서, 몇 미터씩 떨어졌지만 계속 묶이던
       시설물은 최대 배율에서도 풀리지 않았습니다.
@@ -5027,6 +5092,7 @@ node --check  통과</div>
       <span>mapservice(프론트)</span>
     </div>
     <h1>지도에서 허브로<br>돌아가는 길</h1>
+    <p class="plainline">지도에서 허브 화면으로 돌아가는 버튼을 만들었습니다</p>
     <p class="dek">
       허브에서 지도로 들어오는 경로는 있었지만 되돌아갈 방법이 없었습니다.
       헤더에 허브 링크를 넣었습니다.
@@ -5068,6 +5134,7 @@ node --check  통과</div>
       <span>mapservice(프론트)</span>
     </div>
     <h1>로고를 누르면<br>404가 났다</h1>
+    <p class="plainline">로고를 누르면 오류 화면이 뜨던 문제를 고쳤습니다</p>
     <p class="dek">
       로고 클릭이 <code>origin + "/map"</code> 으로 통째 이동하고 있었습니다.
       운영에만 있는 경로라 로컬에서는 404, 게다가 새로고침이라 지도 상태도 날아갔습니다.
@@ -5114,6 +5181,7 @@ window.location.href = homeUrl;
       <span>mapservice(프론트)</span>
     </div>
     <h1>404는 고쳤는데<br>이번엔 무반응</h1>
+    <p class="plainline">로고를 눌러도 아무 반응이 없던 문제를 고쳤습니다</p>
     <p class="dek">
       로고 클릭을 페이지 전환으로 바꿨더니, 이미 지도 화면일 때는 전환할 것이 없어
       아무 일도 일어나지 않았습니다. 첫 화면으로 되돌아가는 동작을 더했습니다.
@@ -5175,6 +5243,7 @@ window.location.href = homeUrl;
       <span>mapservice(프론트)</span>
     </div>
     <h1>로고는 사이트를<br>다시 불러온다</h1>
+    <p class="plainline">로고를 누르면 지도 화면을 처음부터 다시 불러오게 했습니다</p>
     <p class="dek">
       404 → 무반응 → 화면 복귀를 거쳐, 로고 클릭은 “지도 사이트를 통째로 다시 불러오기”로 확정했습니다.
       경로는 현재 문서가 있는 디렉터리 기준이라 운영·로컬 모두 맞습니다.
@@ -5238,6 +5307,7 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
       <span>전체 11개 저장소</span>
     </div>
     <h1>전체 저장소 README 현행화 및<br>CLAUDE.md 유지 규칙 추가</h1>
+    <p class="plainline">모든 저장소의 설명 문서를 현재 상태에 맞게 손봤습니다</p>
     <p class="dek">
       11개 저장소의 README.md를 현재 MSA·GIS 아키텍처 현실에 맞게 전면 작성·보강하고,
       향후 코드 수정 시 README를 즉시 동시 갱신하도록 모든 CLAUDE.md에 규칙을 확립했습니다.
@@ -5271,6 +5341,7 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
       <span>전체 12개 저장소</span>
     </div>
     <h1>전체 저장소 README.md<br>엔지니어링 및 업무 프로세스 중심 전면 개편</h1>
+    <p class="plainline">저장소 설명 문서를 업무 흐름 중심으로 다시 썼습니다</p>
     <p class="dek">
       11개 개별 저장소 README.md에서 보여주기식 어투를 완전히 제거하고 시스템 역할, 기술 스택, 업무/데이터 파이프라인 중심의 전문 엔지니어링 문서로 전환했습니다.
       아울러 통합 마스터 저장소(sj-lab) README.md를 전체 아키텍처 다이어그램과 서브 프로젝트 매핑 맵으로 전면 개편했습니다.
@@ -5303,6 +5374,7 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
       <span>sj-lab (마스터)</span>
     </div>
     <h1>sj-lab 마스터 README 강화<br>실서비스 접속 안내 및 엔드투엔드 파이프라인 가시화</h1>
+    <p class="plainline">플랫폼 소개 문서에 접속 방법과 전체 흐름을 보강했습니다</p>
     <p class="dek">
       플랫폼 마스터 README 최상단에 실제 웹사이트(허브·지도·게이트웨이) 접속 링크와 원클릭 체험 안내를 전진 배치하고,
       핵심 프론트 서비스(sj-lab-hub, sj-lab-mapservice)의 상세 화면 기능 명세와 선명한 엔드투엔드 파이프라인 시나리오를 보강했습니다.
@@ -5335,6 +5407,7 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
       <span>sj-lab · apigateway · mapservice</span>
     </div>
     <h1>DevOps 인프라 대시보드 및<br>API Gateway 테스트 URL 안내 추가</h1>
+    <p class="plainline">배포 · 서버 관리 도구 주소를 문서에 정리했습니다</p>
     <p class="dek">
       마스터 저장소(sj-lab)에 ArgoCD, Jenkins, Kubernetes Dashboard 등 클러스터 운영 도구 주소를 명시하고,
       게이트웨이 루트(404) 대신 즉시 정상 연결을 확인할 수 있는 API 게이트웨이 테스트 URL(/map/check) 안내를 추가했습니다.
@@ -5367,6 +5440,7 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
       <span>mapservice-rest</span>
     </div>
     <h1>/map/check 헬스체크 응답 한글화<br>정상 연결 및 운영 상태 안내 메시지 개선</h1>
+    <p class="plainline">서버 상태 확인 주소를 누르면 한글 안내가 나오게 했습니다</p>
     <p class="dek">
       게이트웨이 연동 검증용 /map/check 엔드포인트의 기본 영문 메시지를 한글 상태 문구로 변경하여,
       API 게이트웨이 및 지도/시설물 백엔드 서비스의 정상 연결 및 운영 상태를 직관적으로 전달하도록 개선했습니다.
@@ -5399,6 +5473,7 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
       <span>sj-lab (마스터)</span>
     </div>
     <h1>SJ-LAB 마스터 플랫폼 정의 및<br>다중 서비스 확장 아키텍처 개편</h1>
+    <p class="plainline">여러 서비스를 함께 담는 플랫폼으로 소개 글을 정리했습니다</p>
     <p class="dek">
       SJ-LAB을 단일 시설물 관리용이 아닌 Kubernetes & MSA 기반의 다중 서비스 클라우드 웹 플랫폼으로 재정립하고,
       중앙 허브(sj-lab-hub)와 연계된 4대 서비스 맵(2D GIS, 3D 시뮬레이션, AI 실험실, OpenAPI)을 체계화했습니다.
@@ -5431,6 +5506,7 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
       <span>sj-lab-mapservice</span>
     </div>
     <h1>sj-lab-mapservice 소개 및<br>연락처 종합 정보 뷰 구현</h1>
+    <p class="plainline">소개 · 연락처 화면을 새로 만들었습니다</p>
     <p class="dek">
       기존 템플릿 수준이던 지도 웹의 소개와 연락처 탭을 전면 개편하여, 
       엔드투엔드 데이터 파이프라인(현장 외업 → 동기화 → PostGIS → 관제), 4대 핵심 지표, 
@@ -5465,6 +5541,7 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
       <span>sj-lab-mapservice</span>
     </div>
     <h1>sj-lab-mapservice 프로젝트 설명 영상 팝업 및<br>기간별(1·7·30일) 다시 보지 않기 구현</h1>
+    <p class="plainline">사이트에 들어오면 소개 영상 팝업이 뜨고, 다시 보지 않기를 고를 수 있습니다</p>
     <p class="dek">
       웹 지도 접속 시 사용자에게 시스템 핵심 가치와 엔드투엔드 데이터 파이프라인을 안내하는 
       인트로 영상 모달 팝업을 구현하고, "자세히 보기" 소개 탭 이동 및 1·7·30일 만료 제어를 적용했습니다.
@@ -5498,6 +5575,7 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
       <span>mapservice(프론트 · 영상)</span>
     </div>
     <h1>소개 영상 두 벌<br>요약 1분 · 전체 6분</h1>
+    <p class="plainline">소개 영상을 만들었습니다 — 전체 6분, 요약 1분</p>
     <p class="dek">
       화면녹화 4개를 업무 흐름 순서로 편집해 자막을 넣고, 접속 팝업용 요약본과 전체본으로 나눠
       사이트에 연결했습니다. 개인정보가 보이던 구간은 블러 처리했습니다.
@@ -5563,6 +5641,7 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
       <span>mapservice(소개 탭)</span>
     </div>
     <h1>영상을 틀어주는 곳은<br>팝업 하나로</h1>
+    <p class="plainline">소개 탭의 영상 자리를 없애고 팝업 한 곳에서만 보게 했습니다</p>
     <p class="dek">
       소개 탭에 따로 두었던 전체 영상 섹션을 걷어냈습니다. 같은 탭 위쪽의
       "프로젝트 소개 영상 보기" 버튼이 이미 같은 팝업을 열어 요약본→전체본을 다 보여 줍니다.
@@ -5624,6 +5703,7 @@ node --check                  ui.js · map.js · map-core.js 통과</div>
       <span>mapservice(소개 · 연락처)</span>
     </div>
     <h1>홍보 문구를 걷어내고<br>사람 말투로</h1>
+    <p class="plainline">소개 · 연락처 글을 사람이 말하듯 쉽게 고치고 링크를 정리했습니다</p>
     <p class="dek">
       소개·연락처 탭의 문구를 전부 다시 썼습니다. 고치다 보니 실제 코드와 어긋나는 숫자·기술명도
       다섯 군데 나와 같이 바로잡았고, 연락처 링크도 정리했습니다.
@@ -5696,6 +5776,7 @@ DB 버전         PostgreSQL 15 → PostgreSQL 17 · PostGIS 3.4
       <span>로컬 정적 서버</span>
     </div>
     <h1>영상이 안 넘어간 건<br>영상 탓이 아니었다</h1>
+    <p class="plainline">영상 재생 위치를 앞뒤로 옮길 수 없던 문제를 고쳤습니다</p>
     <p class="dek">
       00:03에서 00:10으로 넘기면 제자리로 돌아오던 문제. 범인은 로컬 정적 서버였습니다 —
       <code>python -m http.server</code>는 Range 요청을 무시하고 항상 파일 전체를 돌려줍니다.
@@ -5768,6 +5849,7 @@ Content-Length: 101
       <span>mapservice(저장소 · 문의)</span>
     </div>
     <h1>연락처보다는<br>저장소 · 문의</h1>
+    <p class="plainline">쿠버네티스 대시보드 주소를 연결하고 탭 이름을 '저장소 · 문의'로 바꿨습니다</p>
     <p class="dek">
       세 번째 탭에 실제로 들어 있는 건 공개 저장소 13곳과 운영 서비스 링크입니다.
       이름을 내용에 맞추고, 비워 두었던 쿠버네티스 대시보드 주소도 채워 넣었습니다.
@@ -5831,6 +5913,7 @@ Content-Length: 101
       <span>mapservice(지도)</span>
     </div>
     <h1>지금 보이는 기호를<br>설명하는 범례</h1>
+    <p class="plainline">지도에 범례를 넣었습니다 — 핀 색과 아이콘 뜻을 바로 볼 수 있습니다</p>
     <p class="dek">
       지도 왼쪽 아래에 범례를 넣었습니다. 시설물은 켜고 끄는 기능이 없어 <b>항상</b>,
       공공데이터 레이어는 <b>켜진 것만</b> 나옵니다.
@@ -5904,6 +5987,7 @@ CCTV 추가       켜 둔 레이어: 편의점, CCTV
       <span>mapservice(범례)</span>
     </div>
     <h1>투박했던 범례를<br>다듬고, 끌 수 있게</h1>
+    <p class="plainline">범례 모양을 다듬고, 원하는 자리로 끌어 옮길 수 있게 했습니다</p>
     <p class="dek">
       모서리·그림자·아이콘 칸을 정리하고, 머리글을 잡아 끌면 범례를 원하는 자리로
       옮길 수 있게 했습니다. 올긴 자리는 다음 접속에도 그대로입니다.
@@ -5970,6 +6054,7 @@ CCTV 추가       켜 둔 레이어: 편의점, CCTV
       <span>mapservice(범례)</span>
     </div>
     <h1>바뀌는 섹션은<br>맨 아래로</h1>
+    <p class="plainline">범례에서 켠 레이어 목록을 맨 아래로 옮기고 이름을 쉽게 바꿨습니다</p>
     <p class="dek">
       레이어를 콠 때마다 가운데에서 내용이 밀려 내려가던 문제를 고쳐, 이름도
       "켜 둔 레이어"에서 "공공데이터 레이어"로 바꿈습니다.
@@ -6027,6 +6112,7 @@ CCTV 추가      "편의점, CCTV" · 본문이 자동으로 내려가 새 항�
       <span>mapservice(왼쪽 패널)</span>
     </div>
     <h1>스크롤은 한 곳에서<br>끝까지 내려가게</h1>
+    <p class="plainline">시설물 목록에 스크롤이 두 줄 생기고 끝이 잘리던 문제를 고쳤습니다</p>
     <p class="dek">
       패널 안에 스크롤바가 두 줄 생기던 것과, 끝까지 내려도 마지막 시설물이 잘려 보이던
       문제를 같이 고쳤습니다. 둘 다 높이를 <code>calc(100vh - …)</code> 로 잡아 둔 탓이었습니다.
@@ -6090,6 +6176,7 @@ CCTV 추가      "편의점, CCTV" · 본문이 자동으로 내려가 새 항�
       <span>mapservice(지도 · 소개)</span>
     </div>
     <h1>두 번 누르면 꺼지던 하이브리드,<br>빠져 있던 기술 목록</h1>
+    <p class="plainline">배경지도 버튼을 두 번 누르면 지명이 사라지던 문제를 고쳤습니다</p>
     <p class="dek">
       배경지도 버튼이 오버레이를 "뒤집고" 있어서 같은 버튼을 두 번 누르면 도로·지명이 사라졌습니다.
       상태를 정해 주도록 바꾸고, 소개 탭에는 실제로 쓰고 있는 기능·기술을 모두 채워 넣었습니다.
@@ -6156,6 +6243,7 @@ window.setOverlayVisible("hybrid", mapType === "satellite");</div>
       <span>mapservice(저장소 · 문의)</span>
     </div>
     <h1>돌아가는 것을<br>직접 눌러 볼 수 있게</h1>
+    <p class="plainline">서비스가 돌아가는 곳(게이트웨이 · 서버 목록 · 로그인) 링크를 추가했습니다</p>
     <p class="dek">
       인프라 카드에 API 게이트웨이 상태, Eureka 등록 현황, 공유 로그인 화면을 더해
       5개 → 8개가 됐습니다. 세 주소 모두 응답을 확인하고 넣었습니다.
@@ -6211,6 +6299,7 @@ https://api.sj-lab.co.kr/auth/login.html   200 text/html   (공유 로그인 화
       <span>mapservice(소개 · 저장소)</span>
     </div>
     <h1>지금 보고 계신<br>이 페이지로 오는 길</h1>
+    <p class="plainline">사이트에서 이 작업 기록으로 바로 갈 수 있게 링크를 붙였습니다</p>
     <p class="dek">
       버전별 작업 기록을 모아 둔 이 페이지를 사이트 안에서 바로 열 수 있게 했습니다 —
       소개 탭 히어로와 저장소·문의 탭 두 곳입니다.
@@ -6270,6 +6359,7 @@ https://api.sj-lab.co.kr/auth/login.html   200 text/html   (공유 로그인 화
       <span>sj-lab(README)</span>
     </div>
     <h1>플랫폼 대문에도<br>이 기록으로 오는 길</h1>
+    <p class="plainline">플랫폼 소개 페이지에도 이 작업 기록 링크를 걸었습니다</p>
     <p class="dek">
       v2.45에서 확인을 받기로 했던 <code>stylealist/sj-lab</code> README 반영을 마무리했습니다.
       Live Demo 표 마지막에 "개발 변경 로그" 한 줄이 들어갔습니다.
@@ -6323,6 +6413,7 @@ sj-lab README       Live Demo 표 "기록" 행
       <span>mapservice(영상)</span>
     </div>
     <h1>전체화면에서 사라지던 자막,<br>화면과 어긋나던 설명</h1>
+    <p class="plainline">영상을 전체화면으로 봐도 자막이 잘리지 않게 고쳤습니다</p>
     <p class="dek">
       자막이 화면에 새겨져 있다 보니 영상이 조금만 잘려도 바로 안 보입니다.
       잘리는 원인을 잡고, 웹 기능 설명 구간의 자막을 화면 순서에 맞춰 다시 썼습니다.
@@ -6377,6 +6468,257 @@ sj-lab README       Live Demo 표 "기록" 행
 </div>
 
 
+<!-- ===================== v2.48 ===================== -->
+<div class="vpane" data-ver="2.48" id="pane-v2.48" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.48</span>
+      <span>2026-09-29</span>
+      <span>mapservice(영상 · 문구)</span>
+    </div>
+    <h1>QGIS 구간 싱크를 다시 맞추고<br>숫자 대신 "주기적으로"</h1>
+    <p class="plainline">자막이 화면과 어긋나던 부분을 다시 맞추고, 안내 문구를 다듬었습니다</p>
+    <p class="dek">
+      로그인부터 VWorld 배경지도까지 자막이 한 박자씩 어긋나 있어 다시 잡았고,
+      화면과 영상의 문구 4건도 같이 손봤습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>seg1 자막</dt><dd class="ok">7 → 10개</dd></div>
+      <div><dt>문구 수정</dt><dd>영상 4 · 화면 7곳</dd></div>
+      <div><dt>"30초"</dt><dd class="ok">화면에서 제거</dd></div>
+      <div><dt>요약본</dt><dd>변경 없음</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">싱크</p>
+    <h2>QGIS → QFieldCloud 구간</h2>
+    <div class="cmd">화면(초)                 전(자막 시각)              후
+ 0~4   플러그인 메뉴      0.5~7  "로그인합니다"        0.5~4   "플러그인 메뉴를 엽니다"
+ 4~12  로그인 창         〃 (7초에 끝남)            4.5~12  "계정으로 로그인합니다"
+12~14  프로젝트 목록      (없음)                   12.3~14.5 "내 프로젝트 목록"
+15~22  PostGIS 연결      7.5~15 (7초 이름)            15~22
+22~28  map 스키마 레이어  15.5~25                     22.5~28.5
+28~35  TMS for Korea    34.5~44 (9초 늦음)           28.8~34.5
+35~45  배경지도·데이터    25.5~34 (10초 이름)           35~45.5
+46~58  프로젝트 생성·업로드                              46~52.5 / 53~58
+58~66  업로드 완료                                     58.5~65.8</div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">문구</p>
+    <h2>영상 4건, 화면 7곳</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">영상</span><span class="fv">"현장조사 앱<s>(QField 포크)</s>에서" · "내업<s>(사무실 처리)</s>을 진행" · "그 자리의 거리 모습을" → <b>"선택한 장소의 로드뷰를 확인합니다"</b></span></div>
+      <div class="frow"><span class="fk">주기 표현</span><span class="fv">"30초 주기 워커가" → <b>"주기적으로 워커가"</b> — 영상뿐 아니라 <b>사이트 문구 7곳</b>도 같이 교체</span></div>
+      <div class="frow"><span class="fk">바뀐 곳</span><span class="fv">소개 탭 지표(30초 → <b>주기적</b>) · 파이프라인 ② · 저장소·문의 안내 · 팭업 설명 · 폴백 카드·태그 · README</span></div>
+      <div class="frow"><span class="fk">남긴 곳</span><span class="fv">실제 주기(30초)는 <b>개발 문서에만</b> — 운영 중 주기가 바뀜도 화면 문구가 거짓말이 되지 않게</span></div>
+    </div>
+
+    <h2 style="margin-top:2.25rem">검증</h2>
+    <div class="cmd">영상    새 full-demo.mp4 에서 seg1 10구간 프레임마다 자막·화면 대조
+        바뀐 문구 4건 번인 확인(현장조사 앱·주기적으로·내업·선택한 장소)
+사이트  document.body.innerText.includes('30초') === false · 콘솔 오류 0건
+재빌드  seg1·seg2(블러 유지)·seg3 재렌더 → 마스터 재조립 → 720p 재인코딩
+        요약본은 바뀐 문구가 없어 그대로 둠</div>
+  </div>
+</section>
+</div>
+
+
+<!-- ===================== v2.49 ===================== -->
+<div class="vpane" data-ver="2.49" id="pane-v2.49" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.49</span>
+      <span>2026-09-29</span>
+      <span>작업 로그 · 소개 탭 · 영상</span>
+    </div>
+    <h1>개발자가 아니어도<br>훑어볼 수 있게</h1>
+    <p class="plainline">작업 기록 85개 전부에 쉽은 한 줄 요약을 넣고, 소개 페이지에 실제 화면 사진을 붙였습니다</p>
+    <p class="dek">
+      글만 있던 자리에 사진을 넣고, 긴 설명을 한두 줄로 줄였습니다.
+      영상에서는 실제로 올리지 않은 레이어를 말하던 자막도 고쳤습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>한 줄 요약</dt><dd class="ok">85개 전부</dd></div>
+      <div><dt>화면 사진</dt><dd>15장 · 592KB</dd></div>
+      <div><dt>문구 정리</dt><dd>25곳</dd></div>
+      <div><dt>영상 자막</dt><dd>3줄 교체</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">작업 로그</p>
+    <h2>기술 제목 앞에 사람 말</h2>
+    <div class="cmd">전                                             후(한 줄 요약)
+시설물 사진·음성·영상 실제 재생(중계)        현장에서 찍은 사진·음성·영상을 웹에서 바로 재생합니다
+묶음을 부채꼴로 펼치기(spiderfy)               같은 자리에 겹친 핀을 펼쳐 하나씩 고를 수 있게 했습니다
+지도 삭제 원인 확정(cleanRemote)                배포할 때 지도가 지워지던 진짜 원인을 찾아 고쳤습니다
+WFS 레이어 최초 로딩 개선(bbox+압축)           지도 레이어가 처음 뜼는 속도를 크게 줄였습니다</div>
+    <ul class="notes">
+      <li>기술 설명은 <b>지우지 않고</b> 아래에 그대로 두었습니다 — 훑어볼 사람과 자세히 볼 사람이 같은 페이지를 씁니다</li>
+      <li>요약 페이지(index.html)는 카드 제목을 한 줄 요약으로 바꾸고 원래 제목을 작은 글씨로 남길</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">소개 탭</p>
+    <h2>설명 옆에 실제 화면</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">사진</span><span class="fv">데이터가 지나가는 길 4장 + 기능 11장 = <b>15장</b>(800×450, 합 592KB, lazy 로드)</span></div>
+      <div class="frow"><span class="fk">출처</span><span class="fv">화면녹화에서 장면을 뽑고, 범례·로그인은 실제 사이트에서 촬영</span></div>
+      <div class="frow"><span class="fk">문구</span><span class="fv">카드마다 1~2문장으로 줄임. "지금 보이는 기호를 설명하는 범례" → <b>"지도 범례"</b>, "재보고, 화면 저장하기" → <b>"거리와 면적 재보기"</b></span></div>
+      <div class="frow"><span class="fk">영상</span><span class="fv">QGIS 구간에서 실제로 올린 것은 <b>시설물 레이어뿐</b>이라 공공데이터·CCTV·편의점 언급을 뺀 자막 3줄로 교체</span></div>
+    </div>
+  </div>
+</section>
+</div>
+
+
+<!-- ===================== v2.50 ===================== -->
+<div class="vpane" data-ver="2.50" id="pane-v2.50" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.50</span>
+      <span>2026-09-29</span>
+      <span>mapservice(소개 탭)</span>
+    </div>
+    <h1>설명과 따로 놀던<br>사진 세 장 교체</h1>
+    <p class="plainline">"데이터가 지나가는 길"의 사진을 각 카드 내용과 맞는 화면으로 바꿨습니다</p>
+    <p class="dek">
+      올리는 장면을 받아오는 카드에 넣거나, API 자리에 결과 화면을 넣는 식으로
+      어긋난 곳이 있어 세 장을 다시 찍었습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>교체</dt><dd class="ok">3장</dd></div>
+      <div><dt>그대로</dt><dd>현장 조사 1장</dd></div>
+      <div><dt>사진 로드</dt><dd class="ok">15/15</dd></div>
+      <div><dt>용량</dt><dd>592 → 548KB</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">교체</p>
+    <h2>카드와 화면을 맞춤</h2>
+    <div class="flow">
+      <div class="frow"><span class="fk">주기적으로<br>받아오기</span><span class="fv">QGIS에서 <s>올리는</s> 화면 → <b>현장 앱이 클라우드와 데이터를 주고받는 화면</b></span></div>
+      <div class="frow"><span class="fk">지도에<br>내려주는 API</span><span class="fv">결과 화면(지도 핀) → <b>API 목록 문서(Swagger)</b> — 바로 아래 "핀 묶음" 사진과도 중복이었음</span></div>
+      <div class="frow"><span class="fk">웹에서<br>확인·처리</span><span class="fv">파일 탐색기 창이 절반을 덮음 → <b>상세 창에서 영상을 보며 내업을 적는 화면</b></span></div>
+      <div class="frow"><span class="fk">그대로</span><span class="fv">"앱으로 현장 조사" — 앱에서 시설물 정보를 입력하는 화면이라 그대로 둡니다</span></div>
+    </div>
+    <div class="cmd" style="margin-top:1.2rem">검증   끝까지 스크롤해 lazy 이미지까지 불러온 뒤 확인 — 15장 전부 로드, 깨진 사진 없음
+       (앞서 "깨졌다"고 나왔던 2장은 화면 밖에 있어 아직 불러오지 않은 것이었음)</div>
+  </div>
+</section>
+</div>
+
+
+<!-- ===================== v2.51 ===================== -->
+<div class="vpane" data-ver="2.51" id="pane-v2.51" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.51</span>
+      <span>2026-09-29</span>
+      <span>mapservice(소개 탭)</span>
+    </div>
+    <h1>흐름을 읽는 자리에는<br>사진을 빼고 글만</h1>
+    <p class="plainline">"데이터가 지나가는 길"에서 사진을 빼고, 단계 설명을 쉽게 다시 썼습니다</p>
+    <p class="dek">
+      이 구간은 한 단계씩 따라 읽는 곳인데 사진이 시선을 끊었습니다.
+      바로 아래 "이런 기능들이 있습니다"의 사진 11장은 그대로 둡니다.
+    </p>
+    <dl class="facts">
+      <div><dt>파이프라인 사진</dt><dd class="ok">4 → 0장</dd></div>
+      <div><dt>기능 사진</dt><dd>11장 유지</dd></div>
+      <div><dt>사진 용량</dt><dd class="ok">548 → 425KB</dd></div>
+      <div><dt>문구</dt><dd>단계 표시 · 제목 · 설명</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">문구</p>
+    <h2>단계 표시부터 우리말로</h2>
+    <div class="cmd">전                                      후
+Step 1. 현장 외업                     1단계 · 현장      · 앱으로 현장을 돌며 기록
+Step 2. 클라우드 연동                 2단계 · 동기화    · 올라온 데이터를 받아오기
+Step 3. 공간 API                      3단계 · 서버      · 지도에 필요한 만큼만 내려주기
+Step 4. 웹 관제                      4단계 · 웹        · 사무실에서 확인하고 처리</div>
+    <ul class="notes">
+      <li>설명도 한두 문장으로 — 예: "지금 보고 있는 화면 범위만 찾아서 지도로 보냅니다. <b>전국 데이터를 통째로 넘기지 않으니 빠릅니다.</b>"</li>
+      <li>저장소 이름 배지(infra-manage-app · sj-qfieldsync · mapservice-rest · sj-lab-mapservice)는 그대로 — 어느 저장소가 그 일을 하는지 보여 줍니다</li>
+      <li>뺀 사진 4장은 지우지 않고 <code>trash/2026-09-29/</code> 로 옮겼습니다</li>
+    </ul>
+  </div>
+</section>
+</div>
+
+
+<!-- ===================== v2.52 ===================== -->
+<div class="vpane" data-ver="2.52" id="pane-v2.52" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.52</span>
+      <span>2026-09-29</span>
+      <span>mapservice(왼쪽 패널)</span>
+    </div>
+    <h1>헤더를 접었는데<br>패널만 그대로였다</h1>
+    <p class="plainline">헤더를 접으면 시설물 목록 아래에 빈 공간이 생기던 문제를 고쳤습니다</p>
+    <p class="dek">
+      헤더를 접으면 지도는 화면 맨 위까지 올라오는데, 왼쪽 패널은 "헤더가 항상 있다"는
+      가정으로 높이가 고정돼 있었습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>전</dt><dd class="bad">아래 60px 빈 공간</dd></div>
+      <div><dt>후</dt><dd class="ok">빈 공간 0px</dd></div>
+      <div><dt>같이 맞춤</dt><dd>범례 위치</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">원인</p>
+    <h2>한쪽만 높이를 바꿨 있었다</h2>
+    <div class="cmd">헤더를 접을 때 ui.js 가 하는 일
+  .main-content  transform: translateY(-60px) + height: calc(100vh + 60px)
+  .map-container height: calc(100vh + 60px)      → 지도는 화면 맨 위에서 시작
+
+그런데 패널은
+  .layer-panel   height: calc(100vh - 60px)      → 헤더가 없는데도 60px 짧음
+                                                 → 목록 아래에 빈 공간</div>
+    <ul class="notes">
+      <li><code>ui.js</code> — 헤더를 접고 필 때 <code>body</code> 에 <code>header-hidden</code> 클래스를 같이 토글</li>
+      <li><code>layer-panel.css</code> — <code>body.header-hidden .layer-panel { height: 100vh; }</code>, 높이 변화에도 애니메이션</li>
+      <li>화면 기준으로 자리를 계산하는 범례가 있어, 애니메이션이 끝나면 <code>resize</code> 를 한 번 보냅니다</li>
+    </ul>
+    <div class="cmd" style="margin-top:1.1rem">검증(1440x900)
+  헤더 보임   패널  60 ~ 900   빈 공간 0px   범례 아래 16px
+  헤더 접음   패널   0 ~ 900   빈 공간 0px   범례 아래 16px
+  다시 펼침   패널  60 ~ 900   빈 공간 0px   목록 끝 884px</div>
+  </div>
+</section>
+</div>
+
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -6387,7 +6729,7 @@ sj-lab README       Live Demo 표 "기록" 행
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.47.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.52.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·

@@ -28,6 +28,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **파일 삭제**: 파일을 지우지 말고 `trash/<YYYY-MM-DD>/` 아래에 원래 경로 구조를 유지한 채 옮길 것(예: `trash/2026-09-16/docs/old.md`). 옮긴 파일은 그 버전의 history 문서에 기록할 것.
 - **git push**: 자동으로 push하지 말 것. 사용자가 명시적으로 요청할 때만 push하며, 커밋은 저장소별로 `git -C <경로>`로 할 것.
 - **변경 기록(history)**: 파일을 실제로 변경한 작업마다 `history/history_v<major>.<minor>.md`를 새로 만들 것(조회·질문만 한 턴은 기록하지 않음). 내용은 사용자가 입력한 프롬프트 원문, 변경된 결과물(파일별 요약), 접속 URL 링크를 포함할 것. 직전 버전에서 minor를 1 올리고, 구조가 바뀌는 큰 작업이면 major를 올릴 것.
+- 작업 로그의 내용은 비개발자들도 공유가 쉽게되도록 최대한 일상적인 언어를 사용해서 작성할것.
+- 최대한 한눈에 들어오도록 핵심위주로 심플하게 작성할것
 - **공유 웹사이트**: history 문서를 추가·수정하면 같은 작업에서 두 곳을 함께 갱신할 것.
   1. `history/web/artifact.html` — 팀에 링크로 공유하는 발행 페이지의 원본. 버전 패널을 추가한 뒤 **같은 URL로 다시 발행**해야 링크가 유지됨(발행 주소: `https://claude.ai/artifact/HhEYu2UmxSko5h8uef7hB9`). 발행은 외부 서비스에 내용을 올리는 행위이므로 민감 정보를 싣지 말 것.
   - 작업로그는 탭으로 관리되면 한탭에 15개의 로그가 포함되도록 한다.(예시 : v1.0 ~ v.1.14, v1.15 ~ v.1.29 이런식으로 진행)
