@@ -5,9 +5,10 @@
 //   → ArgoCD 가 동기화(selfHeal·prune) → 롤아웃
 //
 // Jenkins Credentials (docs/k8s-secrets.md 참고, 값은 Jenkins 에만 있다)
-//   github_login  : 서비스 저장소 checkout
 //   ncp-api-key   : NCP 레지스트리 docker login (Access Key / Secret Key)
 //   GitHub_token  : 매니페스트 저장소에 image.tag 커밋·push
+//   (체크아웃은 public 저장소라 자격 증명 없이 된다. 비공개로 바꾸면 Jenkins 에 등록된
+//    아이디(`github_login` 또는 `GitHubAccount` — 잡마다 다르니 Credentials 화면에서 확인)를 넣을 것)
 //
 // 주의
 //  - 여러 서비스 잡이 동시에 매니페스트를 push 하면 한 잡이 `cannot lock ref` 로 실패할 수 있다.
@@ -31,11 +32,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git(
-                    branch: 'main',
-                    credentialsId: 'github_login',
-                    url: 'https://github.com/stylealist/sj-lab-openapi.git'
-                )
+                git branch: 'main', url: 'https://github.com/stylealist/sj-lab-openapi.git'
             }
         }
 
