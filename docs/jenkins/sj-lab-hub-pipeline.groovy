@@ -81,11 +81,11 @@ pipeline {
                         mkdir -p "$DST"
 
                         if command -v rsync >/dev/null 2>&1; then
-                            # 옛 파일은 정리하되 지도(map/)와 인증서 challenge 는 건드리지 않는다
-                            rsync -a --delete --exclude 'map/' --exclude '.well-known/' "$SRC"/ "$DST"/
+                            # 옛 파일은 정리하되 하위 사이트(map/, openapi/)와 인증서 challenge 는 건드리지 않는다
+                            rsync -a --delete --exclude 'map/' --exclude 'openapi/' --exclude '.well-known/' "$SRC"/ "$DST"/
                         else
-                            # rsync 가 없으면: map 과 .well-known 만 남기고 지운다
-                            find "$DST" -mindepth 1 -maxdepth 1 ! -name 'map' ! -name '.well-known' -exec rm -rf {} +
+                            # rsync 가 없으면: map, openapi, .well-known 만 남기고 지운다
+                            find "$DST" -mindepth 1 -maxdepth 1 ! -name 'map' ! -name 'openapi' ! -name '.well-known' -exec rm -rf {} +
                             cp -r "$SRC"/. "$DST"/
                         fi
 
@@ -111,7 +111,9 @@ pipeline {
                 || { echo "❌ 허브 확인 실패"; exit 1; }
             curl -fsS https://sj-lab.co.kr/map/ | grep -q 'js/auth-gate.js' \
                 || { echo "❌ 지도가 허브 폴백으로 응답 - html/map 확인 필요"; exit 1; }
-            echo "✅ 허브·지도 모두 정상"
+            curl -fsS https://sj-lab.co.kr/openapi/ | grep -q 'SJ-LAB OpenAPI' \
+                || { echo "❌ API 활용 페이지가 지워졌거나 폴백으로 응답 - html/openapi 확인 필요"; exit 1; }
+            echo "✅ 허브·지도·활용 페이지 모두 정상"
         '''
       }
     }
