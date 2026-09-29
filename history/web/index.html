@@ -113,6 +113,22 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v2.57</span>
+        <span class="ver-title">허브에서 OpenAPI 페이지로 바로 들어갈 수 있게 했습니다<span class="ver-note">카드 열기 · 게이트웨이 · 차트 · 배포 준비(4단계)</span></span>
+        <span class="date">2026-09-29</span>
+      </div>
+      <ul>
+        <li>허브 OpenAPI 카드가 "Coming Soon" 에서 열렸습니다(로컬 4100 / 운영 <code>/openapi/</code>)</li>
+        <li>키·사용량 표를 <b>api 스키마</b>로 옮겼습니다(지도 데이터와 분리, 스키마명은 설정값)</li>
+        <li>게이트웨이 경로 <code>/open-api/**</code> 추가 — CORS 는 고칠 필요가 없었습니다</li>
+        <li>Helm 차트·nginx 경로·Jenkins 예시 파이프라인까지 준비. 표 생성·Secret·잡 등록은 사람이 합니다</li>
+        <li>검증: 임시 게이트웨이로 4경로 200, helm lint 통과, 테스트 8건·빌드 성공</li>
+      </ul>
+      <p><a href="../history_v2.57.md">history_v2.57.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v2.56</span>
         <span class="ver-title">내 API 키를 발급받아 쓰고 사용량을 확인합니다<span class="ver-note">키 발급·한도·기록(3단계)</span></span>
         <span class="date">2026-09-29</span>

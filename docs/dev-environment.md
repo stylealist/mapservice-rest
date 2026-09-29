@@ -44,6 +44,7 @@
 | `8000` | `fast-api-ai` (`python main.py`, `root_path=/fast-api-ai`) | 게이트웨이 `/fast-api-ai/**`. 로컬은 Eureka에 `127.0.0.1`로 등록 |
 | 랜덤(`server.port: 0`) | `sj-lab-authserver` (context-path `/auth`) | 게이트웨이 `/auth/**`. **hub·mapservice는 로그인 게이트가 있어 이게 없으면 접속 자체가 안 됨**(로그인 페이지 503). 로그인 페이지 `http://localhost:8100/auth/login.html` |
 | 랜덤(`server.port: 0`) | `sj-lab-openapi` (context-path `/open-api`) | 게이트웨이 `/open-api/**`. 데이터는 mapservice-rest 를 불러 중계하므로 **mapservice-rest 가 떠 있어야** 동작합니다. 따로 확인할 때는 `--server.port=8110` 처럼 별도 포트로 띄울 것 |
+| `3000` | `sj-lab-hub` (`npm start`) | 허브 첫 화면. OpenAPI 카드를 누르면 로컬에서는 4100 으로 간다 |
 | `4100` | `sj-lab-openapi-web` (`npm start`, webpack dev server) | API 활용 페이지. **API 호출은 dev server 프록시**(`/open-api` → `localhost:8100`)로 넘기므로 게이트웨이 CORS 목록에 4100을 넣지 않습니다. 게이트웨이에 `/open-api` 라우트를 넣기 전에는 `OPENAPI_PROXY_TARGET=http://localhost:8110`으로 백엔드를 직접 가리켜 확인 |
 | `4000` | 프론트엔드 정적 서버(`node scripts/static-server.js <프론트경로> 4000`) | 게이트웨이 CORS 허용 origin. **`python -m http.server`로 띄우지 말 것** — Range 요청을 지원하지 않아 소개 영상의 재생 위치를 옮길 수 없습니다(2026-09-28 확인) |
 

@@ -388,7 +388,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.56</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.57</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -495,7 +495,8 @@
       <button type="button" class="vchip" role="tab" data-ver="2.53" aria-controls="pane-v2.53" title="헤더를 다시 펼칠 때 패널 아래가 잠긐 비던 문제 수정"><span class="pv">v2.53</span><span class="pt">펼칠 때 공백</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.54" aria-controls="pane-v2.54" title="공개 API 서비스 신설 — 카탈로그와 중계"><span class="pv">v2.54</span><span class="pt">공개 API</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.55" aria-controls="pane-v2.55" title="API 활용 페이지 화면 구현"><span class="pv">v2.55</span><span class="pt">활용 페이지</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.56" aria-controls="pane-v2.56" title="API 키 발급·사용량"><span class="pv">v2.56<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">API 키</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.56" aria-controls="pane-v2.56" title="API 키 발급·사용량"><span class="pv">v2.56</span><span class="pt">API 키</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.57" aria-controls="pane-v2.57" title="허브 카드 열기·게이트웨이·배포 준비"><span class="pv">v2.57<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">배포 준비</span></button>
     </div>
   </div>
 </nav>
@@ -6995,6 +6996,72 @@ npm run build     성공 (bundle 161 KiB)</div>
 </div>
 
 
+<!-- ===================== v2.57 ===================== -->
+<div class="vpane" data-ver="2.57" id="pane-v2.57" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.57</span>
+      <span>2026-09-29</span>
+      <span>hub · gateway · k8s</span>
+    </div>
+    <h1>허브에서 바로 들어가게,<br>배포할 준비까지</h1>
+    <p class="plainline">허브의 OpenAPI 카드를 열고, 게이트웨이·차트·nginx·Jenkins 준비를 마쳤습니다 — 4단계 완료</p>
+    <p class="dek">
+      표는 요청하신 대로 <b>api 스키마</b>에 만드도록 바꿨었습니다(지도 데이터와 분리).
+    </p>
+    <dl class="facts">
+      <div><dt>허브 카드</dt><dd class="ok">Coming Soon → 열림</dd></div>
+      <div><dt>게이트웨이</dt><dd class="ok">/open-api/** 추가</dd></div>
+      <div><dt>CORS 변경</dt><dd class="ok">없음(필요 없음)</dd></div>
+      <div><dt>helm lint</dt><dd class="ok">통과</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">변경</p>
+    <h2>네 가지를 손봤습니다</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>저장소</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>sj-lab-openapi</td><td>키·사용량 표를 <b>api 스키마</b>로 이동(스키마 이름은 설정값, 형식 검증)</td></tr>
+          <tr><td>sj-lab-hub</td><td>OpenAPI 카드 열기 · 로컬 4100 / 운영 /openapi/ 로 이동</td></tr>
+          <tr><td>sj-lab-apigateway</td><td>라우트 <code>/open-api/**</code> → SJ-LAB-OPENAPI</td></tr>
+          <tr><td>sj-lab-k8s-manifests</td><td>차트 신규 · nginx <code>/openapi/</code> 경로 명시(파일 없으면 404)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="notes">
+      <li>CORS 는 그대로 둡니다 — 운영 주소는 이미 허용돼 있고, 로컬은 개발 서버가 대신 부릅니다</li>
+      <li>nginx 에 <code>/openapi/</code> 를 명시한 이유: 파일이 없을 때 허브 화면이 200 으로 뜨면 "배포가 됐나?" 헷갈립니다(지도에서 겪은 문제)</li>
+      <li>Jenkins 예시 파이프라인을 남겼습니다 — 스테이징에 올리고 바꿔치기 후 확인까지</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>게이트웨이를 거쳐 실제로 불러 봤습니다</h2>
+    <div class="cmd">임시 게이트웨이(8101)로 확인 — 쓰고 계신 8100 은 건드리지 않음
+  /open-api/catalog              200  10 KB
+  /open-api/v1/admin-area/sido   200  2.3 KB
+  /open-api/keys/status          200
+  /map/check                     200  (기존 경로 영향 없음)
+  CORS(Origin: sj-lab.co.kr)     허용 헤더 정상</div>
+    <ul class="notes">
+      <li>허브 화면에서 OpenAPI 카드의 "COMING SOON" 이 사라진 것과 나머지 카드가 그대로인 것을 확인</li>
+      <li><code>helm lint</code>·<code>helm template</code> 통과, 백엔드 테스트 8건·프론트 빌드 성공</li>
+      <li><b>사람이 할 일</b>: 표 2개 생성 → Secret 등록 → Jenkins 잡 2개 → ArgoCD Application 등록</li>
+    </ul>
+  </div>
+</section>
+</div>
+
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -7005,7 +7072,7 @@ npm run build     성공 (bundle 161 KiB)</div>
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.56.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.57.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·

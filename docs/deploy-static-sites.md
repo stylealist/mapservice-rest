@@ -7,6 +7,7 @@
 ```
 /home/kuber-volume/sj-lab-webserver/html/          ← 허브(sj-lab-hub)   → https://sj-lab.co.kr/
 /home/kuber-volume/sj-lab-webserver/html/map/      ← 지도(sj-lab-mapservice) → https://sj-lab.co.kr/map/
+/home/kuber-volume/sj-lab-webserver/html/openapi/  ← API 활용 페이지(sj-lab-openapi-web) → https://sj-lab.co.kr/openapi/
 ```
 
 - 지도는 **허브 디렉터리의 하위 폴더**입니다. 별도 볼륨이 아닙니다.
