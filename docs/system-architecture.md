@@ -84,7 +84,7 @@
 
 **공개 API(`sj-lab-openapi`, 게이트웨이 `/open-api/**`)**: 지도·시설물 데이터를 외부에서 쓸 수 있게 여는 서비스다. `GET /open-api/catalog` 가 공개 API 목록(경로·파라미터·예시)을 내려주고, 활용 페이지는 그 JSON으로 화면을 그린다. `GET /open-api/v1/...` 는 카탈로그에 **정의된 경로·파라미터만** mapservice-rest 로 올려보내고 응답을 그대로 전달한다 (정의 밖은 404·400). **DB를 직접 읽지 않는다** — 같은 SQL이 두 저장소에 생기면 뷰가 바뀔 때 한쪽만 고쳐지기 때문이다.
 - 공개 범위는 `src/main/resources/catalog/api-catalog.json` 한 파일이 정한다(현재 12개, 모두 GET). 공공데이터 6종 · 시설물 목록/상세/아이콘 · 행정구역 3단계. **내업 쓰기·사진·첨부 중계는 열지 않는다.**
-- 2026-09-29 기준 **API 키·사용량 제한은 아직 없다**(다음 단계). 키 테이블을 만들 때는 `map` 스키마에 둘 것.
+- **API 키·사용량(2026-09-29 구현, 기본 꺼짐)**: 로그인한 사람이 `POST /open-api/keys` 로 키를 발급받아 `X-API-Key` 헤더(또는 `?apiKey=`)로 호출하면, 호출이 `map.openapi_api_usage` 에 기록되고 하루 한도(기본 1000회)를 넘으면 429. 키 원문은 저장하지 않고 SHA-256 해시만 둔다. 로그인 확인은 authserver `/auth/me` 위임. **표(`map.openapi_api_key`, `map.openapi_api_usage`)가 없거나 기능이 꺼져 있으면 키 API 만 503이고 공개 조회는 정상** — 생성 스크립트는 `sj-lab-openapi/db/*.sql`이며 DDL 실행은 담당자가 한다. 키 없이도 부를 수 있는 현재 정책을 바꾸려면 사용자와 먼저 상의할 것.
 - **활용 페이지(`sj-lab-openapi-web`, 운영 `sj-lab.co.kr/openapi/`)**: 화면을 코드에 적지 않고 `GET /open-api/catalog` 응답으로 그린다 — API가 늘면 페이지를 고치지 않아도 항목이 함께 늘어난다. 파라미터 입력 → **실행해 보기**(상태·시간·크기·본문) → curl/JS/Python 샘플 코드 복사까지 한 화면에서 한다. 로컬은 webpack dev server 프록시로 게이트웨이에 넘겨 CORS 없이 동작하고, 운영은 `sj-lab.co.kr` → `api.sj-lab.co.kr`(게이트웨이가 이미 허용한 오리진)로 직접 부른다. 로그인 게이트 스크립트는 hub·mapservice와 **같은 코드가 세 곳에 복제**돼 있으니 한쪽을 고치면 나머지도 고칠 것.
 
 **로그인 및 SSO(`sj-lab-authserver`, 게이트웨이 `/auth/**`)**: 별도 회원 DB 없이 QFieldCloud 계정을 그대로 쓴다. `POST /auth/login {username,password}` → QFieldCloud `POST /api/v1/auth/login/`에 위임 검증(위 중계 흐름과 같은 계약) → 성공 시 이 서버가 서명한 sj-lab 전용 JWT 발급(`{accessToken, tokenType, expiresIn, username}`). `GET /auth/me`(`Authorization: Bearer`)로 토큰 유효성 확인.
