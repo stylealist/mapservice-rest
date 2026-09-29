@@ -238,6 +238,7 @@
   }
   .facts dd { margin: 0; font-size: .93rem; font-weight: 500; }
   .ok { color: var(--ok); font-weight: 600; }
+  .bad { color: var(--warn); font-weight: 600; }
   .pending { color: var(--warn); font-weight: 600; }
 
   /* ---------- 섹션 ---------- */
@@ -387,7 +388,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.52</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.53</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -490,7 +491,8 @@
       <button type="button" class="vchip" role="tab" data-ver="2.49" aria-controls="pane-v2.49" title="작업 로그 한 줄 요약 · 소개 탭 사진 · 문구 정리"><span class="pv">v2.49</span><span class="pt">쉽게 · 사진 추가</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.50" aria-controls="pane-v2.50" title="소개 탭 파이프라인 사진을 내용에 맞게 교체"><span class="pv">v2.50</span><span class="pt">사진 교체</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.51" aria-controls="pane-v2.51" title="파이프라인 사진 제거와 문구 정리"><span class="pv">v2.51</span><span class="pt">글로만 정리</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.52" aria-controls="pane-v2.52" title="헤더를 접으면 시설물 패널 아래가 비던 문제 수정"><span class="pv">v2.52<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">패널 높이</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.52" aria-controls="pane-v2.52" title="헤더를 접으면 시설물 패널 아래가 비던 문제 수정"><span class="pv">v2.52</span><span class="pt">패널 높이</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.53" aria-controls="pane-v2.53" title="헤더를 다시 펼칠 때 패널 아래가 잠긐 비던 문제 수정"><span class="pv">v2.53<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">펼칠 때 공백</span></button>
     </div>
   </div>
 </nav>
@@ -6719,6 +6721,62 @@ Step 4. 웹 관제                      4단계 · 웹        · 사무실에서
 </div>
 
 
+<!-- ===================== v2.53 ===================== -->
+<div class="vpane" data-ver="2.53" id="pane-v2.53" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.53</span>
+      <span>2026-09-29</span>
+      <span>mapservice(왼쪽 패널)</span>
+    </div>
+    <h1>접을 때는 멀줦했는데<br>펼칠 때만 잘못됐다</h1>
+    <p class="plainline">헤더를 다시 펼칠 때 패널 아래가 잠긐 비던 문제를 고쳤습니다</p>
+    <p class="dek">
+      바로 앞 버전(v2.52)에서 패널 높이에 애니메이션을 걸었는데, 같은 속성을 두 번 적어
+      둔 탓에 그 설정이 통째로 무시되고 있었습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>전(펼칠 때)</dt><dd class="bad">0.4초간 60px 공백</dd></div>
+      <div><dt>후</dt><dd class="ok">내내 0px</dd></div>
+      <div><dt>고친 곳</dt><dd>CSS 1줄</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">원인</p>
+    <h2>같은 속성을 두 번 적으면 뒤의 것만 남는다</h2>
+    <div class="cmd">.layer-panel {
+  transition: transform 0.3s ..., height 0.4s ...;   ← v2.52 에서 추가한 줄
+  transform: translateX(0);
+  transition: transform 0.3s ...;                    ← 원래 있던 줄 (뒤에 있어 이게 이긴다)
+}</div>
+    <p style="margin:1.1rem 0 0">높이 애니메이션이 사라져 패널 높이만 <b>즉시</b> 바뀝니다. 지도 영역은 0.4초에 걸쳐 움직이고요.</p>
+    <div class="tbl">
+      <table>
+      <thead><tr><th>동작</th><th>패널 높이</th><th>지도 영역</th><th>결과</th></tr></thead>
+      <tbody>
+        <tr><td>접을 때</td><td>곷바로 60px 커짐</td><td>천천히 위로</td><td class="ok">넘친 부분이 화면 밖 — 안 보임</td></tr>
+        <tr><td>펼칠 때</td><td>곷바로 60px 줄어듦</td><td>천천히 아래로</td><td class="bad">그 사이 아래가 비어 보임</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="notes">
+      <li><code>layer-panel.css</code> — 두 선언을 <b>한 줄로 병합</b>(<code>transform</code> + <code>height</code>), 같은 실수 반복을 막는 주석 추가</li>
+      <li><code>index.html</code> — 캐시 무효화 <code>layer-panel.css?v=20260929b</code></li>
+      <li><code>docs/ui-conventions.md</code> — 헤더를 접으면 패널은 <code>100vh</code>, <code>transition</code> 은 한 줄로만</li>
+    </ul>
+    <div class="cmd" style="margin-top:1.1rem">검증 — 애니메이션 도는 동안 매 프레임 "화면 아래 - 패널 아래" 측정
+  헤더 접기    표본 55프레임   최대 빈 공간 0px
+  헤더 펼치기  표본 56프레임   최대 빈 공간 0px   (이전에는 60px)</div>
+  </div>
+</section>
+</div>
+
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -6729,7 +6787,7 @@ Step 4. 웹 관제                      4단계 · 웹        · 사무실에서
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.52.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.53.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·

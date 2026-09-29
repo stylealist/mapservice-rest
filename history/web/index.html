@@ -113,6 +113,21 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v2.53</span>
+        <span class="ver-title">헤더를 다시 펼칠 때 패널 아래가 잠긐 비던 문제 수정<span class="ver-note">CSS 에서 같은 속성을 두 번 적은 탓</span></span>
+        <span class="date">2026-09-29</span>
+      </div>
+      <ul>
+        <li><code>.layer-panel</code> 에 <code>transition</code> 이 두 번 있어 뒤의 선언이 앞의 것을 덮어썼 — 높이 애니메이션이 사라짐</li>
+        <li>패널 높이만 즉시 바뀌고 지도 영역은 0.4초 동안 움직여서, <b>펼칠 때만</b> 60px가 비어 보였음</li>
+        <li>선언을 한 줄로 합치고 주석 추가, <code>docs/ui-conventions.md</code> 에 규칙 기록</li>
+        <li>검증: 애니메이션 도는 동안 매 프레임 측정 — 접기·펼치기 모두 <b>빈 공간 0px</b></li>
+      </ul>
+      <p><a href="../history_v2.53.md">history_v2.53.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v2.52</span>
         <span class="ver-title">헤더를 접으면 시설물 목록 아래가 비던 문제를 고쳤습니다<span class="ver-note">패널 높이를 헤더 상태에 맞게 조정</span></span>
         <span class="date">2026-09-29</span>
