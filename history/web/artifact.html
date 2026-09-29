@@ -388,7 +388,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.53</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.55</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -492,7 +492,9 @@
       <button type="button" class="vchip" role="tab" data-ver="2.50" aria-controls="pane-v2.50" title="소개 탭 파이프라인 사진을 내용에 맞게 교체"><span class="pv">v2.50</span><span class="pt">사진 교체</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.51" aria-controls="pane-v2.51" title="파이프라인 사진 제거와 문구 정리"><span class="pv">v2.51</span><span class="pt">글로만 정리</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.52" aria-controls="pane-v2.52" title="헤더를 접으면 시설물 패널 아래가 비던 문제 수정"><span class="pv">v2.52</span><span class="pt">패널 높이</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.53" aria-controls="pane-v2.53" title="헤더를 다시 펼칠 때 패널 아래가 잠긐 비던 문제 수정"><span class="pv">v2.53<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">펼칠 때 공백</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.53" aria-controls="pane-v2.53" title="헤더를 다시 펼칠 때 패널 아래가 잠긐 비던 문제 수정"><span class="pv">v2.53</span><span class="pt">펼칠 때 공백</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.54" aria-controls="pane-v2.54" title="공개 API 서비스 신설 — 카탈로그와 중계"><span class="pv">v2.54</span><span class="pt">공개 API</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.55" aria-controls="pane-v2.55" title="API 활용 페이지 화면 구현"><span class="pv">v2.55<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">활용 페이지</span></button>
     </div>
   </div>
 </nav>
@@ -6777,6 +6779,145 @@ Step 4. 웹 관제                      4단계 · 웹        · 사무실에서
 </div>
 
 
+<!-- ===================== v2.54 ===================== -->
+<div class="vpane" data-ver="2.54" id="pane-v2.54" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.54</span>
+      <span>2026-09-29</span>
+      <span>sj-lab-openapi(신규)</span>
+    </div>
+    <h1>모아 둔 데이터를<br>밖에서도 쓸 수 있게</h1>
+    <p class="plainline">지도·시설물 데이터를 공개 API 로 열어 주는 서비스를 새로 만들었습니다</p>
+    <p class="dek">
+      API 활용 페이지 4단계 중 <b>1단계</b>입니다. 사람이 읽을 문서와 프로그램이 부를 주소를
+      따로 관리하면 금방 어긋나서, 한 파일에서 둘 다 나오게 만들었습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>열어 둔 API</dt><dd class="ok">12개 (모두 조회)</dd></div>
+      <div><dt>새 저장소</dt><dd>2개</dd></div>
+      <div><dt>검증</dt><dd class="ok">정상 7 · 차단 4</dd></div>
+      <div><dt>테스트</dt><dd class="ok">4건 통과</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">구조</p>
+    <h2>문서와 허용 목록이 같은 파일에서 나온다</h2>
+    <div class="cmd">브라우저 ── 활용 페이지(2단계 예정)
+                 │  GET /open-api/catalog   ← API 목록을 받아 화면을 그린다
+                 │  GET /open-api/v1/...    ← 실제 호출
+                 ▼
+          sj-lab-openapi   ── 요청 검사 ──▶  mapservice-rest ──▶ DB
+                 ▲
+      api-catalog.json (한 파일이 문서 + 허용 목록)</div>
+    <ul class="notes">
+      <li><b>열어 둔 것</b> — 공공데이터 6종(편의점·버스정류장·CCTV·약국·병원·관공서), 시설물 목록·상세·아이콘, 행정구역 3단계</li>
+      <li><b>닫아 둔 것</b> — 내업 기록 쓰기, 내업 사진, 첨부 파일 중계(외부 계정 필요)</li>
+      <li><b>DB를 직접 읽지 않는다</b> — 같은 SQL이 두 저장소에 생기면 한쪽만 고쳐져 답이 달라집니다</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>되야 하는 것과 막혀야 하는 것</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>요청</th><th>결과</th></tr></thead>
+        <tbody>
+          <tr><td>API 목록</td><td class="ok">200 · 그룹 3 / 엔드포인트 12</td></tr>
+          <tr><td>시·도 · 시·군·구 목록</td><td class="ok">200</td></tr>
+          <tr><td>편의점(화면 범위 + 20건)</td><td class="ok">200 · GeoJSON</td></tr>
+          <tr><td>시설물 목록 · 상세</td><td class="ok">200 · 없는 ID 는 404 그대로 전달</td></tr>
+          <tr><td>목록에 없는 경로</td><td class="ok">404 UNKNOWN_API</td></tr>
+          <tr><td>모르는 파라미터(<code>?secret=1</code>)</td><td class="ok">400 UNKNOWN_PARAMETER</td></tr>
+          <tr><td>내업 쓰기 · 첨부 중계 경로</td><td class="ok">404 (열려 있지 않음)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="notes">
+      <li>다음 단계: ② 활용 페이지(React) → ③ API 키·사용량 → ④ 허브 4번째 카드 열기 · 배포</li>
+    </ul>
+  </div>
+</section>
+</div>
+
+
+<!-- ===================== v2.55 ===================== -->
+<div class="vpane" data-ver="2.55" id="pane-v2.55" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.55</span>
+      <span>2026-09-29</span>
+      <span>sj-lab-openapi-web</span>
+    </div>
+    <h1>보고, 눌러 보고,<br>코드로 복사해 가는 페이지</h1>
+    <p class="plainline">공개 API 활용 페이지를 만들었습니다 — 4단계 중 2단계</p>
+    <p class="dek">
+      API 문서를 읽다가 다른 도구로 옥겨 넣어 부르는 번거로움 없이, 한 화면에서 바로
+      호출해 보고 그 값이 들어간 코드까지 받아 갑니다.
+    </p>
+    <dl class="facts">
+      <div><dt>목록</dt><dd class="ok">API 12개 · 묶음 3</dd></div>
+      <div><dt>실행해 보기</dt><dd class="ok">200 · 684ms · 197KB</dd></div>
+      <div><dt>콘솔 오류</dt><dd class="ok">0건</dd></div>
+      <div><dt>빌드</dt><dd class="ok">161 KiB</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">화면</p>
+    <h2>화면을 코드에 적지 않았다</h2>
+    <p style="margin:0 0 1rem">서버가 내려주는 API 목록(<code>/open-api/catalog</code>)을 읽어 그립니다. <b>나중에 API가 늘어도 이 페이지는 고칠 필요가 없습니다.</b></p>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>영역</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>왼쪽</td><td>API 목록 12개 — 공공데이터 6 · 시설물 3 · 행정구역 3</td></tr>
+          <tr><td>위쪽</td><td>설명과 <b>실제 호출 주소</b>(복사 버튼)</td></tr>
+          <tr><td>파라미터</td><td>이름 · 필수 여부 · 설명 · 입력칸(예시값이 미리 채워짐)</td></tr>
+          <tr><td>실행해 보기</td><td>상태 · 걸린 시간 · 크기 · 응답 본문</td></tr>
+          <tr><td>샘플 코드</td><td>curl / JavaScript / Python — 지금 입력한 값이 들어간 코드</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="notes">
+      <li>로컬에서는 개발 서버가 대신 호출해 줘서 <b>CORS 설정을 새로 만들지 않았습니다</b>. 운영은 이미 허용된 주소라 그대로 동작합니다</li>
+      <li>화면에 보여 주는 주소는 항상 <b>밖에서 부를 때의 주소</b>입니다 — 개발 서버 주소를 보여 주면 복사해 가도 안 됩니다</li>
+      <li>로그인은 다른 sj-lab 사이트와 같은 화면(허브·지도와 같은 스크립트)</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">검증</p>
+    <h2>브라우저에서 직접 눌러 확인</h2>
+    <div class="cmd">API 목록        12개 · 묶음 3개 표시
+첫 화면          "편의점" 자동 선택, 주소·파라미터 2개
+실행해 보기      HTTP 200 · 684 ms · 197.7 KB · application/json
+없는 시설물 ID   HTTP 404 를 화면에 그대로 표시
+샘플 코드        curl / JavaScript / Python 전환·복사 동작
+콘솔 오류        없음
+npm run build     성공 (bundle 161 KiB)</div>
+    <ul class="notes">
+      <li>처음엔 React 경고 2건 — 선택 상태 스타일에서 <code>border</code>와 <code>borderColor</code>를 섞어 써서였고, 한 줄로 덮어쓰도록 고쳤습니다</li>
+      <li>주소에 보이던 <code>%2C</code>도 쉼표로 되돌려 읽기 쉽게 했습니다</li>
+      <li>다음: ③ API 키·사용량 → ④ 허브 4번째 카드 열기 · 게이트웨이 라우트 · 배포</li>
+    </ul>
+  </div>
+</section>
+</div>
+
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -6787,7 +6928,7 @@ Step 4. 웹 관제                      4단계 · 웹        · 사무실에서
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.53.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.55.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·

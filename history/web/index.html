@@ -113,6 +113,36 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v2.55</span>
+        <span class="ver-title">API 활용 페이지 화면을 만들었습니다<span class="ver-note">목록 · 실행해 보기 · 샘플 코드(2단계)</span></span>
+        <span class="date">2026-09-29</span>
+      </div>
+      <ul>
+        <li>API를 보고 → 그 자리에서 눌러 보고 → curl/JS/Python 코드로 복사해 가는 한 페이지</li>
+        <li>화면을 코드에 적지 않고 <b>서버가 내려주는 API 목록</b>으로 그려, API가 늘어도 페이지는 그대로 둡니다</li>
+        <li>로컬은 개발 서버가 API 호출을 대신 넘겨 CORS 설정을 새로 만들지 않았습니다</li>
+        <li>검증: 목록 12개 표시, 실행 200(684ms · 197KB), 없는 ID는 404 표시, 콘솔 오류 0건, 빌드 성공</li>
+      </ul>
+      <p><a href="../history_v2.55.md">history_v2.55.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
+        <span class="tag">v2.54</span>
+        <span class="ver-title">지도·시설물 데이터를 밖에서도 쓸 수 있게 열었습니다<span class="ver-note">공개 API 서비스 sj-lab-openapi 신설(1단계)</span></span>
+        <span class="date">2026-09-29</span>
+      </div>
+      <ul>
+        <li>새 저장소 2개 — 백엔드 <code>sj-lab-openapi</code>(Spring Boot), 프론트 <code>sj-lab-openapi-web</code>(React, 다음 단계)</li>
+        <li>열어 둔 API 12개 — 공공데이터 6종 · 시설물 3종 · 행정구역 3종(모두 조회). 내업 쓰기·사진·첨부 중계는 닫음</li>
+        <li>문서와 허용 목록을 <b>한 파일</b>(<code>api-catalog.json</code>)에서 내려 문서와 실제가 어긋나지 않게 함</li>
+        <li>검증: 정상 호출 7건 200, 막혀야 하는 요청 4건 404/400, 테스트 4건 통과</li>
+      </ul>
+      <p><a href="../history_v2.54.md">history_v2.54.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v2.53</span>
         <span class="ver-title">헤더를 다시 펼칠 때 패널 아래가 잠긐 비던 문제 수정<span class="ver-note">CSS 에서 같은 속성을 두 번 적은 탓</span></span>
         <span class="date">2026-09-29</span>

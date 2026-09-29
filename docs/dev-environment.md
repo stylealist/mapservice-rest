@@ -16,9 +16,11 @@
 | `sj-lab-hub` | `C:\vscode_develop\sj-lab-hub` | sj-lab 사이트 첫 화면(React + Webpack 랜딩 허브, `npm start` 포트 3000) |
 | `sj-lab-k8s-manifests` | `C:\developer\workspace\sj-lab-k8s-manifests` | 쿠버네티스 배포 매니페스트(서비스별 Helm 차트). ArgoCD의 GitOps 소스 |
 | `infra-manage-app` | `C:\vscode_develop\infra-manage-app` | 현장조사 앱(QField 포크, C++/QML). 기본 브랜치 `master` |
+| `sj-lab-openapi` | `C:\developer\workspace\sj-lab-openapi` | 공개 API 서비스 — API 목록(카탈로그) 제공 + mapservice-rest 중계(2026-09-29 신설, 키 발급 전) |
+| `sj-lab-openapi-web` | `C:\vscode_develop\sj-lab-openapi-web` | API 활용 페이지(React + Webpack, 허브 4번째 카드 OpenAPI) |
 | `sj-qfieldsync` | `C:\vscode_develop\sj-qfieldsync` | QFieldCloud → PostGIS `qfield` 스키마 동기화 배치(파이썬, 30초 주기) |
 
-이 저장소를 제외한 10개 저장소는 `.claude/settings.local.json`의 `permissions.additionalDirectories`에 등록되어 총괄 세션에서 바로 읽고 수정할 수 있습니다. 경로가 바뀌면 그 목록도 함께 고칩니다.
+이 저장소를 제외한 12개 저장소는 `.claude/settings.local.json`의 `permissions.additionalDirectories`에 등록되어 총괄 세션에서 바로 읽고 수정할 수 있습니다. 경로가 바뀌면 그 목록도 함께 고칩니다.
 
 **로컬 clone이 없는 저장소 — `stylealist/sj-lab`**: 플랫폼 전체를 소개하는 README 한 장짜리 저장소라 로컬에 두지 않습니다. 고칠 일이 생기면 임시 디렉터리에 `git clone --depth 1` → 수정 → 커밋·push 하고 임시 디렉터리를 정리합니다(2026-09-29 개발 변경 로그 링크 추가 때 이 방식 사용). 이 README의 "1. 서비스 접속 및 실서비스 체험 안내" 표는 운영 주소 목록이므로, 주소가 늘거나 바뀌면 지도 프론트의 "저장소 · 문의" 탭과 함께 확인할 것.
 
@@ -27,7 +29,7 @@
 - Antigravity CLI(agy): `~/.gemini/antigravity-cli/settings.json`의 `trustedWorkspaces` (`C:\\...` 형식)
 - Gemini CLI: `~/.gemini/trustedFolders.json` (`"c:/...": "TRUST_FOLDER"`)
 
-**Orca 프로젝트 목록**: 위 11개 저장소는 Orca에 `orca repo add --path <경로>`로 등록되어 사이드바에 표시됩니다(`orca repo list --json`으로 확인). 새 저장소도 같은 방식으로 추가합니다. `sj-lab-authserver`는 이번에 신설되어 아직 Orca에 등록되지 않았을 수 있으니, 사용하기 전에 `orca repo list --json`으로 확인할 것.
+**Orca 프로젝트 목록**: 위 13개 저장소는 Orca에 `orca repo add --path <경로>`로 등록되어 사이드바에 표시됩니다(`orca repo list --json`으로 확인). 새 저장소도 같은 방식으로 추가합니다. `sj-lab-authserver`는 이번에 신설되어 아직 Orca에 등록되지 않았을 수 있으니, 사용하기 전에 `orca repo list --json`으로 확인할 것.
 
 그 밖의 저장소(nginx 등)는 GitHub `stylealist/*`에 있으며, 로컬 경로는 확인되는 대로 이 표와 `additionalDirectories`에 추가합니다.
 
@@ -41,6 +43,8 @@
 | 랜덤(`server.port: 0`) | `sj-lab-scheduler` (context-path `/scheduler`) | 게이트웨이 `/scheduler/**`. 기동만 해도 cron 배치가 실제 DB에 적재하므로 검증용으로 함부로 띄우지 말 것. **CCTV는 기동 시 1회 즉시 수집됨**(스트리밍 URL이 주기적으로 갱신돼야 재생됨, 다음 06:00 cron까지 기다리지 않음) |
 | `8000` | `fast-api-ai` (`python main.py`, `root_path=/fast-api-ai`) | 게이트웨이 `/fast-api-ai/**`. 로컬은 Eureka에 `127.0.0.1`로 등록 |
 | 랜덤(`server.port: 0`) | `sj-lab-authserver` (context-path `/auth`) | 게이트웨이 `/auth/**`. **hub·mapservice는 로그인 게이트가 있어 이게 없으면 접속 자체가 안 됨**(로그인 페이지 503). 로그인 페이지 `http://localhost:8100/auth/login.html` |
+| 랜덤(`server.port: 0`) | `sj-lab-openapi` (context-path `/open-api`) | 게이트웨이 `/open-api/**`. 데이터는 mapservice-rest 를 불러 중계하므로 **mapservice-rest 가 떠 있어야** 동작합니다. 따로 확인할 때는 `--server.port=8110` 처럼 별도 포트로 띄울 것 |
+| `4100` | `sj-lab-openapi-web` (`npm start`, webpack dev server) | API 활용 페이지. **API 호출은 dev server 프록시**(`/open-api` → `localhost:8100`)로 넘기므로 게이트웨이 CORS 목록에 4100을 넣지 않습니다. 게이트웨이에 `/open-api` 라우트를 넣기 전에는 `OPENAPI_PROXY_TARGET=http://localhost:8110`으로 백엔드를 직접 가리켜 확인 |
 | `4000` | 프론트엔드 정적 서버(`node scripts/static-server.js <프론트경로> 4000`) | 게이트웨이 CORS 허용 origin. **`python -m http.server`로 띄우지 말 것** — Range 요청을 지원하지 않아 소개 영상의 재생 위치를 옮길 수 없습니다(2026-09-28 확인) |
 
 **기동 순서**: Eureka(8761) → mapservice-rest → 게이트웨이(8100) → 프론트(4000). 게이트웨이·백엔드는 반드시 `local` 프로파일로 띄워야 Eureka 주소(`localhost:8761`)가 잡힙니다(게이트웨이는 프로파일이 없으면 Eureka 주소가 비어 있음). 백엔드가 막 뜬 직후에는 게이트웨이의 레지스트리 캐시가 갱신될 때까지 잠시 503이 날 수 있으니, Eureka 대시보드에서 `MAPSERVICE-REST`가 UP인지 먼저 확인합니다.
