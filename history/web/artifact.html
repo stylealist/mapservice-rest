@@ -385,7 +385,7 @@
         <button type="button" role="tab" id="gtab-0" aria-controls="vgroup-0" aria-selected="false" tabindex="-1">v1.0 – v1.14</button>
         <button type="button" role="tab" id="gtab-1" aria-controls="vgroup-1" aria-selected="false" tabindex="-1">v1.15 – v1.29</button>
         <button type="button" role="tab" id="gtab-2" aria-controls="vgroup-2" aria-selected="false" tabindex="-1">v1.30 – v1.35</button>
-        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.46</button>
+        <button type="button" role="tab" id="gtab-3" aria-controls="vgroup-3" aria-selected="false" tabindex="-1">v2.0 – v2.47</button>
       </div>
       <div class="vstep">
         <span class="vnow" aria-live="polite"></span>
@@ -482,7 +482,8 @@
       <button type="button" class="vchip" role="tab" data-ver="2.43" aria-controls="pane-v2.43" title="하이브리드 토글 버그 수정과 소개 탭 기능·기술 보강"><span class="pv">v2.43</span><span class="pt">배경지도·기술 보강</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.44" aria-controls="pane-v2.44" title="인프라 링크 3개 추가(게이트웨이·Eureka·로그인)"><span class="pv">v2.44</span><span class="pt">인프라 링크</span></button>
       <button type="button" class="vchip" role="tab" data-ver="2.45" aria-controls="pane-v2.45" title="개발 변경 로그 페이지 링크를 사이트에 추가"><span class="pv">v2.45</span><span class="pt">변경 로그 링크</span></button>
-      <button type="button" class="vchip" role="tab" data-ver="2.46" aria-controls="pane-v2.46" title="sj-lab README 에 개발 변경 로그 행 추가"><span class="pv">v2.46<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">README 반영</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.46" aria-controls="pane-v2.46" title="sj-lab README 에 개발 변경 로그 행 추가"><span class="pv">v2.46</span><span class="pt">README 반영</span></button>
+      <button type="button" class="vchip" role="tab" data-ver="2.47" aria-controls="pane-v2.47" title="전체화면 자막 잘림과 화면·자막 불일치 수정"><span class="pv">v2.47<span class="dot" title="최신" aria-label="최신"></span></span><span class="pt">영상 자막 수정</span></button>
     </div>
   </div>
 </nav>
@@ -6312,6 +6313,70 @@ sj-lab README       Live Demo 표 "기록" 행
 </div>
 
 
+<!-- ===================== v2.47 ===================== -->
+<div class="vpane" data-ver="2.47" id="pane-v2.47" hidden>
+<header class="masthead">
+  <div class="wrap">
+    <div class="stamp">
+      <span class="ver">v2.47</span>
+      <span>2026-09-29</span>
+      <span>mapservice(영상)</span>
+    </div>
+    <h1>전체화면에서 사라지던 자막,<br>화면과 어긋나던 설명</h1>
+    <p class="dek">
+      자막이 화면에 새겨져 있다 보니 영상이 조금만 잘려도 바로 안 보입니다.
+      잘리는 원인을 잡고, 웹 기능 설명 구간의 자막을 화면 순서에 맞춰 다시 썼습니다.
+    </p>
+    <dl class="facts">
+      <div><dt>전체화면</dt><dd class="ok">잘림 없음</dd></div>
+      <div><dt>seg3 자막</dt><dd>14 → 23개</dd></div>
+      <div><dt>요약본</dt><dd>1:05 → 1:08</dd></div>
+      <div><dt>용량</dt><dd class="ok">4.3 → 3.5MB</dd></div>
+    </dl>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow">잘림</p>
+    <h2>cover 가 아니라 contain</h2>
+    <div class="cmd">전   .intro-video-wrapper video { object-fit: cover; }
+     → 팭업(16:9) 에서는 멀줦하지만, 창 비율이 다른 전체화면(예: 16:10)에서
+       위아래가 잘려 화면에 새겨 둔 자막이 사라짐
+
+후   object-fit: contain  (+ :fullscreen 전용 규칙)
+     → 위아래 검은 여백이 생길 뿐, 자막까지 모두 보임</div>
+    <div class="cmd" style="margin-top:1rem">검증(1440x900 = 16:10 창에서 실제 requestFullscreen)
+  팭업 안        object-fit: contain · 713x401
+  요약본 전체화면  1440x900 차지 · 표시 비율 1.600 vs 영상 1.778 → 레터박스
+  전체본 전체화면  같은 결과 · 자막 보임(스크린샷 확인) · 콘솔 오류 0건</div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">자막</p>
+    <h2>프레임을 뽑아 순서를 다시 맞췤다</h2>
+    <p class="dek" style="margin-bottom:1rem">원본에서 2~4초 간격으로 프레임을 뽑아 무엇이 보이는지 확인하고 시각을 정했습니다.</p>
+    <div class="cmd">화면(초)              전 자막                          후 자막
+ 80~88  PDF 보고서      "공공데이터 레이어를 겹쳐..."    "표준 서식 PDF 보고서로 내려받습니다"
+ 89~92  위성 지도       〃                             "배경지도를 위성 지도로 바꿔..."
+ 93~99  측정(반경)      "화면 영역(BBOX) 단위로..."     "측정 도구로 반경 · 거리 · 면적을..."
+100~104  로드뷰 도로      "편의점 · 병원 등 레이어는..."    "볼 수 있는 도로가 파란 선으로..."
+104~109  로드뷰          〃                             "그 자리의 거리 모습을 로드뷰로..."
+110~117  편의점 레이어    "거리 · 면적 측정과 로드뷰..."     "화면에 보이는 영역만 불러옵니다" 외
+118~125  CCTV 레이어·영상  〃                             "실시간 교통 CCTV 영상이 바로..."
+126~161  캐처·편집·저장    순서 어긋남                     구간마다 맞춰 8개로 분리</div>
+    <ul class="notes">
+      <li>요약본도 같은 기준으로 재구성 — ④ 내업 기록, ⑤ <b>PDF 보고서</b>, ⑥ <b>공공데이터 레이어</b> 로 장면을 나눠 6 → 7개</li>
+      <li>새 영상에서 다시 프레임을 뽑아 <b>자막과 화면이 같은 내용인지 하나씩 대조</b>(전체본 13지점 · 요약본 7장면)</li>
+      <li><code>videos/README.md</code> 에 "object-fit 은 contain", "자막 시점은 프레임을 뽑아 확인할 것" 주의를 남김</li>
+    </ul>
+  </div>
+</section>
+</div>
+
+
 <footer>
   <div class="wrap">
     <p class="k">접속 URL</p>
@@ -6322,7 +6387,7 @@ sj-lab README       Live Demo 표 "기록" 행
       <li><em>로컬 스택 기동</em><span class="url">powershell -ExecutionPolicy Bypass -File scripts\local-stack.ps1 start</span></li>
       <li><em>운영 로그인 페이지</em><span class="url">https://api.sj-lab.co.kr/auth/login.html</span></li>
       <li><em>sj-lab-authserver</em><span class="url">https://github.com/stylealist/sj-lab-authserver</span></li>
-      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.46.md</span></li>
+      <li><em>기록 원본</em><span class="url">mapservice-rest/history/history_v1.0.md ~ v1.35.md, v2.0.md ~ v2.47.md</span></li>
     </ul>
     <p class="colophon">
       총괄 허브 <code>C:\developer\workspace\mapservice-rest</code> 기준 · 커밋과 push는 사용자가 요청할 때만 수행합니다 ·

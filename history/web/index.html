@@ -112,6 +112,21 @@
 
     <div class="card">
       <div class="ver-head">
+        <span class="tag">v2.47</span>
+        <span class="ver-title">전체화면에서 자막이 잘리던 문제와 화면·자막 불일치 수정</span>
+        <span class="date">2026-09-29</span>
+      </div>
+      <ul>
+        <li>플레이어 <code>object-fit</code> 을 <code>cover</code> → <b><code>contain</code></b> 으로 교체 — 창 비율이 16:9 가 아닌 전체화면에서 위아래가 잘려 번인 자막이 안 보이던 원인</li>
+        <li>웹 기능 설명 구간(측정 · 로드뷰 · 레이어 · 캐처)의 자막을 프레임을 뽑아 확인해 <b>화면 순서에 맞춰 재작성</b>(14 → 23개)</li>
+        <li>요약본도 장면을 다시 잡아 6 → 7개(내업 · PDF · 공공데이터 레이어 분리), 1:05 → 1:08 · 4.3 → 3.5MB</li>
+        <li>검증: 16:10 창에서 실제 전체화면 진입 후 자막 노출 확인, 새 영상 20지점 자막·화면 대조</li>
+      </ul>
+      <p><a href="../history_v2.47.md">history_v2.47.md 원문 보기</a></p>
+    </div>
+
+    <div class="card">
+      <div class="ver-head">
         <span class="tag">v2.46</span>
         <span class="ver-title">sj-lab README 에 개발 변경 로그 행 추가 (v2.45 마무리)</span>
         <span class="date">2026-09-29</span>
